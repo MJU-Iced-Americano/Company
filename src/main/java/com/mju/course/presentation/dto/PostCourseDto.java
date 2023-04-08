@@ -5,7 +5,5 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CompanyEnrollmentDto {
-    private String name;
-    private String url;
+public class PostCourseDto {
 }
