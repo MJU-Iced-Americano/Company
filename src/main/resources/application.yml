@@ -5,9 +5,9 @@ spring:
   application:
     name: course-service
   datasource:
-    url:
-    username:
-    password:
+    url : ENC(mlffVT3bPcDtWvtnbR6M0TObIA/dadPjSWN6L/YIuRBIDajb32M7Y3UeYWONVXG1XiN+WsivoRo22lHbt+X846g1Fe/c4SIb0hB/2lxmabZwvYKamCL64g==)
+    username: ENC(LAujOfwPBv0SrFcl5Wpm+A==)
+    password: ENC(Jg3ImnoWv0+b7lFQD9kzsWllbtw4Kli/)
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -16,6 +16,13 @@ spring:
     properties:
       hibernate:
         format_sql:true
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    property:
+      prefix: ENC(
+      suffix: )
 
 eureka:
   instance:
