@@ -2,20 +2,21 @@ package com.mju.course.application;
 
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.enums.CourseState;
-import com.mju.course.domain.model.other.Exception.ExceptionList;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.CourseRepository;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.PostCourseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.mju.course.domain.model.other.Exception.ExceptionList.NOT_EXISTENT_COURSE;
+import static com.mju.course.domain.model.other.Exception.ExceptionList.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CourseServiceImpl implements CourseService{
 
     private final CourseRepository courseRepository;
@@ -23,6 +24,11 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public CommonResult createCourse(PostCourseDto postCourseDto) {
+        Optional<Course> findCourse = courseRepository.findByCourseName(postCourseDto.getCourseName());
+        if(findCourse.isPresent()){
+            return responseService.getFailResult(DUPLICATION_COURSE_NAME.getCode(),
+                    DUPLICATION_COURSE_NAME.getMessage());
+        }
         Course course = Course.of(postCourseDto);
         courseRepository.save(course);
         return responseService.getSuccessfulResult();

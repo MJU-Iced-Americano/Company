@@ -19,18 +19,18 @@ public class Lecture extends BaseTimeEntity{
     private Curriculum curriculum;
 
     @Column(name = "lecture_sequence")
-    private int lecture_sequence;
+    private int lectureSequence;
 
     @Column(name = "lecture_title")
-    private String lecture_title;
+    private String lectureTitle;
 
     @Column(name = "lecture_time")
-    private int lecture_time;
+    private int lectureTime;
 
     @Column(name = "lecture_url")
-    private String lecture_url;
+    private String lectureUrl;
 
     @Column(name = "lecture_description")
-    private String lecture_description;
+    private String lectureDescription;
 
 }

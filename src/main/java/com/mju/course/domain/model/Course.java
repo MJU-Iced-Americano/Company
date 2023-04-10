@@ -23,19 +23,19 @@ public class Course extends BaseTimeEntity {
     private String category;
 
     @Column(name = "course_name")
-    private String course_name;
+    private String courseName;
 
     @Column(name = "price")
     private String price;
 
     @Column(name = "course_description")
-    private String course_description;
+    private String courseDescription;
 
     @Column(name = "difficulty")
     private int difficulty;
 
     @Column(name = "course_time")
-    private int course_time;
+    private int courseTime;
 
     @Column(name = "skill")
     private String skill;
@@ -44,7 +44,7 @@ public class Course extends BaseTimeEntity {
     private Long hits;
 
     @Column(name = "course_period")
-    private String course_period;
+    private String coursePeriod;
 
     @Enumerated(EnumType.STRING)
     private CourseState status;
@@ -53,16 +53,16 @@ public class Course extends BaseTimeEntity {
     private String comment; // 보류 이유
 
     @Builder
-    public Course(String category, String course_name, String price, String course_description,
-                  int difficulty, int course_time, String skill, Long hits, String course_period, CourseState status){
+    public Course(String category, String courseName, String price, String courseDescription,
+                  int difficulty, int courseTime, String skill, Long hits, String coursePeriod, CourseState status){
         this.category = category;
-        this.course_name = course_name;
+        this.courseName = courseName;
         this.price = price;
-        this.course_description = course_description;
+        this.courseDescription = courseDescription;
         this.difficulty = difficulty;
-        this.course_time = course_time;
+        this.courseTime = courseTime;
         this.skill = skill;
-        this.course_period = course_period;
+        this.coursePeriod = coursePeriod;
         this.hits = hits;
         this.status = status;
     }
@@ -70,13 +70,13 @@ public class Course extends BaseTimeEntity {
     public static Course of(PostCourseDto postCourseDto){
         return Course.builder()
                 .category(postCourseDto.getCategory())
-                .course_name(postCourseDto.getCourse_name())
+                .courseName(postCourseDto.getCourseName())
                 .price(postCourseDto.getPrice())
-                .course_description(postCourseDto.getCourse_description())
+                .courseDescription(postCourseDto.getCourseDescription())
                 .difficulty(postCourseDto.getDifficulty())
-                .course_time(postCourseDto.getCourse_time())
+                .courseTime(postCourseDto.getCourseTime())
                 .skill(postCourseDto.getSkill())
-                .course_period(postCourseDto.getCourse_period())
+                .coursePeriod(postCourseDto.getCoursePeriod())
                 .hits(0L)
                 .status(CourseState.hold)
                 .build();

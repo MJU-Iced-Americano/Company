@@ -22,6 +22,6 @@ public class Curriculum extends BaseTimeEntity{
     private int chapter;
 
     @Column(name = "curriculum_title")
-    private String curriculum_title;
+    private String curriculumTitle;
 
 }

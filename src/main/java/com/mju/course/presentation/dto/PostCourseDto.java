@@ -12,29 +12,29 @@ public class PostCourseDto {
 
     // 코스
     private String category;
-    private String course_name;
+    private String courseName;
     private String price;
-    private String course_description;
+    private String courseDescription;
     private int difficulty;
-    private int course_time;
+    private int courseTime;
     private String skill;
-    private String course_period;
+    private String coursePeriod;
 
     // 커리 큘럼
     private ArrayList<PostCurriculumDto> postCurriculumDtos;
 
 
     @Builder
-    public PostCourseDto(String category, String course_name, String price, String course_description,
-                         int difficulty, int course_time, String skill, String course_period){
+    public PostCourseDto(String category, String courseName, String price, String courseDescription,
+                         int difficulty, int courseTime, String skill, String coursePeriod){
         this.category = category;
-        this.course_name = course_name;
+        this.courseName = courseName;
         this.price = price;
-        this.course_description = course_description;
+        this.courseDescription = courseDescription;
         this.difficulty = difficulty;
-        this.course_time = course_time;
+        this.courseTime = courseTime;
         this.skill = skill;
-        this.course_period = course_period;
+        this.coursePeriod = coursePeriod;
     }
 
 }
