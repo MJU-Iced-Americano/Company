@@ -11,7 +11,7 @@ public class Curriculum extends BaseTimeEntity{
 
     @Id
     @Column(name = "curriculum_index")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
