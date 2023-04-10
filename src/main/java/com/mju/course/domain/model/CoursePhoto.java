@@ -11,7 +11,7 @@ public class CoursePhoto extends BaseTimeEntity{
 
     @Id
     @Column(name = "course_photo_index")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

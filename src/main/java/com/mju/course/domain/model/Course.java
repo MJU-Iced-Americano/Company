@@ -1,7 +1,9 @@
 package com.mju.course.domain.model;
 
 import com.mju.course.domain.model.enums.CourseState;
+import com.mju.course.presentation.dto.PostCourseDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +14,7 @@ public class Course extends BaseTimeEntity {
 
     @Id
     @Column(name = "course_index")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // 유저 - 강사진
@@ -30,10 +32,10 @@ public class Course extends BaseTimeEntity {
     private String course_description;
 
     @Column(name = "difficulty")
-    private String difficulty;
+    private int difficulty;
 
     @Column(name = "course_time")
-    private String course_time;
+    private int course_time;
 
     @Column(name = "skill")
     private String skill;
@@ -46,5 +48,43 @@ public class Course extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private CourseState status;
+
+    @Column(name = "comment")
+    private String comment; // 보류 이유
+
+    @Builder
+    public Course(String category, String course_name, String price, String course_description,
+                  int difficulty, int course_time, String skill, Long hits, String course_period, CourseState status){
+        this.category = category;
+        this.course_name = course_name;
+        this.price = price;
+        this.course_description = course_description;
+        this.difficulty = difficulty;
+        this.course_time = course_time;
+        this.skill = skill;
+        this.course_period = course_period;
+        this.hits = hits;
+        this.status = status;
+    }
+
+    public static Course of(PostCourseDto postCourseDto){
+        return Course.builder()
+                .category(postCourseDto.getCategory())
+                .course_name(postCourseDto.getCourse_name())
+                .price(postCourseDto.getPrice())
+                .course_description(postCourseDto.getCourse_description())
+                .difficulty(postCourseDto.getDifficulty())
+                .course_time(postCourseDto.getCourse_time())
+                .skill(postCourseDto.getSkill())
+                .course_period(postCourseDto.getCourse_period())
+                .hits(0L)
+                .status(CourseState.hold)
+                .build();
+    }
+
+    public void updateState(CourseState status,String comment) {
+        this.status = status;
+        this.comment = comment;
+    }
 
 }

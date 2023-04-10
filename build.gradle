@@ -38,6 +38,8 @@ dependencies {
 
 	// Jasypt: DB 암호화
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+	testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
 }
 
 dependencyManagement {
