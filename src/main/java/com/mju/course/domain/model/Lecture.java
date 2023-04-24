@@ -1,6 +1,8 @@
 package com.mju.course.domain.model;
 
+import com.mju.course.presentation.dto.request.LectureCreateDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +35,24 @@ public class Lecture extends BaseTimeEntity{
     @Column(name = "lecture_description")
     private String lectureDescription;
 
+    @Builder
+    public Lecture(Curriculum curriculum, int lectureSequence, String lectureTitle,
+                   int lectureTime, String lectureUrl, String lectureDescription){
+        this.curriculum = curriculum;
+        this.lectureSequence = lectureSequence;
+        this.lectureTitle = lectureTitle;
+        this.lectureTime = lectureTime;
+        this.lectureUrl = lectureUrl;
+        this.lectureDescription= lectureDescription;
+    }
+
+    public static Lecture of(Curriculum curriculum, int lecture_sequence, LectureCreateDto lectureCreateDto, String lectureUrl){
+        return Lecture.builder()
+                .curriculum(curriculum)
+                .lectureSequence(lecture_sequence)
+                .lectureTitle(lectureCreateDto.getLectureTitle())
+                .lectureUrl(lectureUrl)
+                .lectureDescription(lectureCreateDto.getLectureDescription())
+                .build();
+    }
 }

@@ -1,7 +1,7 @@
 package com.mju.course.domain.model;
 
 import com.mju.course.domain.model.enums.CourseState;
-import com.mju.course.presentation.dto.PostCourseDto;
+import com.mju.course.presentation.dto.request.CourseCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,9 +43,6 @@ public class Course extends BaseTimeEntity {
     @Column(name = "hits")
     private Long hits;
 
-    @Column(name = "course_period")
-    private String coursePeriod;
-
     @Enumerated(EnumType.STRING)
     private CourseState status;
 
@@ -54,7 +51,7 @@ public class Course extends BaseTimeEntity {
 
     @Builder
     public Course(String category, String courseName, String price, String courseDescription,
-                  int difficulty, int courseTime, String skill, Long hits, String coursePeriod, CourseState status){
+                  int difficulty, int courseTime, String skill, Long hits, CourseState status){
         this.category = category;
         this.courseName = courseName;
         this.price = price;
@@ -62,21 +59,18 @@ public class Course extends BaseTimeEntity {
         this.difficulty = difficulty;
         this.courseTime = courseTime;
         this.skill = skill;
-        this.coursePeriod = coursePeriod;
         this.hits = hits;
         this.status = status;
     }
 
-    public static Course of(PostCourseDto postCourseDto){
+    public static Course of(CourseCreateDto courseCreateDto){
         return Course.builder()
-                .category(postCourseDto.getCategory())
-                .courseName(postCourseDto.getCourseName())
-                .price(postCourseDto.getPrice())
-                .courseDescription(postCourseDto.getCourseDescription())
-                .difficulty(postCourseDto.getDifficulty())
-                .courseTime(postCourseDto.getCourseTime())
-                .skill(postCourseDto.getSkill())
-                .coursePeriod(postCourseDto.getCoursePeriod())
+                .category(courseCreateDto.getCategory())
+                .courseName(courseCreateDto.getCourseName())
+                .price(courseCreateDto.getPrice())
+                .courseDescription(courseCreateDto.getCourseDescription())
+                .difficulty(courseCreateDto.getDifficulty())
+                .skill(courseCreateDto.getSkill())
                 .hits(0L)
                 .status(CourseState.hold)
                 .build();
@@ -87,4 +81,35 @@ public class Course extends BaseTimeEntity {
         this.comment = comment;
     }
 
+    public void updateCourseTime(int courseTime){
+        this.courseTime += courseTime;
+    }
+
+    public void updateHit(){
+        this.hits += 1;
+    }
+
+    public void updateCategory(String category){
+        this.category = category;
+    }
+
+    public void updateCourseName(String courseName){
+        this.courseName = courseName;
+    }
+
+    public void updatePrice(String price){
+        this.price = price;
+    }
+
+    public void updateCourseDescription(String courseDescription){
+        this.courseDescription = courseDescription;
+    }
+
+    public void updateDifficulty(int difficulty){
+        this.difficulty = difficulty;
+    }
+
+    public void updateSkill(String skill){
+        this.skill = skill;
+    }
 }
