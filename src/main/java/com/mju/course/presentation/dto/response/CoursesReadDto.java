@@ -9,10 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class CoursesReadDto {
+
     private Long courseIndex;
     private String courseName;
     private String price;
     private int difficulty;
+    private String courseTitlePhotoUrl;
 
     public static CoursesReadDto of(Course course){
         return CoursesReadDto.builder()
@@ -20,6 +22,7 @@ public class CoursesReadDto {
                 .courseName(course.getCourseName())
                 .price(course.getPrice())
                 .difficulty(course.getDifficulty())
+                .courseTitlePhotoUrl(course.getCourseTitlePhotoUrl())
                 .build();
     }
 }
