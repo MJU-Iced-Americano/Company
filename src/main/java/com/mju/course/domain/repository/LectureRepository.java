@@ -14,4 +14,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
     List<Lecture> findByCurriculum(Curriculum curriculum);
 
     Optional<Lecture> findByLectureSequence(int lecture_sequence);
+
+    Optional<Lecture> findByCurriculumAndLectureSequence(Curriculum findCurriculum, int lecture_sequence);
 }

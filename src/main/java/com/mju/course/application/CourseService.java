@@ -14,20 +14,9 @@ public interface CourseService {
     CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto);
     CommonResult updateCurriculum(Long course_index, int chapter);
 
-    ////////////////////////////////////////////////////////
-    CommonResult createLecture(Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException;
-
-
     CommonResult requestCourse(Long course_index);
-
-    ////////////////////////////////////////////////////////
-
     CommonResult registerCourse(Long course_index);
-
     CommonResult holdCourse(Long course_index, String comment);
-
     CommonResult deleteCourse(Long course_index, String comment);
-
-
 
 }

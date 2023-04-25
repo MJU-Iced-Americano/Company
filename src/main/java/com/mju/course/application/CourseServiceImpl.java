@@ -156,37 +156,6 @@ public class CourseServiceImpl implements CourseService{
 
 
     @Override
-    public CommonResult createLecture(Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException {
-
-        Course findCourse = courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-
-        Curriculum findCurriculum = curriculumRepository.findByCourseAndChapter(findCourse, chapter)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM));
-
-        // 이미 등록된 강의 일 때
-        Optional<Lecture> checkLecture = lectureRepository.findByLectureSequence(lecture_sequence);
-        if(checkLecture.isPresent()) throw new CourseException(DUPLICATION_LECTURE);
-
-        // 만약 커리 쿨럼에 등록된 강의 수를 초과 했을 경우
-        if(findCurriculum.getLectureSum() < lecture_sequence) throw new CourseException(EXCEEDED_LECTURE_SEQUENCE);
-
-        // 동영상 s3 에 등록
-        String dirName = "test1/"+String.valueOf(course_index)+"/" + String.valueOf(chapter);  // 폴더 이름
-        String lectureUrl = s3UploaderService.upload(multipartFile, dirName);
-
-        // 동영상 시간 파악
-
-        // 강의 DB 저장
-        Lecture lecture = Lecture.of(findCurriculum, lecture_sequence, lectureCreateDto, lectureUrl);
-        Lecture saveLecture = lectureRepository.save(lecture);
-
-        // 코스 업데이트
-
-        return responseService.getSuccessfulResult();
-    }
-
-    @Override
     public CommonResult requestCourse(Long course_index) {
         // 코스에 대한 커리 쿨럼 정보를 불러 와서 강의 시간을 얻어와 코스의 합을 구함
         Optional<Course> findCourse = courseRepository.findById(course_index);

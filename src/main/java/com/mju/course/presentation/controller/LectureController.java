@@ -1,6 +1,7 @@
 package com.mju.course.presentation.controller;
 
 import com.mju.course.application.CourseService;
+import com.mju.course.application.LectureService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.request.LectureCreateDto;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import java.io.IOException;
 @RequestMapping("/lecture")
 public class LectureController {
 
-    private final CourseService courseService;
+    private final LectureService lectureService;
 
     // [Crate] (강사) 강의 등록
     @PostMapping("/manage/new-lecture/{course_index}/{chapter}/{lecture_sequence}")
@@ -23,10 +24,10 @@ public class LectureController {
                                       @PathVariable int lecture_sequence,
                                       @RequestPart("postLectureDto") LectureCreateDto lectureCreateDto,
                                       @RequestPart("video") MultipartFile multipartFile) throws IOException {
-        return courseService.createLecture(course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
+        return lectureService.createLecture(course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
     }
 
-    // [Crate] (강의) 대용량 파일 업로드
+    // [Crate] (강사) 대용량 파일 업로드
 
     // [Read] (공통) 강의 조회 - 동영상 스트리밍  (단순)
 
