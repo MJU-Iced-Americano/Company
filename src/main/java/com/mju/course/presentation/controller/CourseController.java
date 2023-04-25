@@ -6,6 +6,9 @@ import com.mju.course.presentation.dto.request.CourseCreateDto;
 import com.mju.course.presentation.dto.request.CourseUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,10 +17,11 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    // (강사) 코스 등록 - 이미지 어떻게 처리 ??
+    // (강사) 코스 등록 - 코스 설명할 때 사진 어떻게 처리 ?
     @PostMapping("/manage/new-course")
-    public CommonResult createCourse(@RequestBody CourseCreateDto courseCreateDto){
-        return courseService.createCourse(courseCreateDto);
+    public CommonResult createCourse(@RequestPart("courseCreateDto") CourseCreateDto courseCreateDto,
+                                     @RequestPart("titlePhoto") MultipartFile titlePhoto) throws IOException {
+        return courseService.createCourse(courseCreateDto, titlePhoto);
     }
 
     // (공통) 코스 조회

@@ -49,6 +49,9 @@ public class Course extends BaseTimeEntity {
     @Column(name = "comment")
     private String comment; // 보류 이유
 
+    @Column(name = "course_title_photo_url")
+    private String courseTitlePhotoUrl; // 코스 대표 사진
+
     @Builder
     public Course(String category, String courseName, String price, String courseDescription,
                   int difficulty, int courseTime, String skill, Long hits, CourseState status){
@@ -76,6 +79,9 @@ public class Course extends BaseTimeEntity {
                 .build();
     }
 
+    public void updateTitlePhoto(String courseTitlePhotoUrl){
+        this.courseTitlePhotoUrl = courseTitlePhotoUrl;
+    }
     public void updateState(CourseState status,String comment) {
         this.status = status;
         this.comment = comment;

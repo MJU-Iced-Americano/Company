@@ -22,6 +22,7 @@ public class CourseReadDto {
     private int courseTime;
     private String skill;
     private Long hits;
+    private String courseTitlePhotoUrl;
 
     private int curriculumSum;
 
@@ -38,6 +39,7 @@ public class CourseReadDto {
                 .difficulty(course.getDifficulty())
                 .courseTime(course.getCourseTime())
                 .skill(course.getSkill())
+                .courseTitlePhotoUrl(course.getCourseTitlePhotoUrl())
                 .curriculumSum(curriculumReadDtos.size())
                 .curriculumReadDtos(curriculumReadDtos)
                 .hits(course.getHits())

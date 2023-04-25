@@ -43,17 +43,23 @@ public class CourseServiceImpl implements CourseService{
 
     @Transactional
     @Override
-    public CommonResult createCourse(CourseCreateDto courseCreateDto) {
+    public CommonResult createCourse(CourseCreateDto courseCreateDto, MultipartFile titlePhoto) throws IOException {
         Optional<Course> checkCourse = courseRepository.findByCourseName(courseCreateDto.getCourseName());
         if(checkCourse.isPresent()) throw new CourseException(DUPLICATION_COURSE_NAME);
 
         // 코스 저장
         Course course = Course.of(courseCreateDto);
-        courseRepository.save(course);
+        Course saveCourse = courseRepository.save(course);
+
+        // 코스 대표 사진 저장
+        String dirName = "test1/"+String.valueOf(saveCourse.getId());  // 폴더 이름
+        String courseTitlePhotoUrl = s3UploaderService.upload(titlePhoto, dirName);
+        course.updateTitlePhoto(courseTitlePhotoUrl);
+        courseRepository.save(saveCourse);
 
         // 커리 큘럼 저장
         for(int i = 0; i< courseCreateDto.getCurriculumCreateDtos().size(); i++){
-            Curriculum curriculum = Curriculum.of(courseCreateDto.getCurriculumCreateDtos().get(i), course);
+            Curriculum curriculum = Curriculum.of(courseCreateDto.getCurriculumCreateDtos().get(i), saveCourse);
             curriculumRepository.save(curriculum);
         }
 

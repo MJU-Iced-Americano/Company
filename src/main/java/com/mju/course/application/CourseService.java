@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface CourseService {
-    CommonResult createCourse(CourseCreateDto courseCreateDto);
+    CommonResult createCourse(CourseCreateDto courseCreateDto, MultipartFile titlePhoto) throws IOException;
     CommonResult readCourse(Long course_index);
     CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto);
     CommonResult updateCurriculum(Long course_index, int chapter);
