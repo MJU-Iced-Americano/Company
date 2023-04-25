@@ -1,7 +1,7 @@
 package com.mju.course.domain.model;
 
 import com.mju.course.domain.model.enums.CourseState;
-import com.mju.course.presentation.dto.PostCourseDto;
+import com.mju.course.presentation.dto.request.CourseCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,19 +23,19 @@ public class Course extends BaseTimeEntity {
     private String category;
 
     @Column(name = "course_name")
-    private String course_name;
+    private String courseName;
 
     @Column(name = "price")
     private String price;
 
     @Column(name = "course_description")
-    private String course_description;
+    private String courseDescription;
 
     @Column(name = "difficulty")
     private int difficulty;
 
     @Column(name = "course_time")
-    private int course_time;
+    private int courseTime;
 
     @Column(name = "skill")
     private String skill;
@@ -43,48 +43,79 @@ public class Course extends BaseTimeEntity {
     @Column(name = "hits")
     private Long hits;
 
-    @Column(name = "course_period")
-    private String course_period;
-
     @Enumerated(EnumType.STRING)
     private CourseState status;
 
     @Column(name = "comment")
     private String comment; // 보류 이유
 
+    @Column(name = "course_title_photo_url")
+    private String courseTitlePhotoUrl; // 코스 대표 사진
+
     @Builder
-    public Course(String category, String course_name, String price, String course_description,
-                  int difficulty, int course_time, String skill, Long hits, String course_period, CourseState status){
+    public Course(String category, String courseName, String price, String courseDescription,
+                  int difficulty, int courseTime, String skill, Long hits, CourseState status){
         this.category = category;
-        this.course_name = course_name;
+        this.courseName = courseName;
         this.price = price;
-        this.course_description = course_description;
+        this.courseDescription = courseDescription;
         this.difficulty = difficulty;
-        this.course_time = course_time;
+        this.courseTime = courseTime;
         this.skill = skill;
-        this.course_period = course_period;
         this.hits = hits;
         this.status = status;
     }
 
-    public static Course of(PostCourseDto postCourseDto){
+    public static Course of(CourseCreateDto courseCreateDto){
         return Course.builder()
-                .category(postCourseDto.getCategory())
-                .course_name(postCourseDto.getCourse_name())
-                .price(postCourseDto.getPrice())
-                .course_description(postCourseDto.getCourse_description())
-                .difficulty(postCourseDto.getDifficulty())
-                .course_time(postCourseDto.getCourse_time())
-                .skill(postCourseDto.getSkill())
-                .course_period(postCourseDto.getCourse_period())
+                .category(courseCreateDto.getCategory())
+                .courseName(courseCreateDto.getCourseName())
+                .price(courseCreateDto.getPrice())
+                .courseDescription(courseCreateDto.getCourseDescription())
+                .difficulty(courseCreateDto.getDifficulty())
+                .skill(courseCreateDto.getSkill())
                 .hits(0L)
                 .status(CourseState.hold)
                 .build();
     }
 
+    public void updateTitlePhoto(String courseTitlePhotoUrl){
+        this.courseTitlePhotoUrl = courseTitlePhotoUrl;
+    }
     public void updateState(CourseState status,String comment) {
         this.status = status;
         this.comment = comment;
     }
 
+    public void updateCourseTime(int courseTime){
+        this.courseTime += courseTime;
+    }
+
+    public void updateHit(){
+        this.hits += 1;
+    }
+
+    public void updateCategory(String category){
+        this.category = category;
+    }
+
+    public void updateCourseName(String courseName){
+        this.courseName = courseName;
+    }
+
+    public void updatePrice(String price){
+        this.price = price;
+    }
+
+    public void updateCourseDescription(String courseDescription){
+        this.courseDescription = courseDescription;
+    }
+
+    public void updateDifficulty(int difficulty){
+        this.difficulty = difficulty;
+    }
+
+    public void updateSkill(String skill){
+        this.skill = skill;
+    }
 }

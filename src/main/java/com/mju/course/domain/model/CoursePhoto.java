@@ -19,6 +19,6 @@ public class CoursePhoto extends BaseTimeEntity{
     private Course course;
 
     @Column(name = "course_photo_url")
-    private String course_photo_url;
+    private String coursePhotoUrl;
 
 }

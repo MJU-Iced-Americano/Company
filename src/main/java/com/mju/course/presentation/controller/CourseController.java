@@ -2,50 +2,74 @@ package com.mju.course.presentation.controller;
 
 import com.mju.course.application.CourseService;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.presentation.dto.*;
+import com.mju.course.presentation.dto.request.CourseCreateDto;
+import com.mju.course.presentation.dto.request.CourseUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/course-service")
+@RequestMapping("/course")
 public class CourseController {
 
     private final CourseService courseService;
 
-    // 코스 등록 후 신청
-    @PostMapping("/course")
-    public CommonResult createCourse(@RequestBody PostCourseDto postCourseDto){
-        return courseService.createCourse(postCourseDto);
+    // (강사) 코스 등록 - 코스 설명할 때 사진 어떻게 처리 ?
+    @PostMapping("/manage/new-course")
+    public CommonResult createCourse(@RequestPart("courseCreateDto") CourseCreateDto courseCreateDto,
+                                     @RequestPart("titlePhoto") MultipartFile titlePhoto) throws IOException {
+        return courseService.createCourse(courseCreateDto, titlePhoto);
     }
 
-    // 코스 정보 수정
-
-    // 코스 동영상 수정
-
-    // 코스 등록 재 신청
-
-    // 코스 등록
-    @GetMapping("/course/register/{course_index}")
-    public CommonResult registerCourse(@PathVariable Long course_index){
-        return courseService.registerCourse(course_index);
+    // (공통) 코스 조회
+    @GetMapping("/{course_index}")
+    public CommonResult readCourse(@PathVariable Long course_index){
+        return courseService.readCourse(course_index);
     }
 
-    // 코스 등록 보류
-    @PostMapping("/course/hold/{course_index}")
-    public CommonResult holdCourse(@PathVariable Long course_index, String comment){
-        return courseService.holdCourse(course_index, comment);
+    // (강사) 코스 수정
+    @PutMapping("/manage/edit/{course_index}")
+    public CommonResult updateCourse(@PathVariable Long course_index,
+                                     @RequestBody CourseUpdateDto courseUpdateDto){
+        return courseService.updateCourse(course_index, courseUpdateDto);
     }
 
-    // 코스 삭제
-    @PostMapping("/course/delete/{course_index}")
+    // 커리 큘럼 추가는 어디서...?
+
+    // (강사) 커리 큘럼 수정  -- 구현 필요
+    @PostMapping("/manage/edit/{course_index}/{chapter}")
+    public CommonResult updateCurriculum(@PathVariable Long course_index,
+                                         @PathVariable int chapter){
+        return courseService.updateCurriculum(course_index, chapter);
+    }
+
+    // (운영자) 코스 삭제
+    @PostMapping("/manage/delete/{course_index}")
     public CommonResult deleteCourse(@PathVariable Long course_index, String comment){
         return courseService.deleteCourse(course_index, comment);
     }
 
-    @GetMapping("/ping")
-    public String ping() {
-        return "pong";
+    //////////////////////////////////////////////////////
+
+    // (강사) 코스 신청
+    @PostMapping("/manage/{course_index}")
+    public CommonResult requestCourse(@PathVariable Long course_index){
+        return courseService.requestCourse(course_index);
+    }
+
+    // (운영자) 코스 등록
+    @GetMapping("/manage/register/{course_index}")
+    public CommonResult registerCourse(@PathVariable Long course_index){
+        return courseService.registerCourse(course_index);
+    }
+
+    // (운영자) 코스 등록 보류
+    @PostMapping("/manage/hold/{course_index}")
+    public CommonResult holdCourse(@PathVariable Long course_index, String comment){
+        return courseService.holdCourse(course_index, comment);
     }
 
 }
