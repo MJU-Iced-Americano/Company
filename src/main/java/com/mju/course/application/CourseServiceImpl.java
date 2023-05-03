@@ -10,12 +10,8 @@ import com.mju.course.domain.repository.CourseRepository;
 import com.mju.course.domain.repository.CurriculumRepository;
 import com.mju.course.domain.repository.LectureRepository;
 import com.mju.course.domain.service.ResponseService;
-import com.mju.course.presentation.dto.request.CourseCreateDto;
-import com.mju.course.presentation.dto.request.CourseUpdateDto;
-import com.mju.course.presentation.dto.request.LectureCreateDto;
-import com.mju.course.presentation.dto.response.CourseReadDto;
-import com.mju.course.presentation.dto.response.CurriculumReadDto;
-import com.mju.course.presentation.dto.response.LectureReadDto;
+import com.mju.course.presentation.dto.request.*;
+import com.mju.course.presentation.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,7 +48,7 @@ public class CourseServiceImpl implements CourseService{
         Course saveCourse = courseRepository.save(course);
 
         // 코스 대표 사진 저장
-        String dirName = "test1/"+String.valueOf(saveCourse.getId());  // 폴더 이름
+        String dirName = "courses/"+String.valueOf(saveCourse.getId()) +"/title";  // 폴더 이름
         String courseTitlePhotoUrl = s3UploaderService.upload(titlePhoto, dirName);
         course.updateTitlePhoto(courseTitlePhotoUrl);
         courseRepository.save(saveCourse);
@@ -62,6 +58,8 @@ public class CourseServiceImpl implements CourseService{
             Curriculum curriculum = Curriculum.of(courseCreateDto.getCurriculumCreateDtos().get(i), saveCourse);
             curriculumRepository.save(curriculum);
         }
+
+        // 코스 설명 사진 저장
 
         return responseService.getSuccessfulResult();
     }
