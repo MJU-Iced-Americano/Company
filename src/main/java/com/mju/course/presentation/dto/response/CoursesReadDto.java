@@ -28,7 +28,7 @@ public class CoursesReadDto {
                 .courseName(course.getCourseName())
                 .price(course.getPrice())
                 .difficulty(course.getDifficulty())
-                .courseTitlePhotoUrl(course.getCourseTitlePhotoUrl())
+                .courseTitlePhotoUrl("https://d19wla4ff811v8.cloudfront.net/" + course.getCourseTitlePhotoUrl())
                 .build();
     }
 }
