@@ -5,9 +5,9 @@ spring:
   application:
     name: course-service
   datasource:
-    url : ENC(mlffVT3bPcDtWvtnbR6M0TObIA/dadPjSWN6L/YIuRBIDajb32M7Y3UeYWONVXG1XiN+WsivoRo22lHbt+X846g1Fe/c4SIb0hB/2lxmabZwvYKamCL64g==)
-    username: ENC(LAujOfwPBv0SrFcl5Wpm+A==)
-    password: ENC(Jg3ImnoWv0+b7lFQD9kzsWllbtw4Kli/)
+    url : ENC(f+nQbE89XwJXwcdICBnb4dqOT6jsDDVCoyKDxwiqTp07ZpZOgMT77fEpejvR2yLAopXgb+v2vl3NjAUCfV/tdIbYRtqkXXbzbl78JyywFOAuMH3Lr1KH+zmoQBpxd64Y)
+    username: ENC(BnLO0oWjeoSv1VGZdFv4mg==)
+    password: ENC(wK7FZfkX0gPrFZyczIRB53EI7fyEcZdN)
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -16,6 +16,19 @@ spring:
     properties:
       hibernate:
         format_sql:true
+
+#  profiles:
+#    active: local
+#  environment: "local"
+#  config:
+#    activate:
+#      on-profile: "local"
+#  file-dir: /src/main/resources/static/files/
+
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
 
 jasypt:
   encryptor:
@@ -38,3 +51,18 @@ management:
     web:
       exposure:
         include: "*"
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: ENC(WjoHv1R082QE6FseTXFqdNCV80cTv3wmtB5TUwVRACE=)
+    credentials:
+      access-key: ENC(B+WsEnID+ykUli0o+VCDqLv/PtZYQTnI2lP1vrL4iN0=)
+      secret-key: ENC(6Qh4jUg2uX6YCrpHiMQGGxHhi+5VgrPSJmF10fFbrwv1ivDWaU+Z9QXUJbU52ykw00Z3y1PGSLY=)
+    stack:
+      auto: false
+
+logging.level.com.amazonaws.util.EC2MetadataUtils: error
+
