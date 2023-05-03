@@ -1,8 +1,14 @@
 package com.mju.course.application;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.mju.course.domain.model.other.Exception.CourseException;
+import com.mju.course.domain.model.other.Result.CommonResult;
+import com.mju.course.domain.service.ResponseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +19,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
+
+import static com.mju.course.domain.model.other.Exception.ExceptionList.ERROR_S3_OBJECT_DELETE;
+import static com.mju.course.domain.model.other.Exception.ExceptionList.NO_MODIFIED_COURSE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,14 +42,14 @@ public class S3UploaderService {
 
     // S3로 파일 업로드
     private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + uploadFile.getName(); // s3에 저장된 파일 이름
+        String fileName = dirName + "/" + UUID.randomUUID().toString() + "-" + uploadFile.getName(); // s3에 저장된 파일 이름
 
         String uploadImageUrl = putS3(uploadFile, fileName);
 
         // 동영상 시간 추출
 
         removeNewFile(uploadFile);
-        return uploadImageUrl;
+        return fileName;
     }
 
     private String putS3(File uploadFile, String fileName) {
@@ -71,6 +81,20 @@ public class S3UploaderService {
             return Optional.of(convertFile);
         }
         return Optional.empty();
+    }
+
+    /**
+     * @description s3에서 객체 삭제
+     * @param objectKey
+     */
+    public void deleteS3File(String objectKey) {
+        try{
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, objectKey));
+        }catch (AmazonServiceException e){
+            throw new CourseException(ERROR_S3_OBJECT_DELETE);
+        }catch (SdkClientException e){
+            throw new CourseException(ERROR_S3_OBJECT_DELETE);
+        }
     }
 
 }

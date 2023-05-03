@@ -31,7 +31,8 @@ public class CourseController {
     @Operation(summary = "(강사) 코스 등록", description = "강사진용 코스 등록 API 입니다. ")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공하였습니다.", content = @Content(schema = @Schema(implementation = CommonResult.class))),
-            @ApiResponse(responseCode = "-5002", description = "중복된 코스 이름입니다.", content = @Content(schema = @Schema(implementation = CommonResult.class)))
+            @ApiResponse(responseCode = "-5002", description = "중복된 코스 이름입니다.", content = @Content(schema = @Schema(implementation = CommonResult.class))),
+            @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
     })
     @Parameters({
             @Parameter(name = "courseCreateDto", description = "코스 기본 정보를 담은 객체", required = true),
@@ -46,7 +47,8 @@ public class CourseController {
     @Operation(summary = "(공통) 코스 조회", description = "코스 조회 API 입니다. ")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공하였습니다.", content = @Content(schema = @Schema(implementation = CourseReadDto.class))),
-            @ApiResponse(responseCode = "-5001", description = "존재 하지 않는 코스입니다.", content = @Content(schema = @Schema(implementation = CommonResult.class)))
+            @ApiResponse(responseCode = "-5001", description = "존재 하지 않는 코스입니다.", content = @Content(schema = @Schema(implementation = CommonResult.class))),
+            @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
     })
     @Parameter(name = "course_index", description = "코스 인덱스", required = true)
     @GetMapping("/{course_index}")
@@ -61,7 +63,7 @@ public class CourseController {
         return courseService.updateCourse(course_index, courseUpdateDto);
     }
 
-    // 커리 큘럼 추가는 어디서...?
+    // (강사) 커리 큘럼 추가
 
     // (강사) 커리 큘럼 수정  -- 구현 필요
     @PostMapping("/manage/edit/{course_index}/{chapter}")
@@ -70,13 +72,24 @@ public class CourseController {
         return courseService.updateCurriculum(course_index, chapter);
     }
 
-    // (운영자) 코스 삭제
-    @PostMapping("/manage/delete/{course_index}")
-    public CommonResult deleteCourse(@PathVariable Long course_index, String comment){
-        return courseService.deleteCourse(course_index, comment);
+    @Operation(summary = "(강사) 코스 삭제 - 완전 삭제", description = "강사진용 코스 삭제 API 입니다. ")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공하였습니다.", content = @Content(schema = @Schema(implementation = CommonResult.class))),
+            @ApiResponse(responseCode = "-5001", description = "존재 하지 않는 코스입니다.", content = @Content(schema = @Schema(implementation = CommonResult.class))),
+            @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
+    })
+    @DeleteMapping("/manage/delete/{course_index}")
+    public CommonResult deleteCourse(@PathVariable Long course_index){
+        return courseService.deleteCourse(course_index);
     }
 
     //////////////////////////////////////////////////////
+
+    // (운영자) 코스 삭제
+//    @DeleteMapping("/manage/delete/{course_index}")
+//    public CommonResult deleteCourse(@PathVariable Long course_index, String comment){
+//        return courseService.deleteCourse(course_index, comment);
+//    }
 
     // (강사) 코스 신청
     @PostMapping("/manage/{course_index}")

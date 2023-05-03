@@ -166,6 +166,38 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
+    public CommonResult deleteCourse(Long course_index) {
+        // 코스
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+
+        // 커리 큘럼
+        List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse);
+
+        // 강의 삭제
+        for(int i=0; i<findCurriculum.size(); i++){
+            List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get(i));
+            if(lectures.size() != 0){
+                for(int j=0; j< lectures.size(); j++){
+                    s3UploaderService.deleteS3File(lectures.get(i).getLectureUrl());
+                    lectureRepository.delete(lectures.get(i));
+                }
+            }
+        }
+
+        // 커리 큘럼 삭제
+        for(int i=0; i< findCurriculum.size(); i++){
+            curriculumRepository.delete(findCurriculum.get(i));
+        }
+
+        // 코스 삭제
+        s3UploaderService.deleteS3File(findCourse.getCourseTitlePhotoUrl());
+        courseRepository.delete(findCourse);
+
+        return responseService.getSuccessfulResult();
+    }
+
+    @Override
     public CommonResult registerCourse(Long course_index) {
         return updateState(course_index, CourseState.registration, null);
     }
@@ -173,11 +205,6 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public CommonResult holdCourse(Long course_index,String comment) {
         return updateState(course_index, CourseState.hold, comment);
-    }
-
-    @Override
-    public CommonResult deleteCourse(Long course_index, String comment) {
-        return updateState(course_index, CourseState.delete, comment);
     }
 
     private CommonResult updateState(Long course_index, CourseState status,String comment) {
