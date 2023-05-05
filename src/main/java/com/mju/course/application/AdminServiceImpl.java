@@ -30,6 +30,23 @@ public class AdminServiceImpl {
     private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
 
+    public CommonResult registerCourse(Long course_index) {
+        return updateState(course_index, CourseState.registration, null);
+    }
+
+    public CommonResult holdCourse(Long course_index,String comment) {
+        return updateState(course_index, CourseState.hold, comment);
+    }
+
+    private CommonResult updateState(Long course_index, CourseState status,String comment) {
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+
+        findCourse.updateState(status, comment);
+        courseRepository.save(findCourse);
+        return responseService.getSuccessfulResult();
+    }
+
     public CommonResult deleteCourse(Long course_index) {
         // 코스
         Course findCourse = courseRepository.findById(course_index)
@@ -61,20 +78,4 @@ public class AdminServiceImpl {
         return responseService.getSuccessfulResult();
     }
 
-    public CommonResult registerCourse(Long course_index) {
-        return updateState(course_index, CourseState.registration, null);
-    }
-
-    public CommonResult holdCourse(Long course_index,String comment) {
-        return updateState(course_index, CourseState.hold, comment);
-    }
-
-    private CommonResult updateState(Long course_index, CourseState status,String comment) {
-        Course findCourse = courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-
-        findCourse.updateState(status, comment);
-        courseRepository.save(findCourse);
-        return responseService.getSuccessfulResult();
-    }
 }

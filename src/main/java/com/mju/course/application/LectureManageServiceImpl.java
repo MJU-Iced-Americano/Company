@@ -26,7 +26,7 @@ import static com.mju.course.domain.model.other.Exception.ExceptionList.EXCEEDED
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class LectureServiceImpl implements LectureService{
+public class LectureManageServiceImpl implements LectureManageService {
 
     private final CourseRepository courseRepository;
     private final CurriculumRepository curriculumRepository;

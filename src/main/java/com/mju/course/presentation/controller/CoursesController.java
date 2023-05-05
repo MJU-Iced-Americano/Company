@@ -1,7 +1,6 @@
 package com.mju.course.presentation.controller;
 
 import com.mju.course.application.CoursesService;
-import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import io.swagger.v3.oas.annotations.Operation;
