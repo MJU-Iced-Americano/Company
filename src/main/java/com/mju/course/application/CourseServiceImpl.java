@@ -49,8 +49,8 @@ public class CourseServiceImpl implements CourseService{
 
         // 코스 대표 사진 저장
         String dirName = "courses/"+String.valueOf(saveCourse.getId()) +"/title";  // 폴더 이름
-        String courseTitlePhotoUrl = s3UploaderService.upload(titlePhoto, dirName);
-        course.updateTitlePhoto(courseTitlePhotoUrl);
+        String courseTitlePhotoKey = s3UploaderService.upload(titlePhoto, dirName);
+        course.updateTitlePhoto(courseTitlePhotoKey);
         courseRepository.save(saveCourse);
 
         // 커리 큘럼 저장
@@ -66,8 +66,7 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public CommonResult readCourse(Long course_index) {
-        Course findCourse = courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+        Course findCourse = findCourse(course_index);
 
         // 조회 수 증가
         findCourse.updateHit();
@@ -93,8 +92,7 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException {
-        Course findCourse = courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+        Course findCourse = findCourse(course_index);
 
         boolean isModified = false; // 수정 유무
 
@@ -149,7 +147,7 @@ public class CourseServiceImpl implements CourseService{
             isModified = true;
         }
 
-        if(isModified == false){
+        if(!isModified){
             throw new CourseException(NO_MODIFIED_COURSE);
         }else{
             courseRepository.save(findCourse);
@@ -158,73 +156,125 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public CommonResult updateCurriculum(Long course_index, int chapter) {
-        return null;
-    }
-
-
-    @Override
-    public CommonResult requestCourse(Long course_index) {
-        // 코스에 대한 커리 쿨럼 정보를 불러 와서 강의 시간을 얻어와 코스의 합을 구함
-        Optional<Course> findCourse = courseRepository.findById(course_index);
-        // 존재하는 코스인지 확인
-
-//        ArrayList<Curriculum> curriculumArrayList = curriculumRepository.findByCourse(findCourse.get());
-        // 존재하는 커리쿨럼인지 확인
-
-        return null;
-    }
-
-    @Override
-    public CommonResult deleteCourse(Long course_index) {
-        // 코스
-        Course findCourse = courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-
-        // 커리 큘럼
-        List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse);
-
-        // 강의 삭제
-        for(int i=0; i<findCurriculum.size(); i++){
-            List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get(i));
-            if(lectures.size() != 0){
-                for(int j=0; j< lectures.size(); j++){
-                    s3UploaderService.deleteS3File(lectures.get(i).getLectureKey());
-                    lectureRepository.delete(lectures.get(i));
-                }
-            }
+    public CommonResult deleteCourse(Long course_index, String comment) {
+        if(comment != null){
+            return updateState(course_index, CourseState.delete, comment);
+        }else{
+            throw new CourseException(PLEASE_COURSE_DELETE_REASON);
         }
-
-        // 커리 큘럼 삭제
-        for(int i=0; i< findCurriculum.size(); i++){
-            curriculumRepository.delete(findCurriculum.get(i));
-        }
-
-        // 코스 삭제
-        s3UploaderService.deleteS3File(findCourse.getCourseTitlePhotoKey());
-        courseRepository.delete(findCourse);
-
-        return responseService.getSuccessfulResult();
-    }
-
-    @Override
-    public CommonResult registerCourse(Long course_index) {
-        return updateState(course_index, CourseState.registration, null);
-    }
-
-    @Override
-    public CommonResult holdCourse(Long course_index,String comment) {
-        return updateState(course_index, CourseState.hold, comment);
     }
 
     private CommonResult updateState(Long course_index, CourseState status,String comment) {
-        Optional<Course> course = courseRepository.findById(course_index);
-        if(course.isEmpty()){
-            return responseService.getFailResult(NOT_EXISTENT_COURSE.getCode(), NOT_EXISTENT_COURSE.getMessage());
-        }
-        course.get().updateState(status, comment);
-        courseRepository.save(course.get());
+        Course findCourse = findCourse(course_index);
+
+        findCourse.updateState(status, comment);
+        courseRepository.save(findCourse);
         return responseService.getSuccessfulResult();
+    }
+
+    @Override
+    public CommonResult requestCourse(Long course_index) {
+        Course findCourse = findCourse(course_index);
+
+        List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse); // 에러 처리
+
+        boolean checkLecture = false;
+        for(int i=0; i<findCurriculum.size();i++){
+            List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get(i));
+            if(lectures.size() != findCurriculum.get(i).getLectureSum()) checkLecture = true;
+        }
+        if(!checkLecture){
+            throw new CourseException(DIFFERENT_LECTURE_SUM);
+        }else{
+            return responseService.getSingleResult("코스가 신청되었습니다.");
+        }
+
+    }
+
+    @Override
+    public CommonResult addCurriculum(Long course_index, CurriculumCreateDto curriculumCreateDto) {
+        Course findCourse = findCourse(course_index);
+
+        Optional<Curriculum> findCurriculum1 = curriculumRepository.findByCourseAndChapter(findCourse, curriculumCreateDto.getChapter());
+        if(findCurriculum1.isPresent()){
+            throw new CourseException(EXISTENT_CURRICULUM_CHAPTER);
+        }
+        Optional<Curriculum> findCurriculum = curriculumRepository.findByCourseAndCurriculumTitle(findCourse, curriculumCreateDto.getCurriculumTitle());
+        if(findCurriculum.isPresent()){
+            throw new CourseException(EXISTENT_CURRICULUM_NAME);
+        }
+
+        Curriculum curriculum = Curriculum.of(curriculumCreateDto, findCourse);
+        curriculumRepository.save(curriculum);
+        return responseService.getSingleResult("커리 큘럼이 추가되었습니다.");
+    }
+
+    @Override
+    public CommonResult updateCurriculum(Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto) {
+        Course findCourse = findCourse(course_index);
+        Optional<Curriculum> findCurriculum = Optional.ofNullable(curriculumRepository.findByCourseAndChapter(findCourse, chapter)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM)));
+
+        List<String> arr = new ArrayList<>();
+        boolean isModified = false;
+
+        Optional<Curriculum> findCurriculumChapter = curriculumRepository.findByCourseAndChapter(findCourse, curriculumCreateDto.getChapter());
+        if(findCurriculumChapter.isPresent()){
+            throw new CourseException(EXISTENT_CURRICULUM_CHAPTER);
+        }
+        Optional<Curriculum> findCurriculumTitle = curriculumRepository.findByCourseAndCurriculumTitle(findCourse, curriculumCreateDto.getCurriculumTitle());
+        if(findCurriculumTitle.isPresent()){
+            throw new CourseException(EXISTENT_CURRICULUM_NAME);
+        }
+
+        if(curriculumCreateDto.getLectureSum() != 0){
+            List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get());
+            if(lectures.size() >= curriculumCreateDto.getLectureSum()){
+                throw new CourseException(EXCEEDED_LECTURE_CURRICULUM);
+            }
+        }
+
+        if(curriculumCreateDto.getChapter() != 0 && curriculumCreateDto.getChapter() != findCurriculum.get().getChapter()){
+            arr.add("챕터");
+            findCurriculum.get().updateChapter(curriculumCreateDto.getChapter());
+            isModified = true;
+        }
+        if(curriculumCreateDto.getCurriculumTitle() != null && !curriculumCreateDto.getCurriculumTitle().equals(findCurriculum.get().getCurriculumTitle())){
+            arr.add("커리큘럼 제목");
+            findCurriculum.get().updateCurriculumTitle(curriculumCreateDto.getCurriculumTitle());
+            isModified = true;
+        }
+        if(curriculumCreateDto.getLectureSum() != 0 && curriculumCreateDto.getLectureSum() != findCurriculum.get().getLectureSum()){
+            arr.add("강의 수");
+            findCurriculum.get().updateLectureSum(curriculumCreateDto.getLectureSum());
+            isModified = true;
+        }
+
+        if(!isModified){
+            throw new CourseException(NO_MODIFIED_CURRICULUM);
+        }else{
+            curriculumRepository.save(findCurriculum.get());
+            return responseService.getSingleResult(arr +"가 수정되었습니다.");
+        }
+    }
+
+    @Override
+    public CommonResult deleteCurriculum(Long course_index, int chapter) {
+        Course findCourse = findCourse(course_index);
+        Optional<Curriculum> findCurriculum = Optional.ofNullable(curriculumRepository.findByCourseAndChapter(findCourse, chapter)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM)));
+        List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get());
+        if(lectures.size() == 0){
+            curriculumRepository.delete(findCurriculum.get());
+            return responseService.getSingleResult("커리큘럼이 삭제되었습니다.");
+        }else{
+            throw new CourseException(EXISTENT_CURRICULUM_LECTURE);
+        }
+    }
+
+    private Course findCourse(Long course_index){
+        return courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
     }
 
 }

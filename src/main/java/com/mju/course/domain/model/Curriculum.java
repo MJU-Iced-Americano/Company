@@ -46,4 +46,13 @@ public class Curriculum extends BaseTimeEntity{
                 .build();
     }
 
+    public void updateChapter(int chapter){
+        this.chapter = chapter;
+    }
+    public void updateCurriculumTitle(String curriculumTitle){
+        this.curriculumTitle = curriculumTitle;
+    }
+    public void updateLectureSum(int lectureSum){
+        this.lectureSum = lectureSum;
+    }
 }
