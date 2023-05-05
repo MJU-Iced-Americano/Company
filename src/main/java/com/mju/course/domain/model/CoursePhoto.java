@@ -18,7 +18,7 @@ public class CoursePhoto extends BaseTimeEntity{
     @JoinColumn(name="course_index")
     private Course course;
 
-    @Column(name = "course_photo_url")
-    private String coursePhotoUrl;
+    @Column(name = "course_photo_key")
+    private String coursePhotoKey;
 
 }

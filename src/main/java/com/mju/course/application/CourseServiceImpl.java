@@ -92,7 +92,7 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto) {
+    public CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
@@ -139,6 +139,16 @@ public class CourseServiceImpl implements CourseService{
             isModified = true;
         }
 
+        if(titlePhoto != null){
+            arr.add("타이틀 사진");
+            s3UploaderService.deleteS3File(findCourse.getCourseTitlePhotoKey());
+            // 사진 등록
+            String dirName = "courses/"+String.valueOf(findCourse.getId()) +"/title";  // 폴더 이름
+            String courseTitlePhotoUrl = s3UploaderService.upload(titlePhoto, dirName);
+            findCourse.updateTitlePhoto(courseTitlePhotoUrl);
+            isModified = true;
+        }
+
         if(isModified == false){
             throw new CourseException(NO_MODIFIED_COURSE);
         }else{
@@ -179,7 +189,7 @@ public class CourseServiceImpl implements CourseService{
             List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get(i));
             if(lectures.size() != 0){
                 for(int j=0; j< lectures.size(); j++){
-                    s3UploaderService.deleteS3File(lectures.get(i).getLectureUrl());
+                    s3UploaderService.deleteS3File(lectures.get(i).getLectureKey());
                     lectureRepository.delete(lectures.get(i));
                 }
             }
@@ -191,7 +201,7 @@ public class CourseServiceImpl implements CourseService{
         }
 
         // 코스 삭제
-        s3UploaderService.deleteS3File(findCourse.getCourseTitlePhotoUrl());
+        s3UploaderService.deleteS3File(findCourse.getCourseTitlePhotoKey());
         courseRepository.delete(findCourse);
 
         return responseService.getSuccessfulResult();

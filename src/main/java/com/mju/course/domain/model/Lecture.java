@@ -29,20 +29,20 @@ public class Lecture extends BaseTimeEntity{
     @Column(name = "lecture_time")
     private int lectureTime;
 
-    @Column(name = "lecture_url")
-    private String lectureUrl;
+    @Column(name = "lecture_key")
+    private String lectureKey;
 
     @Column(name = "lecture_description")
     private String lectureDescription;
 
     @Builder
     public Lecture(Curriculum curriculum, int lectureSequence, String lectureTitle,
-                   int lectureTime, String lectureUrl, String lectureDescription){
+                   int lectureTime, String lectureKey, String lectureDescription){
         this.curriculum = curriculum;
         this.lectureSequence = lectureSequence;
         this.lectureTitle = lectureTitle;
         this.lectureTime = lectureTime;
-        this.lectureUrl = lectureUrl;
+        this.lectureKey = lectureKey;
         this.lectureDescription= lectureDescription;
     }
 
@@ -51,8 +51,17 @@ public class Lecture extends BaseTimeEntity{
                 .curriculum(curriculum)
                 .lectureSequence(lecture_sequence)
                 .lectureTitle(lectureCreateDto.getLectureTitle())
-                .lectureUrl(lectureUrl)
+                .lectureKey(lectureUrl)
                 .lectureDescription(lectureCreateDto.getLectureDescription())
                 .build();
     }
+
+    public void updateLectureTitle (String lectureTitle){
+        this.lectureTitle = lectureTitle;
+    }
+
+    public void updateLectureDescription(String lectureDescription){
+        this.lectureDescription = lectureDescription;
+    }
+
 }

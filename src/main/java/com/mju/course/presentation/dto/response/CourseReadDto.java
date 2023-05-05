@@ -51,7 +51,7 @@ public class CourseReadDto {
                 .difficulty(course.getDifficulty())
                 .courseTime(course.getCourseTime())
                 .skill(course.getSkill())
-                .courseTitlePhotoUrl("https://d19wla4ff811v8.cloudfront.net/" + course.getCourseTitlePhotoUrl())
+                .courseTitlePhotoUrl("https://d19wla4ff811v8.cloudfront.net/" + course.getCourseTitlePhotoKey())
                 .curriculumSum(curriculumReadDtos.size())
                 .curriculumReadDtos(curriculumReadDtos)
                 .hits(course.getHits())

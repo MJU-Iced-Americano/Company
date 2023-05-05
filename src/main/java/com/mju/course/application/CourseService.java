@@ -10,7 +10,7 @@ import java.io.IOException;
 public interface CourseService {
     CommonResult createCourse(CourseCreateDto courseCreateDto, MultipartFile titlePhoto) throws IOException;
     CommonResult readCourse(Long course_index);
-    CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto);
+    CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException;
     CommonResult updateCurriculum(Long course_index, int chapter);
     CommonResult deleteCourse(Long course_index);
 
