@@ -29,7 +29,7 @@ public class LectureReadDto {
                 .lectureSequence(lecture.getLectureSequence())
                 .lectureTitle(lecture.getLectureTitle())
                 .lectureTime(lecture.getLectureTime())
-                .lectureUrl("https://d19wla4ff811v8.cloudfront.net/" + lecture.getLectureKey())
+                .lectureUrl("https://d19wla4ff811v8.cloudfront.net/output/" + lecture.getLectureKey())
                 .lectureDescription(lecture.getLectureDescription())
                 .build();
     }

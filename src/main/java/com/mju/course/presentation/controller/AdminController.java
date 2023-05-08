@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/admin")
-@Tag(name = "1. 운영자", description = "운영자 용 api 입니다.")
+@Tag(name = "1. (운영자 용) 코스, 강의 관리", description = "운영자 용 api 입니다.")
 public class AdminController {
 
     private final AdminServiceImpl adminService;

@@ -11,7 +11,6 @@ import com.mju.course.domain.repository.CurriculumRepository;
 import com.mju.course.domain.repository.LectureRepository;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.*;
-import com.mju.course.presentation.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,8 +47,9 @@ public class CourseManageServiceImpl implements CourseManageService {
         Course saveCourse = courseRepository.save(course);
 
         // 코스 대표 사진 저장
+        String basicFileName = course.getId() + "-title" ;
         String dirName = "courses/"+String.valueOf(saveCourse.getId()) +"/title";  // 폴더 이름
-        String courseTitlePhotoKey = s3UploaderService.upload(titlePhoto, dirName);
+        String courseTitlePhotoKey = s3UploaderService.upload(titlePhoto, dirName, basicFileName);
         course.updateTitlePhoto(courseTitlePhotoKey);
         courseRepository.save(saveCourse);
 
@@ -114,9 +114,11 @@ public class CourseManageServiceImpl implements CourseManageService {
         if(titlePhoto != null){
             arr.add("타이틀 사진");
             s3UploaderService.deleteS3File(findCourse.getCourseTitlePhotoKey());
+
             // 사진 등록
+            String basicFileName = findCourse.getId() + "-title" ;
             String dirName = "courses/"+String.valueOf(findCourse.getId()) +"/title";  // 폴더 이름
-            String courseTitlePhotoUrl = s3UploaderService.upload(titlePhoto, dirName);
+            String courseTitlePhotoUrl = s3UploaderService.upload(titlePhoto, dirName, basicFileName);
             findCourse.updateTitlePhoto(courseTitlePhotoUrl);
             isModified = true;
         }

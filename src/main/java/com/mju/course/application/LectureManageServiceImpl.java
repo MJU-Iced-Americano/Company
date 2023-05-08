@@ -52,13 +52,19 @@ public class LectureManageServiceImpl implements LectureManageService {
         if(findCurriculum.getLectureSum() < lecture_sequence) throw new CourseException(EXCEEDED_LECTURE_SEQUENCE);
 
         // 동영상 s3 에 등록
+        // 1. input (inputKey)
+        String basicFileName = course_index + "-" + chapter + "-" + lecture_sequence + "-" + lectureCreateDto.getLectureTitle();
         String dirName = "input/"+String.valueOf(course_index)+"/" + String.valueOf(chapter);  // 폴더 이름
-        String lectureUrl = s3UploaderService.upload(multipartFile, dirName);
+        String inputKey = s3UploaderService.upload(multipartFile, dirName, basicFileName);
+
+        // 2. output (lectureKey)
+        String lectureKey = basicFileName+"/Default/HLS/"+basicFileName+".m3u8";
 
         // 동영상 시간 파악
 
         // 강의 DB 저장
-        Lecture lecture = Lecture.of(findCurriculum, lecture_sequence, lectureCreateDto, lectureUrl);
+        
+        Lecture lecture = Lecture.of(findCurriculum, lecture_sequence, lectureCreateDto,lectureKey, inputKey);
         Lecture saveLecture = lectureRepository.save(lecture);
 
         // 코스 업데이트
@@ -98,7 +104,10 @@ public class LectureManageServiceImpl implements LectureManageService {
     public CommonResult deleteLecture(Long lecture_index) {
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
-        s3UploaderService.deleteS3File(lecture.getLectureKey());
+
+        s3UploaderService.deleteS3File(lecture.getLectureKey()); // output 값 삭제
+        s3UploaderService.deleteS3File(lecture.getLectureInputKey()); // input 값 삭제
+
         lectureRepository.delete(lecture);
         return responseService.getSingleResult("강의가 삭제되었습니다.");
     }
