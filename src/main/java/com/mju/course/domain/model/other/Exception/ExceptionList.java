@@ -33,7 +33,16 @@ public enum ExceptionList {
     NOT_EXISTENT_LECTURE(-5023, "존재 하지 않는 강의입니다."),
 
     // s3
-    ERROR_S3_OBJECT_DELETE(-5031, "s3 객체 삭제를 실패했습니다.");
+    ERROR_S3_OBJECT_DELETE(-5031, "s3 객체 삭제를 실패했습니다."),
+
+    // 강의 노트
+    NOT_EXISTENT_LECTURE_NOTE(-5041, "존재하지 않는 강의 노트입니다."),
+    NO_MODIFIED_LECTURE_NOTE(-5042, "수정사항이 없습니다."),
+
+    // 유저
+    EMPTY_USER(-5051, "유저 정보를 입력해 주세요."),
+    NOT_EXISTENT_USER(-5052, "존재하지 않는 유저입니다. 다시 입력해주세요."),
+    NOT_ACCESS_USER(-5053, "접근할 수 있는 유저 타입이 아닙니다.");
 
     private final int code;
     private final String message;

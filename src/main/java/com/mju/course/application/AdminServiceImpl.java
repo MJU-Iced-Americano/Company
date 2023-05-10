@@ -6,10 +6,11 @@ import com.mju.course.domain.model.Lecture;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.domain.repository.CourseRepository;
+import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.CurriculumRepository;
 import com.mju.course.domain.repository.LectureRepository;
 import com.mju.course.domain.service.ResponseService;
+import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -78,4 +79,8 @@ public class AdminServiceImpl {
         return responseService.getSuccessfulResult();
     }
 
+    public CommonResult readCourses(String state) {
+        List<AdminReadCoursesDto> courses = courseRepository.readCourses(state);
+        return responseService.getListResult(courses);
+    }
 }

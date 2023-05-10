@@ -6,7 +6,7 @@ import com.mju.course.domain.model.Lecture;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.domain.repository.CourseRepository;
+import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.CurriculumRepository;
 import com.mju.course.domain.repository.LectureRepository;
 import com.mju.course.domain.service.ResponseService;

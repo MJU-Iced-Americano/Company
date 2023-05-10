@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -21,8 +21,10 @@
 </head>
 <body>
 <h1>안녕</h1>
+
 <video id=video width=100% class="video-js" controls>
-    <source src="https://d19wla4ff811v8.cloudfront.net/output/ex1/Default/HLS/ex1.m3u8" type="application/x-mpegURL">
+<!--    <source th:src="@{url}" type="application/x-mpegURL">-->
+        <source src="https://d19wla4ff811v8.cloudfront.net/output/2-1-1-test3/Default/HLS/2-1-1-test3.m3u8" type="application/x-mpegURL">
 </video>
 <script src="https://vjs.zencdn.net/7.8.2/video.min.js"></script
 >
