@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,7 +47,7 @@ public class LectureManageController {
     public CommonResult createLecture(@PathVariable Long course_index,
                                       @PathVariable int chapter,
                                       @PathVariable int lecture_sequence,
-                                      @RequestPart("postLectureDto") LectureCreateDto lectureCreateDto,
+                                      @RequestPart("postLectureDto") @Validated LectureCreateDto lectureCreateDto,
                                       @RequestPart("video") MultipartFile multipartFile) throws IOException {
         return lectureManageService.createLecture(course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
     }

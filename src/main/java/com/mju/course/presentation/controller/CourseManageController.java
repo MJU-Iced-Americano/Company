@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,7 +39,7 @@ public class CourseManageController {
             @Parameter(name = "titlePhoto", description = "코스 기본 사진", required = true)
     })
     @PostMapping("/new-course")
-    public CommonResult createCourse(@RequestPart("courseCreateDto") CourseCreateDto courseCreateDto,
+    public CommonResult createCourse(@RequestPart("courseCreateDto") @Validated CourseCreateDto courseCreateDto,
                                      @RequestPart(value="titlePhoto") MultipartFile titlePhoto) throws IOException {
         return courseManageService.createCourse(courseCreateDto, titlePhoto);
     }
@@ -106,7 +108,7 @@ public class CourseManageController {
     })
     @PostMapping("/edit/{course_index}/add-curriculum")
     public CommonResult addCurriculum(@PathVariable Long course_index,
-                                      @RequestBody CurriculumCreateDto curriculumCreateDto){
+                                      @RequestBody @Validated CurriculumCreateDto curriculumCreateDto){
         return courseManageService.addCurriculum(course_index,curriculumCreateDto);
     }
 
