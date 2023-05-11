@@ -7,12 +7,14 @@ import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
-import com.mju.course.domain.repository.CurriculumRepository;
-import com.mju.course.domain.repository.LectureRepository;
+import com.mju.course.domain.repository.course.CurriculumRepository;
+import com.mju.course.domain.repository.lecture.LectureRepository;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,21 +33,16 @@ public class AdminServiceImpl {
     private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
 
-    public CommonResult registerCourse(Long course_index) {
-        return updateState(course_index, CourseState.registration, null);
-    }
+    public CommonResult readCourses(String state, String order, Pageable pageable) {
+        // 페이징 처리
+//        PageRequest pageRequest = PageRequest.of(0, 2);
+//        Page<AdminReadCoursesDto> result = courseRepository.readCoursesPageSimple(state, order, pageable);
+//        return responseService.getSingleResult(result);
 
-    public CommonResult holdCourse(Long course_index,String comment) {
-        return updateState(course_index, CourseState.hold, comment);
-    }
-
-    private CommonResult updateState(Long course_index, CourseState status,String comment) {
-        Course findCourse = courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-
-        findCourse.updateState(status, comment);
-        courseRepository.save(findCourse);
-        return responseService.getSuccessfulResult();
+        Page<AdminReadCoursesDto> result = courseRepository.readCoursesPageComplex(state, order, pageable);
+        return responseService.getSingleResult(result);
+//        List<AdminReadCoursesDto> courses = courseRepository.readCourses(state, order);
+//        return responseService.getSingleResult(courses);
     }
 
     public CommonResult deleteCourse(Long course_index) {
@@ -79,8 +76,21 @@ public class AdminServiceImpl {
         return responseService.getSuccessfulResult();
     }
 
-    public CommonResult readCourses(String state) {
-        List<AdminReadCoursesDto> courses = courseRepository.readCourses(state);
-        return responseService.getListResult(courses);
+
+    public CommonResult registerCourse(Long course_index) {
+        return updateState(course_index, CourseState.registration, null);
     }
+
+    public CommonResult holdCourse(Long course_index,String comment) {
+        return updateState(course_index, CourseState.hold, comment);
+    }
+
+    private CommonResult updateState(Long course_index, CourseState status,String comment) {
+        Course findCourse = courseRepository.findById(course_index).orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+
+        findCourse.updateState(status, comment);
+        courseRepository.save(findCourse);
+        return responseService.getSuccessfulResult();
+    }
+
 }

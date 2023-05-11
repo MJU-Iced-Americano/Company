@@ -1,4 +1,4 @@
-package com.mju.course.domain.repository;
+package com.mju.course.domain.repository.course;
 
 import com.mju.course.domain.model.CoursePhoto;
 import org.springframework.data.jpa.repository.JpaRepository;
