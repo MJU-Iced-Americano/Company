@@ -1,4 +1,4 @@
-package com.mju.course.infrastructure.s3;
+package com.mju.course.infrastructure.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import org.springframework.beans.factory.annotation.Value;
