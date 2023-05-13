@@ -35,8 +35,8 @@ public class AdminController {
     @Parameters({
             @Parameter(name = "page", description = "페이지 번호", required = true),
             @Parameter(name = "size", description = "한 페이지에 표시되는 코스 수", required = true),
-            @Parameter(name = "order", description = "생성일(createdAt - 기본값), 코스 번호(courseIndex), 난이도(difficulty), 강사 이름(lecture), 가격(price), 강의 시간(courseTime), 조회수(hit)", required = true),
-            @Parameter(name = "status", description = "코스 상태 (all, registration, request, hold, delete)", required = true)
+            @Parameter(name = "order", description = "생성일(createdAt - 기본값), 코스 번호(courseIndex), 난이도(difficulty), 강사 이름(lecture), 가격(price), 강의 시간(courseTime), 조회수(hit)", required = false),
+            @Parameter(name = "status", description = "코스 상태 (all, registration, request, hold, delete)", required = false)
     })
     @GetMapping()
     public CommonResult readCourses(@RequestParam(value = "order", required = false, defaultValue = "createdAt") String order,

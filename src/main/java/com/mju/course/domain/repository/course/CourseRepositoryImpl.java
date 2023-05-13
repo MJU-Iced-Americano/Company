@@ -1,6 +1,8 @@
 package com.mju.course.domain.repository.course;
 
 import com.mju.course.domain.model.QCourse;
+import com.mju.course.domain.model.QSkill;
+import com.mju.course.domain.model.Skill;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
@@ -9,9 +11,11 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -21,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CourseRepositoryImpl implements CourseRepositoryCustom {
 
@@ -83,6 +88,8 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     @Override
     public Page<AdminReadCoursesDto> readCoursesPageComplex(String state, String order, Pageable pageable) {
         QCourse course = QCourse.course;
+        QSkill skill = QSkill.skill1;
+
         BooleanBuilder builder = new BooleanBuilder();
 
         if (!state.equals("all")) {
@@ -117,27 +124,40 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable) {
+    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skillList, Pageable pageable) {
         QCourse course = QCourse.course;
+        QSkill skill = QSkill.skill1;
 
-        // if 카테고리가 존재한다면
-
-        // if skill이 존재한다면
-        // - 우선 skill을 분리해야 함
-
-        // if order이 존재한다면
-        OrderSpecifier<?> orderSpecifier = getOrderByExpression(order, course);
-        // - 잘못된 order을 입력한 경우
-
-        QueryResults<CoursesReadDto> results = queryFactory
-                .select(Projections.constructor(CoursesReadDto.class,
+        // Query 객체 생성
+        JPQLQuery<CoursesReadDto> query = queryFactory
+                .selectDistinct(Projections.constructor(CoursesReadDto.class,
                         course.id, course.category, course.courseName,
                         course.price, course.difficulty, course.courseTitlePhotoKey))
                 .from(course)
-                .orderBy(orderSpecifier)
+                .leftJoin(course.skillList, skill)
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
+                .limit(pageable.getPageSize());
+
+        // if category가 존재한다면
+        if(category != null && !category.isEmpty()){
+            BooleanExpression categoryPredicate = course.category.in(category);
+            query.where(categoryPredicate);
+        }
+
+        // if order가 존재한다면
+        if(order != null && !order.isEmpty()){
+            OrderSpecifier<?> orderSpecifier = getOrderByExpression(order, course);
+            query.orderBy(orderSpecifier);
+        }
+
+        // if skill이 존재한다면
+        if (skillList != null && !skillList.isEmpty()) {
+            BooleanExpression skillPredicate = course.skillList.any().skill.in(skillList);
+            query.where(skillPredicate);
+        }
+
+        // Query 실행
+        QueryResults<CoursesReadDto> results = query.fetchResults();
 
         List<CoursesReadDto> content = results.getResults();
         long total = results.getTotal();
@@ -149,4 +169,5 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
         PathBuilder<?> orderPath = new PathBuilder<>(course.getType(), course.getMetadata());
         return new OrderSpecifier(Order.DESC, orderPath.get(orderTarget));
     }
+
 }

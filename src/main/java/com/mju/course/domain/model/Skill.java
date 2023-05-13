@@ -27,5 +27,4 @@ public class Skill extends BaseTimeEntity {
         this.course = course;
         this.skill = skill;
     }
-
 }

@@ -41,7 +41,14 @@ public class CourseServiceImpl implements CourseService{
 
     private final ResponseService responseService;
 
-    // 코스 목록 보기
+    /**
+     * 코스 목록 보기
+     * @param category
+     * @param order
+     * @param skill
+     * @param pageable
+     * @return
+     */
     @Override
     public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable){
         Page<CoursesReadDto> result = courseRepository.readCourseList(category, order, skill, pageable);
@@ -49,6 +56,9 @@ public class CourseServiceImpl implements CourseService{
         return responseService.getSingleResult(result);
     }
 
+    /** 코스 하나 읽기
+     * @param course_index
+     */
     @Override
     public CommonResult readCourse(Long course_index) {
         Course findCourse = courseRepository.findById(course_index)
