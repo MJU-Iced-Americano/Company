@@ -1,61 +1,67 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.CourseService;
 import com.mju.course.application.LectureService;
+import com.mju.course.application.UserServiceImpl;
+import com.mju.course.domain.model.enums.UserType;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.presentation.dto.request.LectureCreateDto;
+import com.mju.course.domain.service.ResponseService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/lecture")
+@RequestMapping("/v1/lecture")
+@Tag(name = "5. 강의", description = "강의 관련 api 입니다. ")
 public class LectureController {
 
     private final LectureService lectureService;
+    private final UserServiceImpl userService;
 
-    // [Crate] (강사) 강의 등록
-    @PostMapping("/manage/new-lecture/{course_index}/{chapter}/{lecture_sequence}")
-    public CommonResult createLecture(@PathVariable Long course_index,
-                                      @PathVariable int chapter,
-                                      @PathVariable int lecture_sequence,
-                                      @RequestPart("postLectureDto") LectureCreateDto lectureCreateDto,
-                                      @RequestPart("video") MultipartFile multipartFile) throws IOException {
-        return lectureService.createLecture(course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
+    private void checkUser(){
+        userService.checkUser(String.valueOf(UserType.ROLE_USER));
     }
 
-    // [Crate] (강사) 대용량 파일 업로드
+    // 강의 보기
+    // (공통) 강의 조회 - tab : 기본(basic), 목차 (curriculum)
+    @GetMapping("/{lecture_index}")
+    public CommonResult readBasicLecture(@PathVariable Long lecture_index,
+                                         @RequestParam("tab") String tab){
+        return lectureService.readLecture(lecture_index, tab);
+    }
 
-    // [Read] (공통) 강의 조회 - 동영상 스트리밍  (단순)
+    //////////////////////////////////////////////////////////////////////////
+    // 강의 노트 - 유저로 구분하기 때문에 추후 개발
+    // 강의 노트 작성
+    @PostMapping("/{lecture_index}/my-note")
+    public CommonResult createLectureNote(@PathVariable Long lecture_index,
+                                          @RequestParam("tab") String note,
+                                          @RequestBody String lectureNote){
+        return lectureService.createLectureNote(lecture_index, note, lectureNote);
+    }
 
-    // [Update] (강사) 강의 수정
+    // 강의 노트 수정
+    @PutMapping("/{lecture_index}/my-note")
+    public CommonResult updateLectureNote(@PathVariable Long lecture_index,
+                                          @RequestParam("tab") String note,
+                                          @RequestBody String lectureNote){
+        return lectureService.updateLectureNote(lecture_index, note, lectureNote);
+    }
 
-    // [Delete] (운영자) 강의 삭제
+    // 강의 노트 삭제
+    @DeleteMapping("/{lecture_index}/my-note")
+    public CommonResult deleteLectureNote(@PathVariable Long lecture_index,
+                                          @RequestParam("tab") String note){
+        return lectureService.deleteLectureNote(lecture_index, note);
+    }
+
+    // 강의 질문
 
 
-    // 5월 이후 개발 진행
-    ///////////////// READ ////////////////////////////
-    // [Read] 강의 동영상 + 목차
 
-    // [Read] 강의 동영상 + 강의 질문 전체 보기
 
-    // [Read] 강의 동영상 + 강의 질문 상세 보기
 
-    // [Read] 강의 동영상 + 나의 강의 노트 보기
 
-    //////////////////// 강의 질문 //////////////////////////
-    // [Create]
-    // [Read]
-    // [Update]
-    // [Delete]
 
-    //////////////////// 나의 강의 노트 //////////////////////////
-    // [Create]
-    // [Read]
-    // [Update]
-    // [Delete]
 
 }

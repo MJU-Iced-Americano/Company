@@ -2,7 +2,7 @@ package com.mju.course.application;
 
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.domain.repository.CourseRepository;
+import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import lombok.RequiredArgsConstructor;

@@ -19,7 +19,7 @@ public class CoursesReadDto {
     private String price;
     @Schema(description = "난이도", defaultValue = "2")
     private int difficulty;
-    @Schema(description = "코스 기본 사진")
+    @Schema(description = "코스 기본 사진 URL ")
     private String courseTitlePhotoUrl;
 
     public static CoursesReadDto of(Course course){
@@ -28,7 +28,7 @@ public class CoursesReadDto {
                 .courseName(course.getCourseName())
                 .price(course.getPrice())
                 .difficulty(course.getDifficulty())
-                .courseTitlePhotoUrl("https://d19wla4ff811v8.cloudfront.net/" + course.getCourseTitlePhotoUrl())
+                .courseTitlePhotoUrl("https://d19wla4ff811v8.cloudfront.net/" + course.getCourseTitlePhotoKey())
                 .build();
     }
 }

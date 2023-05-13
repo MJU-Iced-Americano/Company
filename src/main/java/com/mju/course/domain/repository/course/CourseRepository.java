@@ -1,4 +1,4 @@
-package com.mju.course.domain.repository;
+package com.mju.course.domain.repository.course;
 
 import com.mju.course.domain.model.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CourseRepository extends JpaRepository<Course, Long> {
+public interface CourseRepository extends JpaRepository<Course, Long>, CourseRepositoryCustom{
     Optional<Course> findByCourseName(String courseName);
 
     List<Course> findByCategory(String category);

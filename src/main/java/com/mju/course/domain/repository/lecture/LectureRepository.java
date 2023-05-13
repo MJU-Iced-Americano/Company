@@ -1,4 +1,4 @@
-package com.mju.course.domain.repository;
+package com.mju.course.domain.repository.lecture;
 
 import com.mju.course.domain.model.Curriculum;
 import com.mju.course.domain.model.Lecture;

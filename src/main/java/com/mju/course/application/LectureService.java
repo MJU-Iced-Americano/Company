@@ -1,13 +1,11 @@
 package com.mju.course.application;
 
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.presentation.dto.request.LectureCreateDto;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 public interface LectureService {
+    CommonResult createLectureNote(Long lecture_index, String note, String lectureNote);
+    CommonResult updateLectureNote(Long lecture_index, String note, String lectureNote);
+    CommonResult deleteLectureNote(Long lecture_index, String note);
 
-    CommonResult createLecture(Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException;
-
+    CommonResult readLecture(Long lecture_index, String tab);
 }

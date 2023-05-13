@@ -1,8 +1,6 @@
 package com.mju.course.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +8,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LectureCreateDto {
-    @Schema(description = "강의 이름", defaultValue = "프로젝트 생성")
-    @NotNull @NotBlank
+public class LectureUpdateDto {
+    @Schema(description = "강의 제목", defaultValue = "IDE 설치하기")
     private String lectureTitle;
-
+    @Schema(description = "강의 상세 설명")
     private String lectureDescription;
 }
