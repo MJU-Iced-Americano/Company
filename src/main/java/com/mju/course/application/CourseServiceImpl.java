@@ -7,17 +7,24 @@ import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.course.CurriculumRepository;
+import com.mju.course.domain.repository.course.SkillRepository;
 import com.mju.course.domain.repository.lecture.LectureRepository;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.response.CourseReadDto;
+import com.mju.course.presentation.dto.response.CoursesReadDto;
 import com.mju.course.presentation.dto.response.CurriculumReadDto;
 import com.mju.course.presentation.dto.response.LectureReadDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import static com.mju.course.domain.model.other.Exception.ExceptionList.NOT_EXISTENT_COURSE;
 
@@ -27,10 +34,19 @@ import static com.mju.course.domain.model.other.Exception.ExceptionList.NOT_EXIS
 public class CourseServiceImpl implements CourseService{
 
     private final CourseRepository courseRepository;
+    private final SkillRepository skillRepository;
     private final CurriculumRepository curriculumRepository;
     private final LectureRepository lectureRepository;
 
     private final ResponseService responseService;
+
+    // 코스 목록 보기
+    @Override
+    public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable){
+        Page<CoursesReadDto> result = courseRepository.readCourseList(category, order, skill, pageable);
+        result.forEach(readDto -> readDto.updateUrl(readDto.getCourseTitlePhotoUrl()));  // key를 url로 변경
+        return responseService.getSingleResult(result);
+    }
 
     @Override
     public CommonResult readCourse(Long course_index) {
@@ -41,21 +57,22 @@ public class CourseServiceImpl implements CourseService{
         findCourse.updateHit();
         courseRepository.save(findCourse);
 
+        // 스킬
+        ArrayList<String> skillList = skillRepository.findByCourse(findCourse);
+
+        // 커리 큘럼, 강의
         List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse); // 에러 처리
+        ArrayList<CurriculumReadDto> curriculumReadDtoList = new ArrayList<>();
+        findCurriculum.forEach(curriculum -> {
+            List<Lecture> lectures = lectureRepository.findByCurriculum(curriculum);
+            List<LectureReadDto> lectureReadDtos = lectures
+                    .stream()
+                    .map(LectureReadDto::of)
+                    .collect(Collectors.toList());
+            curriculumReadDtoList.add(CurriculumReadDto.of(curriculum, lectureReadDtos));
+        });
 
-        ArrayList<CurriculumReadDto> curriculumReadDtos = new ArrayList<>();
-        for(int i=0; i<findCurriculum.size(); i++){
-            List<LectureReadDto> lectureReadDtos = new ArrayList<>();
-            List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get(i));
-            for(int j=0; j< lectures.size(); j++){
-                LectureReadDto lectureReadDto = LectureReadDto.of(lectures.get(i));
-                lectureReadDtos.add(lectureReadDto);
-            }
-            CurriculumReadDto curriculumReadDto = CurriculumReadDto.of(findCurriculum.get(i), lectureReadDtos);
-            curriculumReadDtos.add(curriculumReadDto);
-        }
-
-        CourseReadDto courseReadDto = CourseReadDto.of(findCourse, curriculumReadDtos);
+        CourseReadDto courseReadDto = CourseReadDto.of(findCourse, skillList, curriculumReadDtoList);
         return responseService.getSingleResult(courseReadDto);
     }
 

@@ -6,19 +6,18 @@ import com.mju.course.presentation.dto.response.CoursesReadDto;
 import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
@@ -29,11 +28,6 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
 
     public CourseRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
-    }
-
-    public static OrderSpecifier<?> getOrderByExpression(String orderTarget, QCourse course) {
-        PathBuilder<?> orderPath = new PathBuilder<>(course.getType(), course.getMetadata());
-        return new OrderSpecifier(Order.DESC, orderPath.get(orderTarget));
     }
 
     public List<AdminReadCoursesDto> readCourses(String state, String orderTarget) {
@@ -49,7 +43,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .select(Projections.constructor(
                         AdminReadCoursesDto.class,
                         course.id, course.status, course.category,
-                        course.difficulty, course.courseName, course.skill,
+                        course.difficulty, course.courseName,
                         course.price, course.courseTime, course.createdAt, course.hits))
                 .from(course)
                 .where(builder)
@@ -71,7 +65,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .select(Projections.constructor(
                         AdminReadCoursesDto.class,
                         course.id, course.status, course.category,
-                        course.difficulty, course.courseName, course.skill,
+                        course.difficulty, course.courseName,
                         course.price, course.courseTime, course.createdAt, course.hits))
                 .from(course)
                 .where(builder)
@@ -101,7 +95,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .select(Projections.constructor(
                         AdminReadCoursesDto.class,
                         course.id, course.status, course.category,
-                        course.difficulty, course.courseName, course.skill,
+                        course.difficulty, course.courseName,
                         course.price, course.courseTime, course.createdAt, course.hits))
                 .from(course)
                 .where(builder)
@@ -113,32 +107,46 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
         JPAQuery<AdminReadCoursesDto> countQuery = queryFactory.select(Projections.constructor(
                         AdminReadCoursesDto.class,
                         course.id, course.status, course.category,
-                        course.difficulty, course.courseName, course.skill,
+                        course.difficulty, course.courseName,
                         course.price, course.courseTime, course.createdAt, course.hits))
                 .from(course)
                 .where(builder)
                 .orderBy(orderSpecifier);
 
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
-
-//        return new PageImpl<>(content, pageable, total);
     }
 
     @Override
-    public Page<CoursesReadDto> readCourseList(String order, String skill, Pageable pageable) {
+    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable) {
         QCourse course = QCourse.course;
+
+        // if 카테고리가 존재한다면
 
         // if skill이 존재한다면
         // - 우선 skill을 분리해야 함
 
         // if order이 존재한다면
-//        List<CoursesReadDto> content = queryFactory
-//                .select(course.id, course.courseName, course.price, course.difficulty, course.courseTitlePhotoKey)
-//                .from(course)
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetchResults();
+        OrderSpecifier<?> orderSpecifier = getOrderByExpression(order, course);
+        // - 잘못된 order을 입력한 경우
 
-        return null;
+        QueryResults<CoursesReadDto> results = queryFactory
+                .select(Projections.constructor(CoursesReadDto.class,
+                        course.id, course.category, course.courseName,
+                        course.price, course.difficulty, course.courseTitlePhotoKey))
+                .from(course)
+                .orderBy(orderSpecifier)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<CoursesReadDto> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    public static OrderSpecifier<?> getOrderByExpression(String orderTarget, QCourse course) {
+        PathBuilder<?> orderPath = new PathBuilder<>(course.getType(), course.getMetadata());
+        return new OrderSpecifier(Order.DESC, orderPath.get(orderTarget));
     }
 }

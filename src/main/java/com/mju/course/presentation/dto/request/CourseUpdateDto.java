@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +17,7 @@ public class CourseUpdateDto {
     private String price;
     private String courseDescription;
     private int difficulty;
-    private String skill;
+
+    // 스킬
+    private ArrayList<String> skillList;
 }

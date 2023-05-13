@@ -3,11 +3,13 @@ package com.mju.course.application;
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.Curriculum;
 import com.mju.course.domain.model.Lecture;
+import com.mju.course.domain.model.Skill;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.course.CurriculumRepository;
+import com.mju.course.domain.repository.course.SkillRepository;
 import com.mju.course.domain.repository.lecture.LectureRepository;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.*;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.mju.course.domain.model.other.Exception.ExceptionList.*;
 
@@ -32,6 +35,7 @@ public class CourseManageServiceImpl implements CourseManageService {
     private final CourseRepository courseRepository;
     private final CurriculumRepository curriculumRepository;
     private final LectureRepository lectureRepository;
+    private final SkillRepository skillRepository;
 
     private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
@@ -46,6 +50,14 @@ public class CourseManageServiceImpl implements CourseManageService {
         Course course = Course.of(courseCreateDto);
         Course saveCourse = courseRepository.save(course);
 
+        // 스킬 저장
+        courseCreateDto.getSkillList()
+                        .stream()
+                                .forEach(s-> skillRepository.save(Skill.builder()
+                                        .course(course)
+                                        .skill(s)
+                                        .build()));
+
         // 코스 대표 사진 저장
         String basicFileName = course.getId() + "-title" ;
         String dirName = "courses/"+String.valueOf(saveCourse.getId()) +"/title";  // 폴더 이름
@@ -54,10 +66,9 @@ public class CourseManageServiceImpl implements CourseManageService {
         courseRepository.save(saveCourse);
 
         // 커리 큘럼 저장
-        for(int i = 0; i< courseCreateDto.getCurriculumCreateDtos().size(); i++){
-            Curriculum curriculum = Curriculum.of(courseCreateDto.getCurriculumCreateDtos().get(i), saveCourse);
-            curriculumRepository.save(curriculum);
-        }
+        courseCreateDto.getCurriculumCreateDtos()
+                .stream()
+                .forEach(s -> curriculumRepository.save(Curriculum.of(s, course)));
 
         // 코스 설명 사진 저장
 
@@ -66,16 +77,17 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     @Override
     public CommonResult updateCourse(Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException {
-        Course findCourse = findCourse(course_index);
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
-        boolean isModified = false; // 수정 유무
+        AtomicBoolean isModified = new AtomicBoolean(false); // 수정 유무
 
         ArrayList<String> arr = new ArrayList<>();
 
         if(courseUpdateDto.getCategory() != null && !courseUpdateDto.getCategory().equals(findCourse.getCategory())){
             findCourse.updateCategory(courseUpdateDto.getCategory());
             arr.add("카테고리");
-            isModified = true;
+            isModified.set(true);
         }
 
         if(courseUpdateDto.getCourseName() != null && !courseUpdateDto.getCourseName().equals(findCourse.getCourseName())){
@@ -86,29 +98,43 @@ public class CourseManageServiceImpl implements CourseManageService {
             }else{
                 arr.add("코스 이름");
                 findCourse.updateCourseName(courseUpdateDto.getCourseName());
-                isModified = true;
+                isModified.set(true);
             }
         }
 
         if(courseUpdateDto.getPrice() != null && !courseUpdateDto.getPrice().equals(findCourse.getPrice())){
             arr.add("코스 가격");
             findCourse.updatePrice(courseUpdateDto.getPrice());
-            isModified = true;
+            isModified.set(true);
         }
         if(courseUpdateDto.getCourseDescription() != null && !courseUpdateDto.getCourseDescription().equals(findCourse.getCourseDescription())){
             arr.add("코스 설명");
             findCourse.updateCourseDescription(courseUpdateDto.getCourseDescription());
-            isModified = true;
+            isModified.set(true);
         }
         if(courseUpdateDto.getDifficulty() != 0 && courseUpdateDto.getDifficulty() != findCourse.getDifficulty()){
             arr.add("난이도");
             findCourse.updateDifficulty(courseUpdateDto.getDifficulty());
-            isModified = true;
+            isModified.set(true);
         }
-        if(courseUpdateDto.getSkill() != null && !courseUpdateDto.getSkill().equals(findCourse.getSkill())){
-            arr.add("스킬");
-            findCourse.updateSkill(courseUpdateDto.getSkill());
-            isModified = true;
+
+        if(courseUpdateDto.getSkillList() != null){
+            ArrayList<String> skills = skillRepository.findByCourse(findCourse);
+            courseUpdateDto.getSkillList().stream()
+                    .forEach(s ->{
+                        boolean checkSkill = false;
+                        for(int i=0; i<skills.size(); i++){
+                            if(skills.get(i).equals(s)) checkSkill = true;
+                        }
+                        if(!checkSkill){
+                            skillRepository.save(Skill.builder()
+                                    .course(findCourse)
+                                    .skill(s)
+                                    .build());
+                            isModified.set(true);
+                            arr.add("스킬");
+                        }
+                    });
         }
 
         if(titlePhoto != null){
@@ -120,10 +146,10 @@ public class CourseManageServiceImpl implements CourseManageService {
             String dirName = "courses/"+String.valueOf(findCourse.getId()) +"/title";  // 폴더 이름
             String courseTitlePhotoUrl = s3UploaderService.upload(titlePhoto, dirName, basicFileName);
             findCourse.updateTitlePhoto(courseTitlePhotoUrl);
-            isModified = true;
+            isModified.set(true);
         }
 
-        if(!isModified){
+        if(!isModified.get()){
             throw new CourseException(NO_MODIFIED_COURSE);
         }else{
             courseRepository.save(findCourse);
@@ -141,7 +167,8 @@ public class CourseManageServiceImpl implements CourseManageService {
     }
 
     private CommonResult updateState(Long course_index, CourseState status,String comment) {
-        Course findCourse = findCourse(course_index);
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
         findCourse.updateState(status, comment);
         courseRepository.save(findCourse);
@@ -150,7 +177,8 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     @Override
     public CommonResult requestCourse(Long course_index) {
-        Course findCourse = findCourse(course_index);
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
         List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse); // 에러 처리
 
@@ -169,16 +197,10 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     @Override
     public CommonResult addCurriculum(Long course_index, CurriculumCreateDto curriculumCreateDto) {
-        Course findCourse = findCourse(course_index);
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
-        Optional<Curriculum> findCurriculum1 = curriculumRepository.findByCourseAndChapter(findCourse, curriculumCreateDto.getChapter());
-        if(findCurriculum1.isPresent()){
-            throw new CourseException(EXISTENT_CURRICULUM_CHAPTER);
-        }
-        Optional<Curriculum> findCurriculum = curriculumRepository.findByCourseAndCurriculumTitle(findCourse, curriculumCreateDto.getCurriculumTitle());
-        if(findCurriculum.isPresent()){
-            throw new CourseException(EXISTENT_CURRICULUM_NAME);
-        }
+        checkCurriculumAndTitle(findCourse, curriculumCreateDto.getChapter(), curriculumCreateDto.getCurriculumTitle());
 
         Curriculum curriculum = Curriculum.of(curriculumCreateDto, findCourse);
         curriculumRepository.save(curriculum);
@@ -187,21 +209,16 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     @Override
     public CommonResult updateCurriculum(Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto) {
-        Course findCourse = findCourse(course_index);
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+
         Optional<Curriculum> findCurriculum = Optional.ofNullable(curriculumRepository.findByCourseAndChapter(findCourse, chapter)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM)));
 
+        checkCurriculumAndTitle(findCourse, curriculumCreateDto.getChapter(), curriculumCreateDto.getCurriculumTitle());
+
         List<String> arr = new ArrayList<>();
         boolean isModified = false;
-
-        Optional<Curriculum> findCurriculumChapter = curriculumRepository.findByCourseAndChapter(findCourse, curriculumCreateDto.getChapter());
-        if(findCurriculumChapter.isPresent()){
-            throw new CourseException(EXISTENT_CURRICULUM_CHAPTER);
-        }
-        Optional<Curriculum> findCurriculumTitle = curriculumRepository.findByCourseAndCurriculumTitle(findCourse, curriculumCreateDto.getCurriculumTitle());
-        if(findCurriculumTitle.isPresent()){
-            throw new CourseException(EXISTENT_CURRICULUM_NAME);
-        }
 
         if(curriculumCreateDto.getLectureSum() != 0){
             List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get());
@@ -236,7 +253,9 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     @Override
     public CommonResult deleteCurriculum(Long course_index, int chapter) {
-        Course findCourse = findCourse(course_index);
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+
         Optional<Curriculum> findCurriculum = Optional.ofNullable(curriculumRepository.findByCourseAndChapter(findCourse, chapter)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM)));
         List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get());
@@ -248,9 +267,18 @@ public class CourseManageServiceImpl implements CourseManageService {
         }
     }
 
-    private Course findCourse(Long course_index){
-        return courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+    /**
+     * 이미 코스안에 존재하는 커리큘럼의 챕터와 제목인지 확인
+     * */
+    private void checkCurriculumAndTitle(Course findCourse, int chapter, String curriculumTitle){
+        Optional<Curriculum> findCurriculum = curriculumRepository.findByCourseAndChapter(findCourse, chapter);
+        if(findCurriculum.isPresent()){
+            throw new CourseException(EXISTENT_CURRICULUM_CHAPTER);
+        }
+        Optional<Curriculum> findCurriculumTitle = curriculumRepository.findByCourseAndCurriculumTitle(findCourse, curriculumTitle);
+        if(findCurriculumTitle.isPresent()){
+            throw new CourseException(EXISTENT_CURRICULUM_NAME);
+        }
     }
 
 }

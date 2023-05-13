@@ -28,8 +28,7 @@ public class CourseReadDto {
     private int difficulty;
     @Schema(description = "코스 생성 시간")
     private int courseTime;
-    @Schema(description = "스킬", defaultValue = "자바")
-    private String skill;
+
     @Schema(description = "조회수", defaultValue = "2")
     private Long hits;
     @Schema(description = "코스 기본(타이틀) 사진 url")
@@ -38,10 +37,13 @@ public class CourseReadDto {
     @Schema(description = "커리 큘럼 수", defaultValue = "3")
     private int curriculumSum;
 
-    @Schema(description = "커리 큘럼 객체")
-    private ArrayList<CurriculumReadDto> curriculumReadDtos;
+    @Schema(description = "스킬", defaultValue = "Java, Programming")
+    private ArrayList<String> skillList;
 
-    public static CourseReadDto of(Course course, ArrayList<CurriculumReadDto> curriculumReadDtos){
+    @Schema(description = "커리 큘럼 객체")
+    private ArrayList<CurriculumReadDto> curriculumReadDtoList;
+
+    public static CourseReadDto of(Course course, ArrayList<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList){
         return CourseReadDto.builder()
                 .courseIndex(course.getId())
                 .category(course.getCategory())
@@ -50,10 +52,10 @@ public class CourseReadDto {
                 .courseDescription(course.getCourseDescription())
                 .difficulty(course.getDifficulty())
                 .courseTime(course.getCourseTime())
-                .skill(course.getSkill())
                 .courseTitlePhotoUrl("https://d19wla4ff811v8.cloudfront.net/" + course.getCourseTitlePhotoKey())
-                .curriculumSum(curriculumReadDtos.size())
-                .curriculumReadDtos(curriculumReadDtos)
+                .skillList(skillList)
+                .curriculumSum(curriculumReadDtoList.size())
+                .curriculumReadDtoList(curriculumReadDtoList)
                 .hits(course.getHits())
                 .build();
     }

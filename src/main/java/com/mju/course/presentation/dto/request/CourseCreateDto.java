@@ -33,21 +33,18 @@ public class CourseCreateDto {
     private int difficulty;
 
     @Schema(description = "스킬", defaultValue = "Java")
-    @NotNull @NotBlank
-    private String skill;
+    private ArrayList<String> skillList;
 
     @Schema(description = "커리 큘럼")
     private ArrayList<CurriculumCreateDto> curriculumCreateDtos;
 
     @Builder
-    public CourseCreateDto(String category, String courseName, String price, String courseDescription,
-                           int difficulty, String skill){
+    public CourseCreateDto(String category, String courseName, String price, String courseDescription, int difficulty){
         this.category = category;
         this.courseName = courseName;
         this.price = price;
         this.courseDescription = courseDescription;
         this.difficulty = difficulty;
-        this.skill = skill;
     }
 
 }

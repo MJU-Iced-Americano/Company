@@ -37,9 +37,6 @@ public class Course extends BaseTimeEntity {
     @Column(name = "course_time")
     private int courseTime;
 
-    @Column(name = "skill")
-    private String skill;
-
     @Column(name = "hits")
     private Long hits;
 
@@ -54,14 +51,13 @@ public class Course extends BaseTimeEntity {
 
     @Builder
     public Course(String category, String courseName, String price, String courseDescription,
-                  int difficulty, int courseTime, String skill, Long hits, CourseState status){
+                  int difficulty, int courseTime, Long hits, CourseState status){
         this.category = category;
         this.courseName = courseName;
         this.price = price;
         this.courseDescription = courseDescription;
         this.difficulty = difficulty;
         this.courseTime = courseTime;
-        this.skill = skill;
         this.hits = hits;
         this.status = status;
     }
@@ -73,7 +69,6 @@ public class Course extends BaseTimeEntity {
                 .price(courseCreateDto.getPrice())
                 .courseDescription(courseCreateDto.getCourseDescription())
                 .difficulty(courseCreateDto.getDifficulty())
-                .skill(courseCreateDto.getSkill())
                 .hits(0L)
                 .status(CourseState.hold)
                 .build();
@@ -115,7 +110,4 @@ public class Course extends BaseTimeEntity {
         this.difficulty = difficulty;
     }
 
-    public void updateSkill(String skill){
-        this.skill = skill;
-    }
 }
