@@ -3,6 +3,7 @@ package com.mju.course.application;
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.Curriculum;
 import com.mju.course.domain.model.Lecture;
+import com.mju.course.domain.model.Skill;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
@@ -58,14 +59,16 @@ public class CourseServiceImpl implements CourseService{
         courseRepository.save(findCourse);
 
         // 스킬
-        ArrayList<String> skillList = skillRepository.findByCourse(findCourse);
+        List<String> skillList = new ArrayList<>();
+        List<Skill> getSkillList = findCourse.getSkillList();
+        getSkillList.forEach(s->skillList.add(s.getSkill()));
 
         // 커리 큘럼, 강의
-        List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse); // 에러 처리
         ArrayList<CurriculumReadDto> curriculumReadDtoList = new ArrayList<>();
-        findCurriculum.forEach(curriculum -> {
-            List<Lecture> lectures = lectureRepository.findByCurriculum(curriculum);
-            List<LectureReadDto> lectureReadDtos = lectures
+        List<Curriculum> curriculumList = findCourse.getCurriculumList();
+        curriculumList.forEach(curriculum -> {
+            List<Lecture> lectureList = curriculum.getLectureList();
+            List<LectureReadDto> lectureReadDtos = lectureList
                     .stream()
                     .map(LectureReadDto::of)
                     .collect(Collectors.toList());

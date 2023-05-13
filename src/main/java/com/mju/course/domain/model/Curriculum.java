@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -28,6 +31,9 @@ public class Curriculum extends BaseTimeEntity{
 
     @Column(name = "lecture_sum")
     private int lectureSum;
+
+    @OneToMany(mappedBy = "curriculum")
+    private List<Lecture> lectureList = new ArrayList<>();
 
     @Builder
     public Curriculum(int chapter, String curriculumTitle, int lectureSum, Course course){

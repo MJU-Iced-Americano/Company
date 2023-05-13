@@ -1,12 +1,14 @@
 package com.mju.course.presentation.dto.response;
 
 import com.mju.course.domain.model.Course;
+import com.mju.course.domain.model.Skill;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -28,7 +30,6 @@ public class CourseReadDto {
     private int difficulty;
     @Schema(description = "코스 생성 시간")
     private int courseTime;
-
     @Schema(description = "조회수", defaultValue = "2")
     private Long hits;
     @Schema(description = "코스 기본(타이틀) 사진 url")
@@ -38,12 +39,12 @@ public class CourseReadDto {
     private int curriculumSum;
 
     @Schema(description = "스킬", defaultValue = "Java, Programming")
-    private ArrayList<String> skillList;
+    private List<String> skillList;
 
     @Schema(description = "커리 큘럼 객체")
-    private ArrayList<CurriculumReadDto> curriculumReadDtoList;
+    private List<CurriculumReadDto> curriculumReadDtoList;
 
-    public static CourseReadDto of(Course course, ArrayList<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList){
+    public static CourseReadDto of(Course course, List<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList){
         return CourseReadDto.builder()
                 .courseIndex(course.getId())
                 .category(course.getCategory())
