@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface CourseRepositoryCustom {
     Page<AdminReadCoursesDto> readCoursesPageComplex(String state, String order, Pageable pageable);
-
-    Page<CoursesReadDto> readCourseList(String order, String skill, Pageable pageable);
+    Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable);
 }

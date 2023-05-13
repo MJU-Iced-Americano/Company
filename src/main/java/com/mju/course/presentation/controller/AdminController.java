@@ -17,10 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/admin")
-@Tag(name = "1. (운영자 용) 코스, 강의 관리", description = "운영자 용 api 입니다.")
+@Tag(name = "Admin Controller", description = "운영자 용 코스, 강의 관리 api ")
 public class AdminController {
-
-    // 코스 검색 기능
 
     private final AdminServiceImpl adminService;
     private final UserServiceImpl userService;
@@ -37,38 +35,40 @@ public class AdminController {
     @Parameters({
             @Parameter(name = "page", description = "페이지 번호", required = true),
             @Parameter(name = "size", description = "한 페이지에 표시되는 코스 수", required = true),
-            @Parameter(name = "order", description = "코스 인덱스", required = true),
+            @Parameter(name = "order", description = "생성일(createdAt - 기본값), 코스 번호(courseIndex), 난이도(difficulty), 강사 이름(lecture), 가격(price), 강의 시간(courseTime), 조회수(hit)", required = true),
             @Parameter(name = "status", description = "코스 상태 (all, registration, request, hold, delete)", required = true)
     })
     @GetMapping()
-    public CommonResult readCourses(@RequestParam("order") String order,
-                                    @RequestParam("status") String state,
+    public CommonResult readCourses(@RequestParam(value = "order", required = false, defaultValue = "createdAt") String order,
+                                    @RequestParam(value = "status",required = false, defaultValue = "all") String state,
                                     Pageable pageable){
         checkAdmin();
         return adminService.readCourses(state,order,pageable);
     }
 
-    // 검색 기능
-
-
-    // (운영자) 코스 삭제 - 완전 삭제
+    @Operation(summary = "(운영자) 코스 삭제 - 완전 삭제", description = "courseState : delete ---> 완전 삭제")
+    @Parameter(name = "course_index", description = "코스 인덱스")
     @DeleteMapping("/manage/delete/{course_index}")
     public CommonResult deleteCourse(@PathVariable Long course_index){
         checkAdmin();
         return adminService.deleteCourse(course_index);
     }
 
-    // (운영자) 코스 등록
+    @Operation(summary = "(운영자) 코스 등록", description = "courseState : request -> registration")
+    @Parameter(name = "course_index", description = "코스 인덱스")
     @PutMapping("/manage/register/{course_index}")
     public CommonResult registerCourse(@PathVariable Long course_index){
         checkAdmin();
         return adminService.registerCourse(course_index);
     }
 
-    // (운영자) 코스 등록 보류
+    @Operation(summary = "(운영자) 코스 등록 보류", description = "courseState : request -> hold")
+    @Parameter(name = "course_index", description = "코스 인덱스")
     @PutMapping("/manage/hold/{course_index}")
-    public CommonResult holdCourse(@PathVariable Long course_index, String comment){
+    public CommonResult holdCourse(@PathVariable Long course_index, @RequestBody String comment){
         checkAdmin();
         return adminService.holdCourse(course_index, comment);
     }
+
+    // 검색 기능
 }
