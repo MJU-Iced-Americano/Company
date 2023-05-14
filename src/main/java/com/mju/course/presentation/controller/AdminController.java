@@ -39,11 +39,11 @@ public class AdminController {
             @Parameter(name = "status", description = "코스 상태 (all, registration, request, hold, delete)", required = false)
     })
     @GetMapping()
-    public CommonResult readCourses(@RequestParam(value = "order", required = false, defaultValue = "createdAt") String order,
+    public CommonResult readAdminCourseList(@RequestParam(value = "order", required = false, defaultValue = "createdAt") String order,
                                     @RequestParam(value = "status",required = false, defaultValue = "all") String state,
                                     Pageable pageable){
         checkAdmin();
-        return adminService.readCourses(state,order,pageable);
+        return adminService.readAdminCourseList(state,order,pageable);
     }
 
     @Operation(summary = "(운영자) 코스 삭제 - 완전 삭제", description = "courseState : delete ---> 완전 삭제")
