@@ -1,5 +1,6 @@
-package com.mju.course.application;
+package com.mju.course.application.lecture;
 
+import com.mju.course.application.S3UploaderService;
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.Curriculum;
 import com.mju.course.domain.model.Lecture;

@@ -1,8 +1,9 @@
-package com.mju.course.application;
+package com.mju.course.application.course;
 
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.Curriculum;
 import com.mju.course.domain.model.Lecture;
+import com.mju.course.domain.model.Skill;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
@@ -17,13 +18,11 @@ import com.mju.course.presentation.dto.response.LectureReadDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import static com.mju.course.domain.model.other.Exception.ExceptionList.NOT_EXISTENT_COURSE;
@@ -40,7 +39,14 @@ public class CourseServiceImpl implements CourseService{
 
     private final ResponseService responseService;
 
-    // 코스 목록 보기
+    /**
+     * 코스 목록 보기
+     * @param category
+     * @param order
+     * @param skill
+     * @param pageable
+     * @return
+     */
     @Override
     public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable){
         Page<CoursesReadDto> result = courseRepository.readCourseList(category, order, skill, pageable);
@@ -48,6 +54,9 @@ public class CourseServiceImpl implements CourseService{
         return responseService.getSingleResult(result);
     }
 
+    /** 코스 하나 읽기
+     * @param course_index
+     */
     @Override
     public CommonResult readCourse(Long course_index) {
         Course findCourse = courseRepository.findById(course_index)
@@ -58,14 +67,16 @@ public class CourseServiceImpl implements CourseService{
         courseRepository.save(findCourse);
 
         // 스킬
-        ArrayList<String> skillList = skillRepository.findByCourse(findCourse);
+        List<String> skillList = new ArrayList<>();
+        List<Skill> getSkillList = findCourse.getSkillList();
+        getSkillList.forEach(s->skillList.add(s.getSkill()));
 
         // 커리 큘럼, 강의
-        List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse); // 에러 처리
         ArrayList<CurriculumReadDto> curriculumReadDtoList = new ArrayList<>();
-        findCurriculum.forEach(curriculum -> {
-            List<Lecture> lectures = lectureRepository.findByCurriculum(curriculum);
-            List<LectureReadDto> lectureReadDtos = lectures
+        List<Curriculum> curriculumList = findCourse.getCurriculumList();
+        curriculumList.forEach(curriculum -> {
+            List<Lecture> lectureList = curriculum.getLectureList();
+            List<LectureReadDto> lectureReadDtos = lectureList
                     .stream()
                     .map(LectureReadDto::of)
                     .collect(Collectors.toList());

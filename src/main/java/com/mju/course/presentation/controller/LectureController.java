@@ -1,10 +1,9 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.LectureService;
+import com.mju.course.application.lecture.LectureService;
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.domain.model.enums.UserType;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.domain.service.ResponseService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

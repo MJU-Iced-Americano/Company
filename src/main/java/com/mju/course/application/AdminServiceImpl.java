@@ -33,16 +33,9 @@ public class AdminServiceImpl {
     private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
 
-    public CommonResult readCourses(String state, String order, Pageable pageable) {
-        // 페이징 처리
-//        PageRequest pageRequest = PageRequest.of(0, 2);
-//        Page<AdminReadCoursesDto> result = courseRepository.readCoursesPageSimple(state, order, pageable);
-//        return responseService.getSingleResult(result);
-
-        Page<AdminReadCoursesDto> result = courseRepository.readCoursesPageComplex(state, order, pageable);
+    public CommonResult readAdminCourseList(String state, String order, Pageable pageable) {
+        Page<AdminReadCoursesDto> result = courseRepository.readAdminCourseList(state, order, pageable);
         return responseService.getSingleResult(result);
-//        List<AdminReadCoursesDto> courses = courseRepository.readCourses(state, order);
-//        return responseService.getSingleResult(courses);
     }
 
     public CommonResult deleteCourse(Long course_index) {

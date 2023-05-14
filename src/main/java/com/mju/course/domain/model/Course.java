@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -48,6 +51,13 @@ public class Course extends BaseTimeEntity {
 
     @Column(name = "course_title_photo_key")
     private String courseTitlePhotoKey; // 코스 대표 사진
+
+    // 양방향 매핑
+    @OneToMany(mappedBy = "course")
+    private List<Skill> skillList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course")
+    private List<Curriculum> curriculumList = new ArrayList<>();
 
     @Builder
     public Course(String category, String courseName, String price, String courseDescription,

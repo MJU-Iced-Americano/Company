@@ -1,12 +1,12 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.CourseManageService;
-import com.mju.course.application.CourseService;
+import com.mju.course.application.course.CourseService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.response.CourseReadDto;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,6 +33,13 @@ public class CourseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공하였습니다.", content = @Content(schema = @Schema(implementation = CoursesReadDto.class))),
             @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호", required = true),
+            @Parameter(name = "size", description = "한 페이지에 표시되는 코스 수", required = true),
+            @Parameter(name = "order", description = "생성일(createdAt - 기본값), 난이도 순 (difficulty), 조회 수 높은 순 (hits)", required = false),
+            @Parameter(name = "skill", description = "코스 스킬 (Java, Programming)", required = false),
+            @Parameter(name = "category", description = "코스 카테고리", required = false)
     })
     @GetMapping()
     public CommonResult readCourseList(@RequestParam(value = "category", required = false) String category,

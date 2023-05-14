@@ -1,6 +1,6 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.LectureServiceImpl;
+import com.mju.course.application.lecture.LectureServiceImpl;
 import com.mju.course.presentation.dto.response.LectureCurriculumReadDto;
 import com.mju.course.presentation.dto.response.LectureReadDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
