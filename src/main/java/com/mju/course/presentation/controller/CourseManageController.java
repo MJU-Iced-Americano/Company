@@ -21,7 +21,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/course/manage")
-@Tag(name = "2. (강사진 용) 코스 관리", description = "강사진 용 코스 관련 api 입니다.")
+@Tag(name = "Course Manage controller", description = "강사진 용 코스 관련 api")
 public class CourseManageController {
 
     private final CourseManageService courseManageService;
