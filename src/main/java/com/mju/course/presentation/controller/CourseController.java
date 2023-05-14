@@ -1,6 +1,6 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.CourseService;
+import com.mju.course.application.course.CourseService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.response.CourseReadDto;
 import com.mju.course.presentation.dto.response.CoursesReadDto;

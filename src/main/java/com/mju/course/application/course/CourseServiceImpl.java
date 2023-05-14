@@ -1,4 +1,4 @@
-package com.mju.course.application;
+package com.mju.course.application.course;
 
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.Curriculum;
@@ -18,13 +18,11 @@ import com.mju.course.presentation.dto.response.LectureReadDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import static com.mju.course.domain.model.other.Exception.ExceptionList.NOT_EXISTENT_COURSE;

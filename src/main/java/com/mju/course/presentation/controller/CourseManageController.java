@@ -1,6 +1,6 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.CourseManageService;
+import com.mju.course.application.course.CourseManageService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.request.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

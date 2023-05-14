@@ -1,4 +1,4 @@
-package com.mju.course.application;
+package com.mju.course.application.lecture;
 
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.request.LectureCreateDto;

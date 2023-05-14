@@ -1,6 +1,6 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.LectureManageService;
+import com.mju.course.application.lecture.LectureManageService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.request.LectureCreateDto;
 import com.mju.course.presentation.dto.request.LectureUpdateDto;

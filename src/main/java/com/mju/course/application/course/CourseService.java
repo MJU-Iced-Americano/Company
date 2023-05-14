@@ -1,4 +1,4 @@
-package com.mju.course.application;
+package com.mju.course.application.course;
 
 import com.mju.course.domain.model.other.Result.CommonResult;
 import org.springframework.data.domain.Pageable;
