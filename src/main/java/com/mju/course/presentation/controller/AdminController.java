@@ -31,7 +31,7 @@ public class AdminController {
     // order - 생성일(createdAt - 기본값), 코스 번호(courseIndex), 난이도(difficulty), 강사 이름(lecture), 가격(price), 강의 시간(courseTime), 조회수(hit)
     // 카테 고리(category)
     // 페이징 처리 - page=0&size=5
-    @Operation(summary = "(공통) 코스 조회", description = "코스 조회 API 입니다. ")
+    @Operation(summary = "(운영자) 코스 조회 리스트 조회", description = "코스 조회 API 입니다. ")
     @Parameters({
             @Parameter(name = "page", description = "페이지 번호", required = true),
             @Parameter(name = "size", description = "한 페이지에 표시되는 코스 수", required = true),
@@ -45,6 +45,8 @@ public class AdminController {
         checkAdmin();
         return adminService.readAdminCourseList(state,order,pageable);
     }
+
+    // 운영자 용 코스 조회
 
     @Operation(summary = "(운영자) 코스 삭제 - 완전 삭제", description = "courseState : delete ---> 완전 삭제")
     @Parameter(name = "course_index", description = "코스 인덱스")

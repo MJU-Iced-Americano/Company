@@ -77,39 +77,4 @@ public class LectureServiceImpl implements LectureService{
                 .build();
     }
 
-    @Override
-    public CommonResult createLectureNote(Long lecture_index, String note, String lectureNote) {
-        Lecture lecture = lectureRepository.findById(lecture_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
-
-        // 강의 노트 와 유저 비교해서 예외 확인하기
-
-        // 강의와 유저를 findBy 해서 이미 강의 노트가 존재하면 수정
-
-        // lectureNote 가 null 일 때
-
-        LectureNote saveLectureNote = LectureNote.of(lecture, lectureNote);
-        lectureNoteRepository.save(saveLectureNote);
-
-        return responseService.getSuccessfulResult();
-    }
-
-    @Override
-    public CommonResult updateLectureNote(Long lecture_index, String note, String lectureNote) {
-        Lecture lecture = lectureRepository.findById(lecture_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
-
-        // 수정 사항이 없을 경우
-
-
-        return null;
-    }
-
-    @Override
-    public CommonResult deleteLectureNote(Long lecture_index, String note) {
-        Lecture lecture = lectureRepository.findById(lecture_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
-
-        return null;
-    }
 }

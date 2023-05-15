@@ -29,38 +29,6 @@ public class LectureController {
         return lectureService.readLecture(lecture_index, tab);
     }
 
-    //////////////////////////////////////////////////////////////////////////
-    // 강의 노트 - 유저로 구분하기 때문에 추후 개발
-    // 강의 노트 작성
-    @PostMapping("/{lecture_index}/my-note")
-    public CommonResult createLectureNote(@PathVariable Long lecture_index,
-                                          @RequestParam("tab") String note,
-                                          @RequestBody String lectureNote){
-        return lectureService.createLectureNote(lecture_index, note, lectureNote);
-    }
-
-    // 강의 노트 수정
-    @PutMapping("/{lecture_index}/my-note")
-    public CommonResult updateLectureNote(@PathVariable Long lecture_index,
-                                          @RequestParam("tab") String note,
-                                          @RequestBody String lectureNote){
-        return lectureService.updateLectureNote(lecture_index, note, lectureNote);
-    }
-
-    // 강의 노트 삭제
-    @DeleteMapping("/{lecture_index}/my-note")
-    public CommonResult deleteLectureNote(@PathVariable Long lecture_index,
-                                          @RequestParam("tab") String note){
-        return lectureService.deleteLectureNote(lecture_index, note);
-    }
-
     // 강의 질문
-
-
-
-
-
-
-
 
 }
