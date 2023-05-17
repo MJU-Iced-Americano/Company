@@ -3,12 +3,10 @@ package com.mju.course.application.lecture;
 import com.mju.course.domain.model.Course;
 import com.mju.course.domain.model.Curriculum;
 import com.mju.course.domain.model.Lecture;
-import com.mju.course.domain.model.LectureNote;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.course.CurriculumRepository;
-import com.mju.course.domain.repository.lecture.LectureNoteRepository;
 import com.mju.course.domain.repository.lecture.LectureRepository;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.response.CurriculumReadDto;
@@ -32,7 +30,6 @@ public class LectureServiceImpl implements LectureService{
     private final CourseRepository courseRepository;
     private final CurriculumRepository curriculumRepository;
     private final LectureRepository lectureRepository;
-    private final LectureNoteRepository lectureNoteRepository;
 
     private final ResponseService responseService;
 

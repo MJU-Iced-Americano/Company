@@ -1,5 +1,6 @@
 package com.mju.course.presentation.controller;
 
+import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.course.CourseService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.response.CourseReadDto;
@@ -25,8 +26,7 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
-
-    // 검색 기능 - elastic search 필요
+    private final UserServiceImpl userService;
 
     // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 좋아요 높은 순, 리뷰 많은 순
     @Operation(summary = "목록 보기", description = " order : 최신순 (createdAt), 난이도 순 (difficulty), 조회 수 높은 순 (hits)")
@@ -35,8 +35,6 @@ public class CourseController {
             @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
     })
     @Parameters({
-            @Parameter(name = "page", description = "페이지 번호", required = true),
-            @Parameter(name = "size", description = "한 페이지에 표시되는 코스 수", required = true),
             @Parameter(name = "order", description = "생성일(createdAt - 기본값), 난이도 순 (difficulty), 조회 수 높은 순 (hits)", required = false),
             @Parameter(name = "skill", description = "코스 스킬 (Java, Programming)", required = false),
             @Parameter(name = "category", description = "코스 카테고리", required = false)
@@ -59,6 +57,33 @@ public class CourseController {
     @GetMapping("/{course_index}")
     public CommonResult readCourse(@PathVariable Long course_index) {
         return courseService.readCourse(course_index);
+    }
+
+    @Operation(summary = "(공통) 코스 장바구니 추가", description = "코스 장바구니 추가 API 입니다. ")
+    @PostMapping("/{course_index}/cart")
+    public CommonResult addCart(@PathVariable Long course_index,
+                                @RequestParam Long userId){
+        return courseService.addCart(userId, course_index);
+    }
+
+    @Operation(summary = "(공통) 코스 장바구니 삭제", description = "코스 장바구니 삭제 API 입니다. ")
+    @DeleteMapping("/{course_index}/cart")
+    public CommonResult deleteCart(@PathVariable Long course_index,
+                                   @RequestParam Long userId){
+        return courseService.deleteCart(userId, course_index);
+    }
+
+    @Operation(summary = "(공통) 코스 좋아요, 좋아요 취소", description = "코스 좋아요 API 입니다. ")
+    @GetMapping("/{course_index}/like")
+    public CommonResult courseLike(@PathVariable Long course_index,
+                                   @RequestParam Long userId){
+        return courseService.courseLike(userId, course_index);
+    }
+
+    @Operation(summary = "(공통) 코스 검색", description = "코스 검색 API 입니다. ")
+    @PostMapping()
+    public CommonResult searchCourse(String search){
+        return courseService.searchCourse(search);
     }
 
 }
