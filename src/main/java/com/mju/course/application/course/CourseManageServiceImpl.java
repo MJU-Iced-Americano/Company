@@ -103,7 +103,7 @@ public class CourseManageServiceImpl implements CourseManageService {
             }
         }
 
-        if(courseUpdateDto.getPrice() != null && !courseUpdateDto.getPrice().equals(findCourse.getPrice())){
+        if(courseUpdateDto.getPrice() != 0 && courseUpdateDto.getPrice() != findCourse.getPrice()){
             arr.add("코스 가격");
             findCourse.updatePrice(courseUpdateDto.getPrice());
             isModified.set(true);
