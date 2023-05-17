@@ -1,5 +1,7 @@
-package com.mju.course.domain.model;
+package com.mju.course.domain.model.lecture;
 
+import com.mju.course.domain.model.BaseTimeEntity;
+import com.mju.course.domain.model.course.Curriculum;
 import com.mju.course.presentation.dto.request.LectureCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -9,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Lecture extends BaseTimeEntity{
+public class Lecture extends BaseTimeEntity {
 
     @Id
     @Column(name = "lecture_index")

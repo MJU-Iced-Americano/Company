@@ -1,6 +1,6 @@
 package com.mju.course.presentation.dto.response;
 
-import com.mju.course.domain.model.Curriculum;
+import com.mju.course.domain.model.course.Curriculum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

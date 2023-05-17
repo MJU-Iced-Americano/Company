@@ -1,6 +1,6 @@
 package com.mju.course.domain.repository.course;
 
-import com.mju.course.domain.model.CoursePhoto;
+import com.mju.course.domain.model.course.CoursePhoto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

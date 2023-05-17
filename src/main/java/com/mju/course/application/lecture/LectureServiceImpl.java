@@ -1,8 +1,8 @@
 package com.mju.course.application.lecture;
 
-import com.mju.course.domain.model.Course;
-import com.mju.course.domain.model.Curriculum;
-import com.mju.course.domain.model.Lecture;
+import com.mju.course.domain.model.course.Course;
+import com.mju.course.domain.model.course.Curriculum;
+import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;

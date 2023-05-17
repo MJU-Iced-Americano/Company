@@ -1,17 +1,13 @@
 package com.mju.course.presentation.dto.response.admin;
 
-import com.mju.course.domain.model.Course;
-import com.mju.course.domain.model.Skill;
+import com.mju.course.domain.model.course.Course;
 import com.mju.course.domain.model.enums.CourseState;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Getter
