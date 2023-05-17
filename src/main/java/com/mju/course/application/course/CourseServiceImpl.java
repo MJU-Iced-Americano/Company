@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.relational.core.sql.Like;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,9 +52,10 @@ public class CourseServiceImpl implements CourseService{
 
     /** 코스 하나 읽기
      * @param course_index
+     * @param userId
      */
     @Override
-    public CommonResult readCourse(Long course_index) {
+    public CommonResult readCourse(Long course_index, Long userId) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
@@ -81,6 +81,15 @@ public class CourseServiceImpl implements CourseService{
         });
 
         CourseReadDto courseReadDto = CourseReadDto.of(findCourse, skillList, curriculumReadDtoList);
+
+        // 유저 정보
+        if(userId != null && userId != 0){
+            User user = userRepository.findById(userId).get();
+            Optional<Cart> cart = cartRepository.findByCourseAndUser(findCourse, user);
+            Optional<CourseLike> like = courseLikeRepository.findByCourseAndUser(findCourse, user);
+            courseReadDto.addUserInfo(cart, like);
+        }
+        
         return responseService.getSingleResult(courseReadDto);
     }
 

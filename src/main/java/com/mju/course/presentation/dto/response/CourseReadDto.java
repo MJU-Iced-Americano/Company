@@ -1,6 +1,9 @@
 package com.mju.course.presentation.dto.response;
 
+import com.mju.course.domain.model.Cart;
 import com.mju.course.domain.model.Course;
+import com.mju.course.domain.model.CourseLike;
+import com.mju.course.domain.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +11,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @AllArgsConstructor
@@ -48,6 +52,17 @@ public class CourseReadDto {
 
     @Schema(description = "장바구니에 담은 유저수")
     private int cartSum;
+
+    @Schema(description = "유저가 좋아요 누른 코스인지 ", defaultValue = "false")
+    private boolean userAddcourseLike;
+
+    @Schema(description = "유저가 장바구니에 담은 코스인지", defaultValue = "false")
+    private boolean userAddCart;
+
+    public void addUserInfo(Optional<Cart> cart, Optional<CourseLike> like) {
+        if(cart.isPresent()) userAddCart = true;
+        if(like.isPresent()) userAddcourseLike = true;
+    }
 
     public static CourseReadDto of(Course course, List<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList){
         return CourseReadDto.builder()

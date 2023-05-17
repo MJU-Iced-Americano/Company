@@ -55,8 +55,9 @@ public class CourseController {
     })
     @Parameter(name = "course_index", description = "코스 인덱스", required = true)
     @GetMapping("/{course_index}")
-    public CommonResult readCourse(@PathVariable Long course_index) {
-        return courseService.readCourse(course_index);
+    public CommonResult readCourse(@PathVariable Long course_index,
+                                   @RequestParam(required = false) Long userId) {
+        return courseService.readCourse(course_index, userId);
     }
 
     @Operation(summary = "(공통) 코스 장바구니 추가", description = "코스 장바구니 추가 API 입니다. ")
