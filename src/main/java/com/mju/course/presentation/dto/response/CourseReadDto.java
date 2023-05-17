@@ -46,6 +46,9 @@ public class CourseReadDto {
     @Schema(description = "코스 좋아요 수")
     private int courseLikeSum;
 
+    @Schema(description = "장바구니에 담은 유저수")
+    private int cartSum;
+
     public static CourseReadDto of(Course course, List<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList){
         return CourseReadDto.builder()
                 .courseIndex(course.getId())
@@ -61,6 +64,7 @@ public class CourseReadDto {
                 .curriculumReadDtoList(curriculumReadDtoList)
                 .hits(course.getHits())
                 .courseLikeSum(course.getCourseLikeList().size())
+                .cartSum(course.getCartList().size())
                 .build();
     }
 }
