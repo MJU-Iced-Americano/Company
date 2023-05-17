@@ -1,7 +1,6 @@
 package com.mju.course.presentation.dto.response;
 
 import com.mju.course.domain.model.Course;
-import com.mju.course.domain.model.Skill;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +43,9 @@ public class CourseReadDto {
     @Schema(description = "커리 큘럼 객체")
     private List<CurriculumReadDto> curriculumReadDtoList;
 
+    @Schema(description = "코스 좋아요 수")
+    private int courseLikeSum;
+
     public static CourseReadDto of(Course course, List<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList){
         return CourseReadDto.builder()
                 .courseIndex(course.getId())
@@ -58,6 +60,7 @@ public class CourseReadDto {
                 .curriculumSum(curriculumReadDtoList.size())
                 .curriculumReadDtoList(curriculumReadDtoList)
                 .hits(course.getHits())
+                .courseLikeSum(course.getCourseLikeList().size())
                 .build();
     }
 }
