@@ -33,7 +33,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skillList, Pageable pageable) {
+    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skillList, Pageable pageable, String search) {
         QCourse course = QCourse.course;
         QSkill skill = QSkill.skill1;
 
@@ -67,6 +67,11 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
         if (skillList != null && !skillList.isEmpty()) {
             BooleanExpression skillPredicate = course.skillList.any().skill.in(skillList);
             query.where(skillPredicate);
+        }
+
+        // if search가 존재한다면
+        if(search != null && !search.isEmpty()){
+            query.where(course.courseName.containsIgnoreCase(search));
         }
 
         // Query 실행

@@ -29,6 +29,7 @@ public class CourseController {
     private final UserServiceImpl userService;
 
     // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 좋아요 높은 순, 리뷰 많은 순
+    // 검색 추가
     @Operation(summary = "목록 보기", description = " order : 최신순 (createdAt), 난이도 순 (difficulty), 조회 수 높은 순 (hits)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공하였습니다.", content = @Content(schema = @Schema(implementation = CoursesReadDto.class))),
@@ -43,8 +44,9 @@ public class CourseController {
     public CommonResult readCourseList(@RequestParam(value = "category", required = false) String category,
                                        @RequestParam(value = "order", required = false, defaultValue = "createdAt") String order,
                                        @RequestParam(value = "skill", required = false) List<String> skill,
+                                       @RequestParam(value = "search", required = false) String search,
                                        Pageable pageable) {
-        return courseService.readCourseList(category, order, skill, pageable);
+        return courseService.readCourseList(category, order, skill, pageable, search);
     }
 
     @Operation(summary = "(공통) 코스 조회", description = "코스 조회 API 입니다. ")
@@ -79,12 +81,6 @@ public class CourseController {
     public CommonResult courseLike(@PathVariable Long course_index,
                                    @RequestParam Long userId){
         return courseService.courseLike(userId, course_index);
-    }
-
-    @Operation(summary = "(공통) 코스 검색", description = "코스 검색 API 입니다. ")
-    @PostMapping()
-    public CommonResult searchCourse(String search){
-        return courseService.searchCourse(search);
     }
 
 }

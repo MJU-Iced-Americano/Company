@@ -8,6 +8,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface CourseRepositoryCustom {
-    Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable);
+    Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable, String search);
     Page<AdminReadCoursesDto> readAdminCourseList(String state, String order, Pageable pageable);
 }

@@ -41,11 +41,12 @@ public class CourseServiceImpl implements CourseService{
      * @param order
      * @param skill
      * @param pageable
+     * @param search
      * @return
      */
     @Override
-    public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable){
-        Page<CoursesReadDto> result = courseRepository.readCourseList(category, order, skill, pageable);
+    public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable, String search){
+        Page<CoursesReadDto> result = courseRepository.readCourseList(category, order, skill, pageable, search);
         result.forEach(readDto -> readDto.updateUrl(readDto.getCourseTitlePhotoUrl()));  // key를 url로 변경
         return responseService.getSingleResult(result);
     }
@@ -93,6 +94,10 @@ public class CourseServiceImpl implements CourseService{
         return responseService.getSingleResult(courseReadDto);
     }
 
+    /** 장바구니 추가
+     * @param course_index
+     * @param userId
+     */
     @Override
     public CommonResult addCart(Long userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
@@ -109,6 +114,10 @@ public class CourseServiceImpl implements CourseService{
         return responseService.getSuccessfulResult();
     }
 
+    /** 장바구니 삭제
+     * @param course_index
+     * @param userId
+     */
     @Override
     public CommonResult deleteCart(Long userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
@@ -122,6 +131,10 @@ public class CourseServiceImpl implements CourseService{
         return responseService.getSuccessfulResult();
     }
 
+    /** 코스 좋아요 추가, 삭제
+     * @param course_index
+     * @param userId
+     */
     @Override
     public CommonResult courseLike(Long userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
@@ -135,11 +148,6 @@ public class CourseServiceImpl implements CourseService{
             courseLikeRepository.save(CourseLike.of(course, user));
         }
         return responseService.getSuccessfulResult();
-    }
-
-    @Override
-    public CommonResult searchCourse(String search) {
-        return null;
     }
 
 }
