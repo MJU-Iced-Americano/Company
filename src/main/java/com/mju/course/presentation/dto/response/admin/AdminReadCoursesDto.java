@@ -34,7 +34,7 @@ public class AdminReadCoursesDto {
     private String courseName;
 
     @Schema(description = "가격", defaultValue = "100000")
-    private String price;
+    private Long price;
 
     @Schema(description = "코스 시간")
     private int courseTime;

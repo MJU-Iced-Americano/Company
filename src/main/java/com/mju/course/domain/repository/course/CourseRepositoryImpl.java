@@ -1,6 +1,7 @@
 package com.mju.course.domain.repository.course;
 
 import com.mju.course.domain.model.Course;
+import com.mju.course.domain.model.QCourseLike;
 import com.querydsl.core.types.Projections;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -33,9 +35,9 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skillList, Pageable pageable) {
+    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skillList, Pageable pageable, String search) {
         QCourse course = QCourse.course;
-        QSkill skill = QSkill.skill1;
+        QCourseLike like = QCourseLike.courseLike;
 
         // Query 객체 생성
         JPQLQuery<CoursesReadDto> query = queryFactory
@@ -47,7 +49,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                         course.difficulty,
                         course.courseTitlePhotoKey))
                 .from(course)
-                .leftJoin(course.skillList, skill)
+                .leftJoin(course.courseLikeList, like)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -59,14 +61,24 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
 
         // if order가 존재한다면
         if(order != null && !order.isEmpty()){
-            OrderSpecifier<?> orderSpecifier = getOrderByExpression(order, course);
-            query.orderBy(orderSpecifier);
+            if(order.equals("likeSum")){
+                query.groupBy(course);
+                query.orderBy(like.count().desc().nullsLast());
+            }else{
+                OrderSpecifier<?> orderSpecifier = getOrderByExpression(order, course);
+                query.orderBy(orderSpecifier);
+            }
         }
 
         // if skill이 존재한다면
         if (skillList != null && !skillList.isEmpty()) {
             BooleanExpression skillPredicate = course.skillList.any().skill.in(skillList);
             query.where(skillPredicate);
+        }
+
+        // if search가 존재한다면
+        if(search != null && !search.isEmpty()){
+            query.where(course.courseName.containsIgnoreCase(search));
         }
 
         // Query 실행

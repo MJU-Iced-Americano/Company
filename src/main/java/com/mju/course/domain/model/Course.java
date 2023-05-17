@@ -29,7 +29,7 @@ public class Course extends BaseTimeEntity {
     private String courseName;
 
     @Column(name = "price")
-    private String price;
+    private Long price;
 
     @Column(name = "course_description")
     private String courseDescription;
@@ -66,7 +66,7 @@ public class Course extends BaseTimeEntity {
     private List<CourseLike> courseLikeList = new ArrayList<>();
 
     @Builder
-    public Course(String category, String courseName, String price, String courseDescription,
+    public Course(String category, String courseName, Long price, String courseDescription,
                   int difficulty, int courseTime, Long hits, CourseState status){
         this.category = category;
         this.courseName = courseName;
@@ -114,7 +114,7 @@ public class Course extends BaseTimeEntity {
         this.courseName = courseName;
     }
 
-    public void updatePrice(String price){
+    public void updatePrice(Long price){
         this.price = price;
     }
 

@@ -28,24 +28,32 @@ public class CourseController {
     private final CourseService courseService;
     private final UserServiceImpl userService;
 
-    // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 좋아요 높은 순, 리뷰 많은 순
+    // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 리뷰 많은 순
     @Operation(summary = "목록 보기", description = " order : 최신순 (createdAt), 난이도 순 (difficulty), 조회 수 높은 순 (hits)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공하였습니다.", content = @Content(schema = @Schema(implementation = CoursesReadDto.class))),
             @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
     })
     @Parameters({
-            @Parameter(name = "order", description = "생성일(createdAt - 기본값), 난이도 순 (difficulty), 조회 수 높은 순 (hits)", required = false),
+            @Parameter(name = "order", description = "생성일(createdAt - 기본값), 난이도 순 (difficulty), 조회 수 높은 순 (hits), 좋아요 수(likeSum)", required = false),
             @Parameter(name = "skill", description = "코스 스킬 (Java, Programming)", required = false),
-            @Parameter(name = "category", description = "코스 카테고리", required = false)
+            @Parameter(name = "category", description = "코스 카테고리", required = false),
+            @Parameter(name = "search", description = "검색어", required = false)
     })
     @GetMapping()
     public CommonResult readCourseList(@RequestParam(value = "category", required = false) String category,
                                        @RequestParam(value = "order", required = false, defaultValue = "createdAt") String order,
                                        @RequestParam(value = "skill", required = false) List<String> skill,
+                                       @RequestParam(value = "search", required = false) String search,
                                        Pageable pageable) {
-        return courseService.readCourseList(category, order, skill, pageable);
+        return courseService.readCourseList(category, order, skill, pageable, search);
     }
+
+    // 검색어 하나 삭제
+
+
+    // 검색어 전체 삭제
+
 
     @Operation(summary = "(공통) 코스 조회", description = "코스 조회 API 입니다. ")
     @ApiResponses({
@@ -55,8 +63,9 @@ public class CourseController {
     })
     @Parameter(name = "course_index", description = "코스 인덱스", required = true)
     @GetMapping("/{course_index}")
-    public CommonResult readCourse(@PathVariable Long course_index) {
-        return courseService.readCourse(course_index);
+    public CommonResult readCourse(@PathVariable Long course_index,
+                                   @RequestParam(required = false) Long userId) {
+        return courseService.readCourse(course_index, userId);
     }
 
     @Operation(summary = "(공통) 코스 장바구니 추가", description = "코스 장바구니 추가 API 입니다. ")
@@ -78,12 +87,6 @@ public class CourseController {
     public CommonResult courseLike(@PathVariable Long course_index,
                                    @RequestParam Long userId){
         return courseService.courseLike(userId, course_index);
-    }
-
-    @Operation(summary = "(공통) 코스 검색", description = "코스 검색 API 입니다. ")
-    @PostMapping()
-    public CommonResult searchCourse(String search){
-        return courseService.searchCourse(search);
     }
 
 }

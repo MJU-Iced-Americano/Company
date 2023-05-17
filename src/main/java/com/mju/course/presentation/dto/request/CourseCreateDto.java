@@ -22,7 +22,7 @@ public class CourseCreateDto {
     private String courseName;
 
     @Schema(description = "가격", defaultValue = "100000")
-    private String price;
+    private Long price;
 
     @Schema(description = "코스 설명", defaultValue = "자바 기초 강의입니다.")
     @NotNull @NotBlank
@@ -39,7 +39,7 @@ public class CourseCreateDto {
     private ArrayList<CurriculumCreateDto> curriculumCreateDtos;
 
     @Builder
-    public CourseCreateDto(String category, String courseName, String price, String courseDescription, int difficulty){
+    public CourseCreateDto(String category, String courseName, Long price, String courseDescription, int difficulty){
         this.category = category;
         this.courseName = courseName;
         this.price = price;

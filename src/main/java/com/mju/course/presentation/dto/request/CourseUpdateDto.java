@@ -14,7 +14,7 @@ public class CourseUpdateDto {
     // 코스
     private String category;
     private String courseName;
-    private String price;
+    private Long price;
     private String courseDescription;
     private int difficulty;
 

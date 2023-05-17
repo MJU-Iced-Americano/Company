@@ -17,7 +17,7 @@ public class CoursesReadDto {
     @Schema(description = "코스 이름", defaultValue = "자바 기초")
     private String courseName;
     @Schema(description = "가격", defaultValue = "100000")
-    private String price;
+    private Long price;
     @Schema(description = "난이도", defaultValue = "2")
     private int difficulty;
     @Schema(description = "코스 기본 사진 URL ")
