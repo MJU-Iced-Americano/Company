@@ -42,7 +42,13 @@ public enum ExceptionList {
     // 유저
     EMPTY_USER(-5051, "유저 정보를 입력해 주세요."),
     NOT_EXISTENT_USER(-5052, "존재하지 않는 유저입니다. 다시 입력해주세요."),
-    NOT_ACCESS_USER(-5053, "접근할 수 있는 유저 타입이 아닙니다.");
+    NOT_ACCESS_USER(-5053, "접근할 수 있는 유저 타입이 아닙니다."),
+
+    // 코스 - 장바구니, 좋아요
+    EXISTENT_CART(-5061, "이미 장바구니 안에 존재합니다."),
+    NOT_EXISTENT_CART(-5062, "존재하지 않는 장바구니 정보입니다."),
+    EXISTENT_LIKE(-5063, "이미 좋아요를 눌렀습니다."),
+    NOT_EXISTENT_LIKE(-5064, "존재하지 않는 좋아요 정보입니다.");
 
     private final int code;
     private final String message;

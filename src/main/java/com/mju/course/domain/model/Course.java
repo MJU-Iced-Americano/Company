@@ -59,6 +59,12 @@ public class Course extends BaseTimeEntity {
     @OneToMany(mappedBy = "course")
     private List<Curriculum> curriculumList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course")
+    private List<Cart> cartList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course")
+    private List<CourseLike> courseLikeList = new ArrayList<>();
+
     @Builder
     public Course(String category, String courseName, String price, String courseDescription,
                   int difficulty, int courseTime, Long hits, CourseState status){

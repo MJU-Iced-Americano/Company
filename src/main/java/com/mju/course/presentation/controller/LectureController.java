@@ -29,6 +29,10 @@ public class LectureController {
         return lectureService.readLecture(lecture_index, tab);
     }
 
-    // 강의 질문
+    // 강의 질문 CRUD
+
+    // 강의 답변 CRUD
+
+    // 강의 질문 좋아요, 좋아요 취소
 
 }
