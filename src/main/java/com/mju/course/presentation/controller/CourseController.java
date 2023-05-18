@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/course")
+@RequestMapping("/course-service/course")
 @Tag(name = "Course controller", description = "코스 관련 api")
 public class CourseController {
 
@@ -29,7 +29,8 @@ public class CourseController {
     private final UserServiceImpl userService;
 
     // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 리뷰 많은 순
-    @Operation(summary = "목록 보기", description = " order : 최신순 (createdAt), 난이도 순 (difficulty), 조회 수 높은 순 (hits)")
+    // 유저 정보가 존재한다면 - 검색어 저장
+    @Operation(summary = "목록 보기", description = " order : 최신순 (createdAt), 난이도 순 (difficulty), 조회 수 높은 순 (hits), 좋아요 수(likeSum)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공하였습니다.", content = @Content(schema = @Schema(implementation = CoursesReadDto.class))),
             @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")

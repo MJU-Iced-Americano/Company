@@ -2,9 +2,8 @@ package com.mju.course.domain.model.lecture;
 
 import com.mju.course.domain.model.BaseTimeEntity;
 import com.mju.course.domain.model.User;
-import com.mju.course.domain.model.course.Course;
-import com.mju.course.domain.model.course.Skill;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,5 +37,20 @@ public class LectureQuestion extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "lectureQuestion")
     private List<LectureQuestionPhoto> lectureQuestionPhotoList = new ArrayList<>();
+
+    @Builder
+    public LectureQuestion(Lecture lecture, User user, String lectureQuestion) {
+        this.lecture = lecture;
+        this.user = user;
+        this.lectureQuestion = lectureQuestion;
+    }
+
+    public static LectureQuestion of(Lecture lecture, User user, String question){
+        return LectureQuestion.builder()
+                .lecture(lecture)
+                .user(user)
+                .lectureQuestion(question)
+                .build();
+    }
 
 }
