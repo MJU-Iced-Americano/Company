@@ -1,10 +1,10 @@
 package com.mju.course.application.course;
 
 import com.mju.course.application.S3UploaderService;
-import com.mju.course.domain.model.Course;
-import com.mju.course.domain.model.Curriculum;
-import com.mju.course.domain.model.Lecture;
-import com.mju.course.domain.model.Skill;
+import com.mju.course.domain.model.course.Course;
+import com.mju.course.domain.model.course.Curriculum;
+import com.mju.course.domain.model.lecture.Lecture;
+import com.mju.course.domain.model.course.Skill;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;

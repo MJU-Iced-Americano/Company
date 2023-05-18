@@ -1,5 +1,6 @@
-package com.mju.course.domain.model;
+package com.mju.course.domain.model.course;
 
+import com.mju.course.domain.model.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class CoursePhoto extends BaseTimeEntity{
+public class CoursePhoto extends BaseTimeEntity {
 
     @Id
     @Column(name = "course_photo_index")

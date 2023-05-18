@@ -1,15 +1,20 @@
-package com.mju.course.domain.model;
+package com.mju.course.domain.model.lecture;
 
+import com.mju.course.domain.model.BaseTimeEntity;
+import com.mju.course.domain.model.course.Curriculum;
 import com.mju.course.presentation.dto.request.LectureCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
-public class Lecture extends BaseTimeEntity{
+public class Lecture extends BaseTimeEntity {
 
     @Id
     @Column(name = "lecture_index")
@@ -37,6 +42,10 @@ public class Lecture extends BaseTimeEntity{
 
     @Column(name = "lecture_description")
     private String lectureDescription;
+
+    // 양방향 매핑
+    @OneToMany(mappedBy = "lecture")
+    private List<LectureQuestion> lectureQuestionList = new ArrayList<>();
 
     @Builder
     public Lecture(Curriculum curriculum, int lectureSequence, String lectureTitle,

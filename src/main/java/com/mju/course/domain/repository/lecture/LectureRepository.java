@@ -1,7 +1,7 @@
 package com.mju.course.domain.repository.lecture;
 
-import com.mju.course.domain.model.Curriculum;
-import com.mju.course.domain.model.Lecture;
+import com.mju.course.domain.model.course.Curriculum;
+import com.mju.course.domain.model.lecture.Lecture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

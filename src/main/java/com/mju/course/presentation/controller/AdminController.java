@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/admin")
+@RequestMapping("/admin-service/admin")
 @Tag(name = "Admin Controller", description = "운영자 용 코스, 강의 관리 api ")
 public class AdminController {
 

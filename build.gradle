@@ -69,6 +69,9 @@ dependencies {
 	// validation
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.6'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+
+	// 다중 파일 처리
+	implementation 'commons-io:commons-io:2.6'
 }
 
 dependencyManagement {

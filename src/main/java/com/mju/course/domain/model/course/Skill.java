@@ -1,5 +1,6 @@
-package com.mju.course.domain.model;
+package com.mju.course.domain.model.course;
 
+import com.mju.course.domain.model.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

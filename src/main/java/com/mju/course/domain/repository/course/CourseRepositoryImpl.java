@@ -1,12 +1,11 @@
 package com.mju.course.domain.repository.course;
 
-import com.mju.course.domain.model.Course;
-import com.mju.course.domain.model.QCourseLike;
+import com.mju.course.domain.model.course.Course;
+import com.mju.course.domain.model.course.QCourseLike;
 import com.querydsl.core.types.Projections;
 
 import java.util.ArrayList;
-import com.mju.course.domain.model.QCourse;
-import com.mju.course.domain.model.QSkill;
+import com.mju.course.domain.model.course.QCourse;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
@@ -14,7 +13,6 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.*;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;

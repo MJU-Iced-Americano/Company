@@ -1,5 +1,6 @@
-package com.mju.course.domain.model;
+package com.mju.course.domain.model.course;
 
+import com.mju.course.domain.model.BaseTimeEntity;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.presentation.dto.request.CourseCreateDto;
 import jakarta.persistence.*;

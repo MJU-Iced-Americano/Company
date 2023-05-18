@@ -1,5 +1,7 @@
-package com.mju.course.domain.model;
+package com.mju.course.domain.model.course;
 
+import com.mju.course.domain.model.BaseTimeEntity;
+import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.presentation.dto.request.CurriculumCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -12,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Curriculum extends BaseTimeEntity{
+public class Curriculum extends BaseTimeEntity {
 
     @Id
     @Column(name = "curriculum_index")
