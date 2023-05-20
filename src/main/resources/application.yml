@@ -5,7 +5,7 @@ spring:
   application:
     name: course-service
   datasource:
-    url : ENC(f+nQbE89XwJXwcdICBnb4dqOT6jsDDVCoyKDxwiqTp07ZpZOgMT77fEpejvR2yLAopXgb+v2vl3NjAUCfV/tdIbYRtqkXXbzbl78JyywFOAuMH3Lr1KH+zmoQBpxd64Y)
+    url : ENC(PYZN+VbEO+icePYws72hioMLiuXOTLonxLWZQeKTQm3LZUT1ZDepDcEUURZITu4tpNTSNenahsbxeoTD41LORnKmp2z2IW/Xtqg8AZTdLai8IX+g07aeIg==)
     username: ENC(BnLO0oWjeoSv1VGZdFv4mg==)
     password: ENC(wK7FZfkX0gPrFZyczIRB53EI7fyEcZdN)
     driver-class-name: com.mysql.cj.jdbc.Driver
