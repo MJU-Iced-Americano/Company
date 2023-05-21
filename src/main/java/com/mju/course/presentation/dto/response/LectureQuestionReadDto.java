@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LectureReadQuestionDto {
+public class LectureQuestionReadDto {
     @Schema(description = "강의 질문 index")
     private Long lectureQuestionIndex;
 
@@ -38,8 +38,8 @@ public class LectureReadQuestionDto {
     @Schema(description = "답변 수")
     private long answerSum;
 
-    public static LectureReadQuestionDto of(LectureQuestion lectureQuestion) {
-        return LectureReadQuestionDto.builder()
+    public static LectureQuestionReadDto of(LectureQuestion lectureQuestion) {
+        return LectureQuestionReadDto.builder()
                 .lectureQuestionIndex(lectureQuestion.getId())
                 .lectureQuestionTitle(lectureQuestion.getLectureQuestionTitle())
                 .lectureQuestion(lectureQuestion.getLectureQuestion())
