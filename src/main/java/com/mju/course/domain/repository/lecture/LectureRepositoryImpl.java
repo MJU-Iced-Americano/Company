@@ -3,7 +3,7 @@ package com.mju.course.domain.repository.lecture;
 import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.domain.model.lecture.LectureQuestion;
 import com.mju.course.domain.model.lecture.QLectureQuestion;
-import com.mju.course.presentation.dto.response.LectureReadQuestionDto;
+import com.mju.course.presentation.dto.response.LectureQuestionReadDto;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,7 +24,7 @@ public class LectureRepositoryImpl implements LectureRepositoryCustom {
     }
 
     @Override
-    public Page<LectureReadQuestionDto> readQuestions(Lecture lecture, Pageable pageable) {
+    public Page<LectureQuestionReadDto> readQuestions(Lecture lecture, Pageable pageable) {
         QLectureQuestion lectureQuestion = QLectureQuestion.lectureQuestion1;
 
         JPQLQuery<LectureQuestion> query = queryFactory.selectFrom(lectureQuestion)
@@ -34,9 +34,9 @@ public class LectureRepositoryImpl implements LectureRepositoryCustom {
 
         List<LectureQuestion> lectureQuestionList = query.fetch();
 
-        List<LectureReadQuestionDto> content = new ArrayList<>();
+        List<LectureQuestionReadDto> content = new ArrayList<>();
         lectureQuestionList.forEach(s->{
-            content.add(LectureReadQuestionDto.of(s));
+            content.add(LectureQuestionReadDto.of(s));
         });
 
         JPAQuery<LectureQuestion> countQuery = queryFactory.selectFrom(lectureQuestion);

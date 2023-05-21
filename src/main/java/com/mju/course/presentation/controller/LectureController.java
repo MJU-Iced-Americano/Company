@@ -72,9 +72,6 @@ public class LectureController {
         return lectureService.deleteQuestion(question_index);
     }
 
-    // 강의 답변 CUD
-
-
     // 강의 질문 북마크, 북마크 취소
     @Operation(summary = "강의 질문 북마크, 북마크 취소", description = "강의 질문 북마크, 북마크 취소 API 입니다. ")
     @GetMapping("/{question_index}/bookmark")
@@ -82,5 +79,14 @@ public class LectureController {
                                                 @RequestParam Long userId){
         return lectureService.lectureQuestionBookmark(question_index,userId);
     }
+
+//    // 강의 답변 CUD
+//    @Operation(summary = "강의 답변 작성하기", description = "강의 답변 작성하기 API 입니다. ")
+//    @PostMapping("/{question_index}/answer")
+//    public CommonResult createAnswer(@PathVariable Long question_index,
+//                                       @RequestPart(value="images", required=false) List<MultipartFile> images,
+//                                       @RequestPart(value="lectureQuestionDto") @Validated LectureQuestionCreateDto lectureQuestionCreateDto){
+//        return lectureService.createAnswer(question_index, images, lectureQuestionCreateDto);
+//    }
 
 }

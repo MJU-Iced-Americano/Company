@@ -12,8 +12,8 @@ import com.mju.course.domain.repository.lecture.*;
 import com.mju.course.domain.service.LectureDomainService;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.LectureQuestionCreateDto;
-import com.mju.course.presentation.dto.request.LectureReadAnswerDto;
-import com.mju.course.presentation.dto.request.LectureReadQAndADto;
+import com.mju.course.presentation.dto.response.LectureAnswerReadDto;
+import com.mju.course.presentation.dto.response.LectureQAndAReadDto;
 import com.mju.course.presentation.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,20 +84,20 @@ public class LectureServiceImpl implements LectureService{
         lectureQuestionRepository.save(lectureQuestion);
 
         // 질문 dto
-        LectureReadQuestionDto lectureReadQuestionDto = LectureReadQuestionDto.of(lectureQuestion);
+        LectureQuestionReadDto lectureQuestionReadDto = LectureQuestionReadDto.of(lectureQuestion);
 
         // 답변들
-        List<LectureReadAnswerDto> list = new ArrayList<>();
+        List<LectureAnswerReadDto> list = new ArrayList<>();
         if(lectureQuestion.getLectureAnswerList() != null && lectureQuestion.getLectureAnswerList().size() != 0){
             lectureQuestion.getLectureAnswerList()
                     .forEach(s ->{
-                        list.add(LectureReadAnswerDto.of(s));
+                        list.add(LectureAnswerReadDto.of(s));
                     });
         }
 
-        return responseService.getSingleResult(LectureReadQAndADto.builder()
-                        .lectureReadQuestionDto(lectureReadQuestionDto)
-                        .lectureReadAnswerDtos(list)
+        return responseService.getSingleResult(LectureQAndAReadDto.builder()
+                        .lectureQuestionReadDto(lectureQuestionReadDto)
+                        .lectureAnswerReadDtos(list)
                 .build());
     }
 
@@ -109,7 +109,7 @@ public class LectureServiceImpl implements LectureService{
     public CommonResult readQuestions(Long lecture_index, Pageable pageable) {
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
-        Page<LectureReadQuestionDto> result = lectureRepository.readQuestions(lecture, pageable);
+        Page<LectureQuestionReadDto> result = lectureRepository.readQuestions(lecture, pageable);
         return responseService.getSingleResult(result);
     }
 

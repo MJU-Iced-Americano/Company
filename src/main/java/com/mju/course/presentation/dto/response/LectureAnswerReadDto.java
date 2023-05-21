@@ -1,4 +1,4 @@
-package com.mju.course.presentation.dto.request;
+package com.mju.course.presentation.dto.response;
 
 import com.mju.course.domain.model.lecture.LectureAnswer;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LectureReadAnswerDto {
+public class LectureAnswerReadDto {
     @Schema(description = "질문 답변 index")
     private Long lectureAnswerIndex;
 
@@ -26,8 +26,8 @@ public class LectureReadAnswerDto {
     @Schema(description = "답변 시간")
     private LocalDateTime createdAt;
 
-    public static LectureReadAnswerDto of(LectureAnswer lectureAnswer) {
-        return LectureReadAnswerDto.builder()
+    public static LectureAnswerReadDto of(LectureAnswer lectureAnswer) {
+        return LectureAnswerReadDto.builder()
                 .lectureAnswerIndex(lectureAnswer.getId())
                 .username("답변자")
                 .lectureAnswer(lectureAnswer.getLectureAnswer())
