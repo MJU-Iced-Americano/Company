@@ -9,6 +9,7 @@ import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.course.CurriculumRepository;
 import com.mju.course.domain.repository.lecture.LectureRepository;
+import com.mju.course.domain.service.LectureDomainService;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,12 +34,18 @@ public class AdminServiceImpl {
 
     private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
+    private final LectureDomainService lectureDomainService;
 
     public CommonResult readAdminCourseList(String state, String order, Pageable pageable) {
         Page<AdminReadCoursesDto> result = courseRepository.readAdminCourseList(state, order, pageable);
         return responseService.getSingleResult(result);
     }
 
+    /**
+     * 코스 삭제하기
+     * @param course_index
+     * */
+    @Transactional
     public CommonResult deleteCourse(Long course_index) {
         // 코스
         Course findCourse = courseRepository.findById(course_index)
@@ -50,10 +58,9 @@ public class AdminServiceImpl {
         for(int i=0; i<findCurriculum.size(); i++){
             List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get(i));
             if(lectures.size() != 0){
-                for(int j=0; j< lectures.size(); j++){
-                    s3UploaderService.deleteS3File(lectures.get(i).getLectureKey());
-                    lectureRepository.delete(lectures.get(i));
-                }
+                lectures.forEach(lecture -> {
+                    lectureDomainService.deleteLecture(lecture.getId());
+                });
             }
         }
 

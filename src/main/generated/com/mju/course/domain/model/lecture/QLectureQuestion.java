@@ -27,6 +27,8 @@ public class QLectureQuestion extends EntityPathBase<LectureQuestion> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
+    public final NumberPath<Long> hits = createNumber("hits", Long.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QLecture lecture;
@@ -35,7 +37,11 @@ public class QLectureQuestion extends EntityPathBase<LectureQuestion> {
 
     public final StringPath lectureQuestion = createString("lectureQuestion");
 
+    public final ListPath<LectureQuestionBookmark, QLectureQuestionBookmark> lectureQuestionBookmarks = this.<LectureQuestionBookmark, QLectureQuestionBookmark>createList("lectureQuestionBookmarks", LectureQuestionBookmark.class, QLectureQuestionBookmark.class, PathInits.DIRECT2);
+
     public final ListPath<LectureQuestionPhoto, QLectureQuestionPhoto> lectureQuestionPhotoList = this.<LectureQuestionPhoto, QLectureQuestionPhoto>createList("lectureQuestionPhotoList", LectureQuestionPhoto.class, QLectureQuestionPhoto.class, PathInits.DIRECT2);
+
+    public final StringPath lectureQuestionTitle = createString("lectureQuestionTitle");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

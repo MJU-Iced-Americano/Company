@@ -17,13 +17,13 @@ spring:
       hibernate:
         format_sql:true
 
-#  profiles:
-#    active: local
-#  environment: "local"
-#  config:
-#    activate:
-#      on-profile: "local"
-#  file-dir: /src/main/resources/static/files/
+  #  profiles:
+  #    active: local
+  #  environment: "local"
+  #  config:
+  #    activate:
+  #      on-profile: "local"
+  #  file-dir: /src/main/resources/static/files/
 
   servlet:
     multipart:
@@ -68,4 +68,3 @@ cloud:
       auto: false
 
 logging.level.com.amazonaws.util.EC2MetadataUtils: error
-

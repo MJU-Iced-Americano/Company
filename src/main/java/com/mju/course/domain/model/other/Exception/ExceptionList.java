@@ -48,7 +48,13 @@ public enum ExceptionList {
     EXISTENT_CART(-5061, "이미 장바구니 안에 존재합니다."),
     NOT_EXISTENT_CART(-5062, "존재하지 않는 장바구니 정보입니다."),
     EXISTENT_LIKE(-5063, "이미 좋아요를 눌렀습니다."),
-    NOT_EXISTENT_LIKE(-5064, "존재하지 않는 좋아요 정보입니다.");
+    NOT_EXISTENT_LIKE(-5064, "존재하지 않는 좋아요 정보입니다."),
+
+    // 강의 질문
+    NOT_EXISTENT_LECTURE_QUESTION(-5071, "존재하지 않는 강의 질문입니다."),
+
+    // 강의 질문 답변
+    NOT_EXISTENT_LECTURE_ANSWER(-5081, "존재하지 않는 강의 질문 답변입니다.");
 
     private final int code;
     private final String message;
