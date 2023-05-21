@@ -17,5 +17,5 @@ public interface LectureService {
     CommonResult updateQuestion(Long question_index);
     CommonResult deleteQuestion(Long question_index);
 
-
+    CommonResult lectureQuestionBookmark(Long question_index, Long userId);
 }

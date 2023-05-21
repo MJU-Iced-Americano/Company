@@ -59,12 +59,12 @@ public class LectureController {
         return lectureService.createQuestion(lecture_index, images, lectureQuestionCreateDto);
     }
 
-    // 개발 필요
-    @Operation(summary = "강의 질문 수정하기", description = "강의 질문 수정하기 API 입니다. ")
-    @PutMapping("/question/{question_index}")
-    public CommonResult updateQuestion(@PathVariable Long question_index){
-        return lectureService.updateQuestion(question_index);
-    }
+//    // 개발 필요
+//    @Operation(summary = "강의 질문 수정하기", description = "강의 질문 수정하기 API 입니다. ")
+//    @PutMapping("/question/{question_index}")
+//    public CommonResult updateQuestion(@PathVariable Long question_index){
+//        return lectureService.updateQuestion(question_index);
+//    }
 
     @Operation(summary = "강의 질문 삭제하기", description = "강의 질문 삭제하기 API 입니다. ")
     @DeleteMapping("/question/{question_index}")
@@ -76,5 +76,11 @@ public class LectureController {
 
 
     // 강의 질문 북마크, 북마크 취소
+    @Operation(summary = "강의 질문 북마크, 북마크 취소", description = "강의 질문 북마크, 북마크 취소 API 입니다. ")
+    @GetMapping("/{question_index}/bookmark")
+    public CommonResult lectureQuestionBookmark(@PathVariable Long question_index,
+                                                @RequestParam Long userId){
+        return lectureService.lectureQuestionBookmark(question_index,userId);
+    }
 
 }

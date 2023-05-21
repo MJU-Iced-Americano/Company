@@ -164,4 +164,26 @@ public class LectureServiceImpl implements LectureService{
         return responseService.getSuccessfulResult();
     }
 
+    /** 강의 질문 북마크, 북마크 취소
+     * @param question_index
+     * @param userId
+     */
+    @Override
+    @Transactional
+    public CommonResult lectureQuestionBookmark(Long question_index, Long userId) {
+        LectureQuestion lectureQuestion = lectureQuestionRepository.findById(question_index)
+                .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_QUESTION));
+        User user = userRepository.findById(userId).get();
+
+        Optional<LectureQuestionBookmark> bookmark = lectureQuestionBookmarkRepository.findByLectureQuestionAndUser(lectureQuestion, user);
+        if(bookmark.isPresent()){
+            lectureQuestionBookmarkRepository.delete(bookmark.get());
+            return responseService.getSingleResult("북마크가 취소되었습니다.");
+        }else{
+            lectureQuestionBookmarkRepository.save(LectureQuestionBookmark.of(lectureQuestion, user));
+            return responseService.getSingleResult("북마크되었습니다.");
+        }
+
+    }
+
 }
