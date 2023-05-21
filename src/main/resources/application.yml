@@ -5,7 +5,7 @@ spring:
   application:
     name: course-service
   datasource:
-    url : ENC(f+nQbE89XwJXwcdICBnb4dqOT6jsDDVCoyKDxwiqTp07ZpZOgMT77fEpejvR2yLAopXgb+v2vl3NjAUCfV/tdIbYRtqkXXbzbl78JyywFOAuMH3Lr1KH+zmoQBpxd64Y)
+    url : ENC(PYZN+VbEO+icePYws72hioMLiuXOTLonxLWZQeKTQm3LZUT1ZDepDcEUURZITu4tpNTSNenahsbxeoTD41LORnKmp2z2IW/Xtqg8AZTdLai8IX+g07aeIg==)
     username: ENC(BnLO0oWjeoSv1VGZdFv4mg==)
     password: ENC(wK7FZfkX0gPrFZyczIRB53EI7fyEcZdN)
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -17,13 +17,13 @@ spring:
       hibernate:
         format_sql:true
 
-#  profiles:
-#    active: local
-#  environment: "local"
-#  config:
-#    activate:
-#      on-profile: "local"
-#  file-dir: /src/main/resources/static/files/
+  #  profiles:
+  #    active: local
+  #  environment: "local"
+  #  config:
+  #    activate:
+  #      on-profile: "local"
+  #  file-dir: /src/main/resources/static/files/
 
   servlet:
     multipart:
@@ -47,7 +47,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://13.124.61.210:8761/eureka
 
 management:
   endpoint:
@@ -68,4 +68,3 @@ cloud:
       auto: false
 
 logging.level.com.amazonaws.util.EC2MetadataUtils: error
-

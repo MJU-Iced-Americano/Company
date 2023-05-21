@@ -42,7 +42,6 @@ public class S3UploaderService {
     private String upload(File uploadFile, String dirName, String basicFileName) {
 
 //        String fileName = dirName + "/" + UUID.randomUUID().toString() + "-" + uploadFile.getName(); // s3에 저장된 파일 이름
-        LocalDate now = LocalDate.now();
         String fileName = dirName + "/" + basicFileName;
         String uploadImageUrl = putS3(uploadFile, fileName);
 
@@ -91,8 +90,10 @@ public class S3UploaderService {
         try{
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, objectKey));
         }catch (AmazonServiceException e){
+            log.error("{} {} {} 출력", String.valueOf(e.getStatusCode()), String.valueOf(e.getErrorCode()), e.getMessage());
             throw new CourseException(ERROR_S3_OBJECT_DELETE);
         }catch (SdkClientException e){
+            log.error("{} {} 출력", e.getMessage(), e.getLocalizedMessage());
             throw new CourseException(ERROR_S3_OBJECT_DELETE);
         }
     }

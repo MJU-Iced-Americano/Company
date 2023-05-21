@@ -60,7 +60,7 @@ public class LectureManageController {
             @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
     })
     @Parameters({
-            @Parameter(name = "course_index", description = "코스 인덱스", required = true),
+            @Parameter(name = "lecture_index", description = "강의 인덱스", required = true),
             @Parameter(name = "lectureUpdateDto", description = "강의 수정 정보를 담은 객체", required = true)
     })
     @PutMapping("/edit/{lecture_index}")
@@ -76,7 +76,7 @@ public class LectureManageController {
             @ApiResponse(responseCode = "-5031", description = "s3 객체 삭제를 실패했습니다.", content = @Content(schema = @Schema(implementation = CommonResult.class))),
             @ApiResponse(responseCode = "-9999", description = "알 수 없는 오류가 발생하였습니다.")
     })
-    @Parameter(name = "course_index", description = "코스 인덱스", required = true)
+    @Parameter(name = "lecture_index", description = "강의 인덱스", required = true)
     @DeleteMapping("/delete/{lecture_index}") //s3 관련 추가
     public CommonResult deleteLecture(@PathVariable Long lecture_index){
         return lectureManageService.deleteLecture(lecture_index);

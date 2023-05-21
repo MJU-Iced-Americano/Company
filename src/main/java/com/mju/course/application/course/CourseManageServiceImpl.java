@@ -252,7 +252,13 @@ public class CourseManageServiceImpl implements CourseManageService {
         }
     }
 
+    /**
+     * 커리큘럼 삭제
+     * @param course_index
+     * @param chapter
+     * */
     @Override
+    @Transactional
     public CommonResult deleteCurriculum(Long course_index, int chapter) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
