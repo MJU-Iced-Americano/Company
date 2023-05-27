@@ -2,6 +2,7 @@ package com.mju.course.domain.service;
 
 import com.mju.course.application.S3UploaderService;
 import com.mju.course.domain.model.lecture.Lecture;
+import com.mju.course.domain.model.lecture.LectureAnswer;
 import com.mju.course.domain.model.lecture.LectureQuestion;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.repository.UserRepository;
@@ -36,7 +37,6 @@ public class LectureDomainService {
      * 강의 삭제
      * @param lecture_index
      * */
-    @Transactional
     public void deleteLecture(Long lecture_index){
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
@@ -56,7 +56,6 @@ public class LectureDomainService {
     /** 강의 질문 삭제
      * @param question_index
      */
-    @Transactional
     public void deleteQuestion(Long question_index){
         LectureQuestion lectureQuestion = lectureQuestionRepository.findById(question_index)
                 .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_QUESTION));
@@ -77,16 +76,25 @@ public class LectureDomainService {
         if(lectureQuestion.getLectureAnswerList().size() != 0){
             lectureQuestion.getLectureAnswerList()
                     .forEach(lectureAnswer -> {
-                        // 강의 답변 관련 사진 삭제
-                        lectureAnswer.getLectureAnswerPhotoList()
-                                .forEach(lectureAnswerPhoto -> {
-                                    s3UploaderService.deleteS3File(lectureAnswerPhoto.getLectureAnswerPhotoKey());
-                                    lectureAnswerPhotoRepository.delete(lectureAnswerPhoto);
-                                });
-                        // 강의 답변 삭제
-                        lectureAnswerRepository.delete(lectureAnswer);
+                        deleteAnswer(lectureAnswer.getId());
                     });
         }
+    }
+
+    /** 강의 질문 답변 삭제
+     * @param lecture_answer_index
+     */
+    public void deleteAnswer(Long lecture_answer_index) {
+        LectureAnswer lectureAnswer = lectureAnswerRepository.findById(lecture_answer_index)
+                .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_ANSWER));
+        // 강의 답변 관련 사진 삭제
+        lectureAnswer.getLectureAnswerPhotoList()
+                .forEach(content->{
+                    s3UploaderService.deleteS3File(content.getLectureAnswerPhotoKey());
+                    lectureAnswerPhotoRepository.delete(content);
+                });
+        // 강의 답변 삭제
+        lectureAnswerRepository.delete(lectureAnswer);
     }
 
 }

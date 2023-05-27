@@ -69,6 +69,8 @@ dependencies {
 
 	// 다중 파일 처리
 	implementation 'commons-io:commons-io:2.6'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 }
 
 dependencyManagement {
