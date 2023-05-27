@@ -11,6 +11,7 @@ import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.lecture.*;
 import com.mju.course.domain.service.LectureDomainService;
 import com.mju.course.domain.service.ResponseService;
+import com.mju.course.presentation.dto.request.AnswerCreateDto;
 import com.mju.course.presentation.dto.request.LectureQuestionCreateDto;
 import com.mju.course.presentation.dto.response.LectureAnswerReadDto;
 import com.mju.course.presentation.dto.response.LectureQAndAReadDto;
@@ -113,6 +114,16 @@ public class LectureServiceImpl implements LectureService{
         return responseService.getSingleResult(result);
     }
 
+    /** 강의 답변 하나보기
+     * @param lecture_answer_index
+     */
+    @Override
+    public CommonResult readAnswer(Long lecture_answer_index) {
+        LectureAnswer lectureAnswer = lectureAnswerRepository.findById(lecture_answer_index)
+                .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_ANSWER));
+        return responseService.getSingleResult(LectureAnswerReadDto.of(lectureAnswer));
+    }
+
     /** 강의 질문 작성하기
      * @param lecture_index
      * @param images
@@ -184,6 +195,48 @@ public class LectureServiceImpl implements LectureService{
             return responseService.getSingleResult("북마크되었습니다.");
         }
 
+    }
+
+    /** 강의 질문 답변 달기
+     * @param question_index
+     * @param images
+     * @param answerCreateDto
+     */
+    @Override
+    @Transactional
+    public CommonResult createAnswer(Long question_index, List<MultipartFile> images, AnswerCreateDto answerCreateDto) {
+        LectureQuestion lectureQuestion = lectureQuestionRepository.findById(question_index)
+                .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_QUESTION));
+        User user = userRepository.findById(answerCreateDto.getUserId()).get();
+
+        LectureAnswer lectureAnswer = LectureAnswer.of(lectureQuestion, user, answerCreateDto.getAnswer());
+        LectureAnswer saveAnswer = lectureAnswerRepository.save(lectureAnswer);
+
+        // 사진 등록
+        if(images != null){
+            images.forEach(s->{
+                try {
+                    String basicFileName = UUID.randomUUID().toString();
+                    String dirName = "answer/" + String.valueOf(lectureQuestion.getId()) +"/"+String.valueOf(saveAnswer.getId());
+                    String questionPhotoKey = s3UploaderService.upload(s, dirName, basicFileName);
+                    LectureAnswerPhoto lectureAnswerPhoto = LectureAnswerPhoto.of(saveAnswer, questionPhotoKey);
+                    lectureAnswerPhotoRepository.save(lectureAnswerPhoto);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        return responseService.getSuccessfulResult();
+    }
+
+    /** 강의 질문 답변 삭제
+     * @param lecture_answer_index
+     */
+    @Override
+    @Transactional
+    public CommonResult deleteAnswer(Long lecture_answer_index) {
+        lectureDomainService.deleteAnswer(lecture_answer_index);
+        return responseService.getSuccessfulResult();
     }
 
 }

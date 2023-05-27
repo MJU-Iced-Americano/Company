@@ -4,7 +4,7 @@ import com.mju.course.application.lecture.LectureService;
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.domain.model.enums.UserType;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.presentation.dto.request.LectureQuestionCreateDto;
+import com.mju.course.presentation.dto.request.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -50,7 +49,13 @@ public class LectureController {
         return lectureService.readQuestions(lecture_index, pageable);
     }
 
-    // 강의 질문 CUD
+    @Operation(summary = "강의 답변 하나보기", description = "강의 답변 하나보기 API 입니다. ")
+    @GetMapping("/answer/{lecture_answer_index}")
+    public CommonResult readAnswer(@PathVariable Long lecture_answer_index){
+        return lectureService.readAnswer(lecture_answer_index);
+    }
+
+    // 강의 질문 CD
     @Operation(summary = "강의 질문 작성하기", description = "강의 질문 작성하기 API 입니다. ")
     @PostMapping("/{lecture_index}/question")
     public CommonResult createQuestion(@PathVariable Long lecture_index,
@@ -59,7 +64,6 @@ public class LectureController {
         return lectureService.createQuestion(lecture_index, images, lectureQuestionCreateDto);
     }
 
-//    // 개발 필요
 //    @Operation(summary = "강의 질문 수정하기", description = "강의 질문 수정하기 API 입니다. ")
 //    @PutMapping("/question/{question_index}")
 //    public CommonResult updateQuestion(@PathVariable Long question_index){
@@ -80,13 +84,27 @@ public class LectureController {
         return lectureService.lectureQuestionBookmark(question_index,userId);
     }
 
-//    // 강의 답변 CUD
-//    @Operation(summary = "강의 답변 작성하기", description = "강의 답변 작성하기 API 입니다. ")
-//    @PostMapping("/{question_index}/answer")
-//    public CommonResult createAnswer(@PathVariable Long question_index,
-//                                       @RequestPart(value="images", required=false) List<MultipartFile> images,
-//                                       @RequestPart(value="lectureQuestionDto") @Validated LectureQuestionCreateDto lectureQuestionCreateDto){
-//        return lectureService.createAnswer(question_index, images, lectureQuestionCreateDto);
+    // 강의 답변 CD
+    @Operation(summary = "강의 답변 작성하기", description = "강의 답변 작성하기 API 입니다. ")
+    @PostMapping("/{question_index}/answer")
+    public CommonResult createAnswer(@PathVariable Long question_index,
+                                     @RequestPart(value="images", required=false) List<MultipartFile> images,
+                                     @RequestPart(value="answerCreateDto") AnswerCreateDto answerCreateDto){
+        return lectureService.createAnswer(question_index, images, answerCreateDto);
+    }
+
+//    @Operation(summary = "강의 답변 수정하기", description = "강의 답변 작성하기 API 입니다. ")
+//    @PutMapping("/answer/{lecture_answer_index}")
+//    public CommonResult updateAnswer(@PathVariable Long lecture_answer_index,
+//                                     @RequestPart(value="images", required=false) List<MultipartFile> images,
+//                                     @RequestPart(value="lectureAnswerCreateDto") @Validated LectureAnswerCreateDto lectureAnswerCreateDto){
+//        return lectureService.updateAnswer(lecture_answer_index, images, lectureAnswerCreateDto);
 //    }
+
+    @Operation(summary = "강의 답변 삭제하기", description = "강의 답변 삭제하기 API 입니다. ")
+    @DeleteMapping("/answer/{lecture_answer_index}")
+    public CommonResult deleteAnswer(@PathVariable Long lecture_answer_index){
+        return lectureService.deleteAnswer(lecture_answer_index);
+    }
 
 }
