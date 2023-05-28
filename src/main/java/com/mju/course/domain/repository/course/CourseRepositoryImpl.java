@@ -2,6 +2,8 @@ package com.mju.course.domain.repository.course;
 
 import com.mju.course.domain.model.course.Course;
 import com.mju.course.domain.model.course.QCourseLike;
+import com.mju.course.domain.model.course.QUserCourse;
+import com.mju.course.presentation.dto.response.*;
 import com.querydsl.core.types.Projections;
 
 import java.util.ArrayList;
@@ -134,6 +136,62 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     public static OrderSpecifier<?> getOrderByExpression(String orderTarget, QCourse course) {
         PathBuilder<?> orderPath = new PathBuilder<>(course.getType(), course.getMetadata());
         return new OrderSpecifier(Order.DESC, orderPath.get(orderTarget));
+    }
+
+    @Override
+    public List<RequestUserCourseDto> requestCourseList(Long userId) {
+        QCourse course = QCourse.course;
+        QUserCourse userCourse = QUserCourse.userCourse;
+
+        // Query 객체 생성
+        JPQLQuery<RequestUserCourseDto> query = queryFactory
+                .selectDistinct(Projections.constructor(RequestUserCourseDto.class,
+                        userCourse.id,
+                        course.category,
+                        course.courseName,
+                        course.price,
+                        course.difficulty,
+                        course.courseTitlePhotoKey,
+                        userCourse.createdAt))
+                .from(userCourse)
+                .join(userCourse.course, course)
+                .where(userCourse.user.id.in(userId));
+
+        // Query 실행
+        List<RequestUserCourseDto> results = query.fetch();
+
+        results.forEach(content->{
+            content.updateUrl(content.getCourseTitlePhotoUrl());
+        });
+        return results;
+    }
+
+    @Override
+    public List<RequestCourseLikeDto> requestCourseLike(Long userId) {
+        QCourse course = QCourse.course;
+        QCourseLike courseLike = QCourseLike.courseLike;
+
+        // Query 객체 생성
+        JPQLQuery<RequestCourseLikeDto> query = queryFactory
+                .selectDistinct(Projections.constructor(RequestCourseLikeDto.class,
+                        courseLike.id,
+                        course.category,
+                        course.courseName,
+                        course.price,
+                        course.difficulty,
+                        course.courseTitlePhotoKey,
+                        courseLike.createdAt))
+                .from(courseLike)
+                .join(courseLike.course, course)
+                .where(courseLike.user.id.in(userId));
+
+        // Query 실행
+        List<RequestCourseLikeDto> results = query.fetch();
+
+        results.forEach(content->{
+            content.updateUrl(content.getCourseTitlePhotoUrl());
+        });
+        return results;
     }
 
 }
