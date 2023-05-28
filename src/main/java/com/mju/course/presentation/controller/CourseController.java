@@ -90,4 +90,18 @@ public class CourseController {
         return courseService.courseLike(userId, course_index);
     }
 
+    @Operation(summary = "코스 수강 신청", description = "코스 수강 신청 API 입니다. ")
+    @GetMapping("/apply-course/{course_index}")
+    public CommonResult applyCourse(@PathVariable Long course_index,
+                                    @RequestParam Long userId){
+        return courseService.applyCourse(userId, course_index);
+    }
+
+    @Operation(summary = "코스 수강 취소", description = "코스 취소 API 입니다. ")
+    @GetMapping("/cancel-course/{user_course_index}")
+    public CommonResult cancelCourse(@PathVariable Long user_course_index,
+                                     @RequestParam Long userId){
+        return courseService.cancelCourse(userId, user_course_index);
+    }
+
 }

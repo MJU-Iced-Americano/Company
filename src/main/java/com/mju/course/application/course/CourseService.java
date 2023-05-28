@@ -12,4 +12,8 @@ public interface CourseService {
     CommonResult addCart(Long userId, Long course_index);
     CommonResult deleteCart(Long userId, Long course_index);
     CommonResult courseLike(Long userId, Long course_index);
+
+    CommonResult applyCourse(Long userId, Long course_index);
+    CommonResult cancelCourse(Long userId, Long user_course_index);
+
 }
