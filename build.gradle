@@ -70,7 +70,8 @@ dependencies {
 	// 다중 파일 처리
 	implementation 'commons-io:commons-io:2.6'
 
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	// Spring Cloud Netflix 라이브러리 추가
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.3'
 }
 
 dependencyManagement {
