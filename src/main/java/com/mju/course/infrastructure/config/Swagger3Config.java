@@ -17,7 +17,7 @@ public class Swagger3Config {
 
     @Bean
     public GroupedOpenApi chatOpenApi() {
-        String[] paths = {"/course-service/**","/lecture-service/**","/admin-service/**"};
+        String[] paths = {"/course-service/**","/lecture-service/**","/admin-service/**","/request/**"};
 
         return GroupedOpenApi.builder()
                 .group("SoftCoA API v1")
