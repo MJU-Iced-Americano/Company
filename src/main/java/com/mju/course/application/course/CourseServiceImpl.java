@@ -8,10 +8,7 @@ import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.UserRepository;
 import com.mju.course.domain.repository.course.*;
 import com.mju.course.domain.service.ResponseService;
-import com.mju.course.presentation.dto.response.CourseReadDto;
-import com.mju.course.presentation.dto.response.CoursesReadDto;
-import com.mju.course.presentation.dto.response.CurriculumReadDto;
-import com.mju.course.presentation.dto.response.LectureReadDto;
+import com.mju.course.presentation.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +32,7 @@ public class CourseServiceImpl implements CourseService{
     private final CourseLikeRepository courseLikeRepository;
     private final UserRepository userRepository;
     private final UserCourseRepository userCourseRepository;
+    private final SearchRepository searchRepository;
 
     private final ResponseService responseService;
 
@@ -45,12 +43,18 @@ public class CourseServiceImpl implements CourseService{
      * @param skill
      * @param pageable
      * @param search
+     * @param userId
      * @return
      */
     @Override
-    public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable, String search){
+    public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable, String search, Long userId){
+        if(userId != null && userId != 0 && search != null){
+            User user = userRepository.findById(userId).get();
+            searchRepository.save(Search.of(user, search));
+        }
         Page<CoursesReadDto> result = courseRepository.readCourseList(category, order, skill, pageable, search);
         result.forEach(readDto -> readDto.updateUrl(readDto.getCourseTitlePhotoUrl()));  // key를 url로 변경
+
         return responseService.getSingleResult(result);
     }
 
@@ -95,6 +99,56 @@ public class CourseServiceImpl implements CourseService{
         }
         
         return responseService.getSingleResult(courseReadDto);
+    }
+
+    /** 검색어 보기
+     * @param userId
+     */
+    @Override
+    public CommonResult readSearch(Long userId) {
+        List<SearchReadDto> searchReadDtos = new ArrayList<>();
+        if(userId != 0){
+            User user = userRepository.findById(userId).get();
+            List<Search> searchList = searchRepository.findByUser(user);
+            searchList.forEach(content->{
+                searchReadDtos.add(SearchReadDto.of(content));
+            });
+        }
+        return responseService.getSingleResult(searchReadDtos);
+    }
+
+    /** 검색어 하나 삭제
+     * @param search_index
+     * @param userId
+     */
+    @Override
+    public CommonResult deleteSearch(Long search_index, Long userId){
+        // 존재하지 않는 유저
+
+        // 존재하지 않는 검색어 입니다.
+        Search search = searchRepository.findById(search_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_USER_SEARCH));
+
+        // 유저가 일치하지 않습니다.
+        if(search.getId() != userId){
+            throw new CourseException(NOT_ACCESS_USER_SEARCH);
+        }
+        searchRepository.delete(search);
+
+        return responseService.getSuccessfulResult();
+    }
+
+    /** 검색어 전체 삭제
+     * @param userId
+     */
+    @Override
+    public CommonResult deleteSearchList(Long userId) {
+        User user = userRepository.findById(userId).get();
+        List<Search> searchList = searchRepository.findByUser(user);
+        searchList.forEach(search -> {
+            searchRepository.delete(search);
+        });
+        return responseService.getSuccessfulResult();
     }
 
     /** 장바구니 추가

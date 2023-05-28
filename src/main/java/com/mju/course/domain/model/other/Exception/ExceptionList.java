@@ -59,7 +59,11 @@ public enum ExceptionList {
 
     // 코스 수강신청
     NOT_EXISTENT_USER_COURSE(-5091, "존재하지 않는 수강신청입니다."),
-    NOT_ACCESS_USER_COURSE(-5092, "접근 불가능한 유저입니다.");
+    NOT_ACCESS_USER_COURSE(-5092, "접근 불가능한 유저입니다."),
+
+    // 검색
+    NOT_EXISTENT_USER_SEARCH(-6001, "존재하지 않는 검색입니다."),
+    NOT_ACCESS_USER_SEARCH(-6002, "접근 불가능한 유저입니다.");
 
     private final int code;
     private final String message;
