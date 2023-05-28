@@ -34,6 +34,7 @@ public class CourseServiceImpl implements CourseService{
     private final CartRepository cartRepository;
     private final CourseLikeRepository courseLikeRepository;
     private final UserRepository userRepository;
+    private final UserCourseRepository userCourseRepository;
 
     private final ResponseService responseService;
 
@@ -149,6 +150,43 @@ public class CourseServiceImpl implements CourseService{
         }else{
             courseLikeRepository.save(CourseLike.of(course, user));
         }
+        return responseService.getSuccessfulResult();
+    }
+
+    /** 코스 수강 신청
+     * @param course_index
+     * @param userId
+     */
+    @Override
+    public CommonResult applyCourse(Long userId, Long course_index) {
+        // 만약, 이미 수강 신청한 강좌라면 이미 수강신청한 강좌입니다란 정보 추출
+        Course course = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+        User user = userRepository.findById(userId).get();
+
+        Optional<UserCourse> checkUserCourse = userCourseRepository.findByUserAndCourse(user, course);
+        if(checkUserCourse.isPresent()){
+            throw new CourseException(ALREADY_APPLY_COURSE);
+        }
+
+        UserCourse userCourse = UserCourse.of(user, course);
+        userCourseRepository.save(userCourse);
+
+        return responseService.getSuccessfulResult();
+    }
+
+    /** 코스 수강 취소
+     * @param user_course_index
+     * @param userId
+     */
+    @Override
+    public CommonResult cancelCourse(Long userId, Long user_course_index) {
+        UserCourse userCourse = userCourseRepository.findById(user_course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_USER_COURSE));
+        if(userCourse.getUser().getId() != userId){
+            throw new CourseException(NOT_ACCESS_USER_COURSE);
+        }
+        userCourseRepository.delete(userCourse);
         return responseService.getSuccessfulResult();
     }
 

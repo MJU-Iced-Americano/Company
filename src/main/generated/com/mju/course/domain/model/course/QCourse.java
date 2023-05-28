@@ -58,6 +58,8 @@ public class QCourse extends EntityPathBase<Course> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
+    public final ListPath<UserCourse, QUserCourse> userCourseList = this.<UserCourse, QUserCourse>createList("userCourseList", UserCourse.class, QUserCourse.class, PathInits.DIRECT2);
+
     public QCourse(String variable) {
         super(Course.class, forVariable(variable));
     }

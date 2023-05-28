@@ -16,6 +16,7 @@ public enum ExceptionList {
     PLEASE_COURSE_DELETE_REASON(-5004, "코스 삭제 이유를 입력해주세요."),
     ALREADY_REQUEST_COURSE(-5005, "이미 등록 신청한 코스입니다."),
     DIFFERENT_LECTURE_SUM(-5006, "커리큘럼에 따른 강의가 등록되지 않았습니다. 다시 확인해 주세요."),
+    ALREADY_APPLY_COURSE(-5007, "이미 해당 유저가 신청한 코스입니다."),
 
     // 커리 큘럼
     NOT_EXISTENT_CURRICULUM(-5011, "존재 하지 않는 커리 쿨럼입니다."),
@@ -54,7 +55,11 @@ public enum ExceptionList {
     NOT_EXISTENT_LECTURE_QUESTION(-5071, "존재하지 않는 강의 질문입니다."),
 
     // 강의 질문 답변
-    NOT_EXISTENT_LECTURE_ANSWER(-5081, "존재하지 않는 강의 질문 답변입니다.");
+    NOT_EXISTENT_LECTURE_ANSWER(-5081, "존재하지 않는 강의 질문 답변입니다."),
+
+    // 코스 수강신청
+    NOT_EXISTENT_USER_COURSE(-5091, "존재하지 않는 수강신청입니다."),
+    NOT_ACCESS_USER_COURSE(-5092, "접근 불가능한 유저입니다.");
 
     private final int code;
     private final String message;
