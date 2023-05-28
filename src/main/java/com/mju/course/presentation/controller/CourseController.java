@@ -46,15 +46,29 @@ public class CourseController {
                                        @RequestParam(value = "order", required = false, defaultValue = "createdAt") String order,
                                        @RequestParam(value = "skill", required = false) List<String> skill,
                                        @RequestParam(value = "search", required = false) String search,
-                                       Pageable pageable) {
-        return courseService.readCourseList(category, order, skill, pageable, search);
+                                       Pageable pageable,
+                                       @RequestParam(value = "userId", required = false) Long userId) {
+        return courseService.readCourseList(category, order, skill, pageable, search, userId);
     }
 
-    // 검색어 하나 삭제
+    @Operation(summary = "검색어 보기", description = "검색어 보기 API 입니다. ")
+    @GetMapping("/search")
+    public CommonResult readSearch(@RequestParam Long userId){
+        return courseService.readSearch(userId);
+    }
 
+    @Operation(summary = "검색어 하나 삭제", description = "검색어 하나 삭제 API 입니다. ")
+    @DeleteMapping("/delete-search/{search_index}")
+    public CommonResult deleteSearch(@PathVariable Long search_index,
+                                     @RequestParam Long userId){
+        return courseService.deleteSearch(search_index, userId);
+    }
 
-    // 검색어 전체 삭제
-
+    @Operation(summary = "검색어 전체 삭제", description = "검색어 전체 삭제 API 입니다. ")
+    @DeleteMapping("/delete-search/list")
+    public CommonResult deleteSearchList(@RequestParam Long userId){
+        return courseService.deleteSearchList(userId);
+    }
 
     @Operation(summary = "(공통) 코스 조회", description = "코스 조회 API 입니다. ")
     @ApiResponses({
