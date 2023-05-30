@@ -70,7 +70,8 @@ public class CourseManageController {
     public CommonResult updateCourse(@PathVariable Long course_index,
                                      @RequestPart(value ="courseUpdateDto",required = false) CourseUpdateDto courseUpdateDto,
                                      @RequestPart(value ="changeTitlePhoto",required = false) MultipartFile titlePhoto) throws IOException {
-        return courseManageService.updateCourse(getUserInfo(), course_index, courseUpdateDto, titlePhoto);
+        String result = courseManageService.updateCourse(getUserInfo(), course_index, courseUpdateDto, titlePhoto);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(강사) 코스 삭제", description = "강사진용 코스 삭제 API 입니다. ")
@@ -86,7 +87,8 @@ public class CourseManageController {
     })
     @DeleteMapping("/delete/{course_index}")
     public CommonResult deleteCourse(@PathVariable Long course_index, String comment){
-        return courseManageService.deleteCourse(getUserInfo(), course_index, comment);
+        String result = courseManageService.deleteCourse(getUserInfo(), course_index, comment);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(강사) 코스 신청", description = "강사진용 코스 삭제 API 입니다. ")
@@ -100,7 +102,8 @@ public class CourseManageController {
     @Parameter(name = "course_index", description = "코스 인덱스", required = true)
     @PostMapping("/request/{course_index}")
     public CommonResult requestCourse(@PathVariable Long course_index){
-        return courseManageService.requestCourse(getUserInfo(), course_index);
+        String result = courseManageService.requestCourse(getUserInfo(), course_index);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(강사) 커리 큘럼 추가", description = "강사진용 커리 큘럼 추가 API 입니다. ")
@@ -118,7 +121,8 @@ public class CourseManageController {
     @PostMapping("/edit/{course_index}/add-curriculum")
     public CommonResult addCurriculum(@PathVariable Long course_index,
                                       @RequestBody @Validated CurriculumCreateDto curriculumCreateDto){
-        return courseManageService.addCurriculum(getUserInfo(), course_index,curriculumCreateDto);
+        String result = courseManageService.addCurriculum(getUserInfo(), course_index,curriculumCreateDto);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(강사) 커리 큘럼 수정", description = "커리 큘럼 수정 API 입니다. ")
@@ -141,7 +145,8 @@ public class CourseManageController {
     public CommonResult updateCurriculum(@PathVariable Long course_index,
                                          @PathVariable int chapter,
                                          @RequestBody CurriculumCreateDto curriculumCreateDto){
-        return courseManageService.updateCurriculum(getUserInfo(), course_index, chapter, curriculumCreateDto);
+        String result = courseManageService.updateCurriculum(getUserInfo(), course_index, chapter, curriculumCreateDto);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(강사) 커리 큘럼 삭제", description = "커리 큘럼 삭제 API 입니다. ")
@@ -159,7 +164,8 @@ public class CourseManageController {
     @PutMapping("/delete/{course_index}/{chapter}")
     public CommonResult deleteCurriculum(@PathVariable Long course_index,
                                          @PathVariable int chapter){
-        return courseManageService.deleteCurriculum(getUserInfo(), course_index, chapter);
+        String result = courseManageService.deleteCurriculum(getUserInfo(), course_index, chapter);
+        return responseService.getSingleResult(result);
     }
 
 }

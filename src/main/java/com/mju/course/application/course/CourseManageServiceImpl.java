@@ -7,12 +7,10 @@ import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.domain.model.course.Skill;
 import com.mju.course.domain.model.enums.CourseState;
 import com.mju.course.domain.model.other.Exception.CourseException;
-import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.course.CurriculumRepository;
 import com.mju.course.domain.repository.course.SkillRepository;
 import com.mju.course.domain.repository.lecture.LectureRepository;
-import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.*;
 import com.mju.course.presentation.dto.response.UserInfoDto;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +37,6 @@ public class CourseManageServiceImpl implements CourseManageService {
     private final LectureRepository lectureRepository;
     private final SkillRepository skillRepository;
 
-    private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
 
     private void checkUser(Course course, UserInfoDto userInfo){
@@ -83,7 +80,7 @@ public class CourseManageServiceImpl implements CourseManageService {
     }
 
     @Override
-    public CommonResult updateCourse(UserInfoDto userInfo, Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException {
+    public String updateCourse(UserInfoDto userInfo, Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         checkUser(findCourse, userInfo);
@@ -161,30 +158,31 @@ public class CourseManageServiceImpl implements CourseManageService {
             throw new CourseException(NO_MODIFIED_COURSE);
         }else{
             courseRepository.save(findCourse);
-            return responseService.getSingleResult(arr +"가 수정되었습니다.");
+            return arr +"가 수정되었습니다.";
         }
     }
 
     @Override
-    public CommonResult deleteCourse(UserInfoDto userInfo, Long course_index, String comment) {
+    @Transactional
+    public String deleteCourse(UserInfoDto userInfo, Long course_index, String comment) {
         if(comment != null){
-            return updateState(userInfo, course_index, CourseState.delete, comment);
+            updateState(userInfo, course_index, CourseState.delete, comment);
+            return "삭제되었습니다.";
         }else{
             throw new CourseException(PLEASE_COURSE_DELETE_REASON);
         }
     }
 
-    private CommonResult updateState(UserInfoDto userInfo, Long course_index, CourseState status,String comment) {
+    private void updateState(UserInfoDto userInfo, Long course_index, CourseState status,String comment) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         checkUser(findCourse, userInfo);
         findCourse.updateState(status, comment);
         courseRepository.save(findCourse);
-        return responseService.getSuccessfulResult();
     }
 
     @Override
-    public CommonResult requestCourse(UserInfoDto userInfo, Long course_index) {
+    public String requestCourse(UserInfoDto userInfo, Long course_index) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         checkUser(findCourse, userInfo);
@@ -198,13 +196,14 @@ public class CourseManageServiceImpl implements CourseManageService {
         if(!checkLecture){
             throw new CourseException(DIFFERENT_LECTURE_SUM);
         }else{
-            return responseService.getSingleResult("코스가 신청되었습니다.");
+            return "코스가 신청되었습니다.";
         }
 
     }
 
     @Override
-    public CommonResult addCurriculum(UserInfoDto userInfo, Long course_index, CurriculumCreateDto curriculumCreateDto) {
+    @Transactional
+    public String addCurriculum(UserInfoDto userInfo, Long course_index, CurriculumCreateDto curriculumCreateDto) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         checkUser(findCourse, userInfo);
@@ -212,11 +211,12 @@ public class CourseManageServiceImpl implements CourseManageService {
 
         Curriculum curriculum = Curriculum.of(curriculumCreateDto, findCourse);
         curriculumRepository.save(curriculum);
-        return responseService.getSingleResult("커리 큘럼이 추가되었습니다.");
+        return "커리 큘럼이 추가되었습니다.";
     }
 
     @Override
-    public CommonResult updateCurriculum(UserInfoDto userInfo, Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto) {
+    @Transactional
+    public String updateCurriculum(UserInfoDto userInfo, Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         checkUser(findCourse, userInfo);
@@ -255,7 +255,7 @@ public class CourseManageServiceImpl implements CourseManageService {
             throw new CourseException(NO_MODIFIED_CURRICULUM);
         }else{
             curriculumRepository.save(findCurriculum.get());
-            return responseService.getSingleResult(arr +"가 수정되었습니다.");
+            return arr +"가 수정되었습니다.";
         }
     }
 
@@ -266,7 +266,7 @@ public class CourseManageServiceImpl implements CourseManageService {
      * */
     @Override
     @Transactional
-    public CommonResult deleteCurriculum(UserInfoDto userInfo, Long course_index, int chapter) {
+    public String deleteCurriculum(UserInfoDto userInfo, Long course_index, int chapter) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         checkUser(findCourse, userInfo);
@@ -275,7 +275,7 @@ public class CourseManageServiceImpl implements CourseManageService {
         List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get());
         if(lectures.size() == 0){
             curriculumRepository.delete(findCurriculum.get());
-            return responseService.getSingleResult("커리큘럼이 삭제되었습니다.");
+            return "커리큘럼이 삭제되었습니다.";
         }else{
             throw new CourseException(EXISTENT_CURRICULUM_LECTURE);
         }

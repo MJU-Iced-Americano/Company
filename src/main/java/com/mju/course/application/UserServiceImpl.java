@@ -24,7 +24,7 @@ public class UserServiceImpl {
     private final ObjectMapper objectMapper;
 
     public UserInfoDto readUserInfo(){
-        UserInfoDto userInfoDto = userFeignClient.getUserInfo("651e95af-53ea-4458-96f4-2d7fd244b42d");
+        UserInfoDto userInfoDto = userFeignClient.getUserInfo("0f187e6e-0ec2-4276-a9e7-79cafeb8da15");
         return userInfoDto;
     }
 
