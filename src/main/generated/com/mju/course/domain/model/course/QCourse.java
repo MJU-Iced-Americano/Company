@@ -49,6 +49,8 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath lecturerId = createString("lecturerId");
+
     public final NumberPath<Long> price = createNumber("price", Long.class);
 
     public final ListPath<Skill, QSkill> skillList = this.<Skill, QSkill>createList("skillList", Skill.class, QSkill.class, PathInits.DIRECT2);

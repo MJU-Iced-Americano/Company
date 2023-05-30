@@ -24,7 +24,7 @@ public class AdminController {
     private final UserServiceImpl userService;
 
     private void checkAdmin(){
-        userService.checkUser(String.valueOf(UserType.ROLE_ADMIN));
+//        userService.checkUser(String.valueOf(UserType.ROLE_ADMIN));
     }
 
     // status - all(기본), registration, request, hold, delete

@@ -33,6 +33,13 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  # Spring devtools
+  devtools :
+    livereload :
+      enabled : true
+    restart :
+      enabled : true
+
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
@@ -68,3 +75,13 @@ cloud:
       auto: false
 
 logging.level.com.amazonaws.util.EC2MetadataUtils: error
+
+# feign client 로그 설정
+logging:
+  level:
+    com :
+      example : DEBUG
+    web : TRACE
+    org :
+      springframwork :
+        web : TRACE

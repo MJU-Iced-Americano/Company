@@ -22,11 +22,6 @@ import java.util.List;
 public class LectureController {
 
     private final LectureService lectureService;
-    private final UserServiceImpl userService;
-
-    private void checkUser(){
-        userService.checkUser(String.valueOf(UserType.ROLE_USER));
-    }
 
     @Operation(summary = "(공통) 강의 보기", description = "tab : 기본(basic), 목차 (curriculum)")
     @GetMapping("/{lecture_index}")

@@ -1,10 +1,12 @@
 package com.mju.course.presentation.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.course.CourseService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.presentation.dto.response.CourseReadDto;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
+import com.mju.course.presentation.dto.response.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -27,6 +30,11 @@ public class CourseController {
 
     private final CourseService courseService;
     private final UserServiceImpl userService;
+
+    @GetMapping("test")
+    public UserInfoDto getUser(){
+        return userService.readUserInfo();
+    }
 
     // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 리뷰 많은 순
     // 유저 정보가 존재한다면 - 검색어 저장

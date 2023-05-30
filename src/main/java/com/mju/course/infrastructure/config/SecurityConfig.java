@@ -22,7 +22,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> {
             try {
                 authorize
-                        .requestMatchers("/company-service/enrollment").hasRole("ADMIN")
+                        .requestMatchers("/course-service/enrollment").hasRole("ADMIN")
                         .anyRequest().permitAll()
                         .and()
                         .formLogin().loginPage("http://localhost:8000/auth-service/login")

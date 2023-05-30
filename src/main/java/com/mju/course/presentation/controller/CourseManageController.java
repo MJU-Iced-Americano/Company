@@ -1,8 +1,11 @@
 package com.mju.course.presentation.controller;
 
+import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.course.CourseManageService;
 import com.mju.course.domain.model.other.Result.CommonResult;
+import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.*;
+import com.mju.course.presentation.dto.response.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -25,6 +28,13 @@ import java.io.IOException;
 public class CourseManageController {
 
     private final CourseManageService courseManageService;
+    private final UserServiceImpl userService;
+
+    private final ResponseService responseService;
+
+    private UserInfoDto getUserInfo(){
+        return userService.readUserInfo();
+    }
 
     // (강사) 코스 등록 - 코스 설명할 때 사진 어떻게 처리 ? -> 다중 사진 처리
     @Operation(summary = "(강사) 코스 등록", description = "강사진 용 코스 등록 API 입니다. ")
@@ -40,7 +50,7 @@ public class CourseManageController {
     @PostMapping("/new-course")
     public CommonResult createCourse(@RequestPart("courseCreateDto") @Validated CourseCreateDto courseCreateDto,
                                      @RequestPart(value="titlePhoto") MultipartFile titlePhoto) throws IOException {
-        return courseManageService.createCourse(courseCreateDto, titlePhoto);
+        return responseService.getSingleResult(courseManageService.createCourse(getUserInfo(), courseCreateDto, titlePhoto));
     }
 
     @Operation(summary = "(강사) 코스 수정", description = "코스 수정 API 입니다. ")
@@ -60,7 +70,7 @@ public class CourseManageController {
     public CommonResult updateCourse(@PathVariable Long course_index,
                                      @RequestPart(value ="courseUpdateDto",required = false) CourseUpdateDto courseUpdateDto,
                                      @RequestPart(value ="changeTitlePhoto",required = false) MultipartFile titlePhoto) throws IOException {
-        return courseManageService.updateCourse(course_index, courseUpdateDto,titlePhoto);
+        return courseManageService.updateCourse(getUserInfo(), course_index, courseUpdateDto, titlePhoto);
     }
 
     @Operation(summary = "(강사) 코스 삭제", description = "강사진용 코스 삭제 API 입니다. ")
@@ -76,7 +86,7 @@ public class CourseManageController {
     })
     @DeleteMapping("/delete/{course_index}")
     public CommonResult deleteCourse(@PathVariable Long course_index, String comment){
-        return courseManageService.deleteCourse(course_index, comment);
+        return courseManageService.deleteCourse(getUserInfo(), course_index, comment);
     }
 
     @Operation(summary = "(강사) 코스 신청", description = "강사진용 코스 삭제 API 입니다. ")
@@ -90,7 +100,7 @@ public class CourseManageController {
     @Parameter(name = "course_index", description = "코스 인덱스", required = true)
     @PostMapping("/request/{course_index}")
     public CommonResult requestCourse(@PathVariable Long course_index){
-        return courseManageService.requestCourse(course_index);
+        return courseManageService.requestCourse(getUserInfo(), course_index);
     }
 
     @Operation(summary = "(강사) 커리 큘럼 추가", description = "강사진용 커리 큘럼 추가 API 입니다. ")
@@ -108,7 +118,7 @@ public class CourseManageController {
     @PostMapping("/edit/{course_index}/add-curriculum")
     public CommonResult addCurriculum(@PathVariable Long course_index,
                                       @RequestBody @Validated CurriculumCreateDto curriculumCreateDto){
-        return courseManageService.addCurriculum(course_index,curriculumCreateDto);
+        return courseManageService.addCurriculum(getUserInfo(), course_index,curriculumCreateDto);
     }
 
     @Operation(summary = "(강사) 커리 큘럼 수정", description = "커리 큘럼 수정 API 입니다. ")
@@ -131,7 +141,7 @@ public class CourseManageController {
     public CommonResult updateCurriculum(@PathVariable Long course_index,
                                          @PathVariable int chapter,
                                          @RequestBody CurriculumCreateDto curriculumCreateDto){
-        return courseManageService.updateCurriculum(course_index, chapter, curriculumCreateDto);
+        return courseManageService.updateCurriculum(getUserInfo(), course_index, chapter, curriculumCreateDto);
     }
 
     @Operation(summary = "(강사) 커리 큘럼 삭제", description = "커리 큘럼 삭제 API 입니다. ")
@@ -149,7 +159,7 @@ public class CourseManageController {
     @PutMapping("/delete/{course_index}/{chapter}")
     public CommonResult deleteCurriculum(@PathVariable Long course_index,
                                          @PathVariable int chapter){
-        return courseManageService.deleteCurriculum(course_index, chapter);
+        return courseManageService.deleteCurriculum(getUserInfo(), course_index, chapter);
     }
 
 }

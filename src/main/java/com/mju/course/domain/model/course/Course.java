@@ -21,7 +21,8 @@ public class Course extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 유저 - 강사진
+    @Column(name = "lecturer_id")
+    private String lecturerId;
 
     @Column(name = "category")
     private String category;
@@ -70,8 +71,9 @@ public class Course extends BaseTimeEntity {
     private List<UserCourse> userCourseList = new ArrayList<>();
 
     @Builder
-    public Course(String category, String courseName, Long price, String courseDescription,
+    public Course(String lecturerId, String category, String courseName, Long price, String courseDescription,
                   int difficulty, int courseTime, Long hits, CourseState status){
+        this.lecturerId = lecturerId;
         this.category = category;
         this.courseName = courseName;
         this.price = price;
@@ -82,8 +84,9 @@ public class Course extends BaseTimeEntity {
         this.status = status;
     }
 
-    public static Course of(CourseCreateDto courseCreateDto){
+    public static Course of(String lecturerId, CourseCreateDto courseCreateDto){
         return Course.builder()
+                .lecturerId(lecturerId)
                 .category(courseCreateDto.getCategory())
                 .courseName(courseCreateDto.getCourseName())
                 .price(courseCreateDto.getPrice())
