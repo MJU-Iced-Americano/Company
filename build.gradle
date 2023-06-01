@@ -41,7 +41,11 @@ dependencies {
 	// Jasypt: DB 암호화
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
-	testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
+	// test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+//	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+//	testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 
 	// s3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'

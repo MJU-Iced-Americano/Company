@@ -21,20 +21,18 @@ public class CourseLike extends BaseTimeEntity {
     @JoinColumn(name="course_index")
     private Course course;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
+    private String userId;
 
     @Builder
-    public CourseLike(Course course, User user) {
+    public CourseLike(Course course, String userId) {
         this.course = course;
-        this.user = user;
+        this.userId = userId;
     }
 
-    public static CourseLike of(Course course, User user){
+    public static CourseLike of(Course course, String userId){
         return CourseLike.builder()
                 .course(course)
-                .user(user)
+                .userId(userId)
                 .build();
     }
 }

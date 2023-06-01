@@ -45,6 +45,7 @@ public enum ExceptionList {
     NOT_CORRECT_USER(-5052, "강사가 아닙니다. 강사로 로그인 다시 부탁드립니다."),
     NOT_ACCESS_USER(-5053, "접근할 수 없는 유저 입니다."),
     EMPTY_JWT(-5054, "토큰이 없습니다. 확인부탁드립니다."),
+    NOT_EXISTENT_USER(-5055, "존재하지 않는 유저입니다."),
 
     // 코스 - 장바구니, 좋아요
     EXISTENT_CART(-5061, "이미 장바구니 안에 존재합니다."),

@@ -2,18 +2,20 @@ package com.mju.course.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.presentation.controller.UserFeignClient;
 import com.mju.course.presentation.dto.response.UserInfoDto;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpCookie;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.net.HttpCookie;
 import java.text.ParseException;
+
+import static com.mju.course.domain.model.other.Exception.ExceptionList.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,23 +25,89 @@ public class UserServiceImpl {
     private final UserFeignClient userFeignClient;
     private final ObjectMapper objectMapper;
 
-    public UserInfoDto readUserInfo(){
-        UserInfoDto userInfoDto = userFeignClient.getUserInfo("0f187e6e-0ec2-4276-a9e7-79cafeb8da15");
+    /**
+     * 유저 아이디 가져오기
+     * @param request
+     * */
+    public String getUserId(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        String ssoToken = null;
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals("SOCOA-SSO-TOKEN")){
+                ssoToken = cookie.getValue();
+            }
+        }
+
+        if (ssoToken == null) {
+            return null;
+        }
+
+        HttpCookie token = new HttpCookie("ssoToken", ssoToken);
+        String userId = getUserInfoDto(token).getId();
+        System.out.println(userId);
+        return userId;
+    }
+
+    /**
+     * UserInfoDto 값 가져오기
+     * @param ssoToken
+     * */
+    public UserInfoDto getUserInfoDto(final HttpCookie ssoToken) {
+        String userId = extractLoginUserId(ssoToken);
+        UserInfoDto userInfoDto = userFeignClient.getUserInfo(userId);
+        if (userInfoDto == null) {
+            throw new CourseException(NOT_EXISTENT_USER);
+        }
         return userInfoDto;
     }
 
     /**
-     * Header에서 X-ACCESS-TOKEN 으로 JWT 추출
-     * @return String
-    */
-    public String getJwt(){
-        HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getHeader("X-ACCESS-TOKEN");
+     * user-service와 통신
+     * */
+    public UserInfoDto getUserInfoDto(String userId) {
+        UserInfoDto userInfoDto = userFeignClient.getUserInfo(userId);
+        return userInfoDto;
     }
 
-    private String extractLoginUserId(final HttpCookie ssoToken) throws ParseException, JsonProcessingException {
-        String tokenPayload = SignedJWT.parse(ssoToken.getValue()).getPayload().toString();
-        return objectMapper.readTree(tokenPayload).path("sub").asText();
+    /**
+     * 토큰에서 userId 가져오기
+     * */
+    private String extractLoginUserId(final HttpCookie ssoToken) {
+        try {
+            String tokenPayload = SignedJWT.parse(ssoToken.getValue()).getPayload().toString();
+
+            System.out.println(tokenPayload);
+
+            return objectMapper.readTree(tokenPayload).path("sub").asText();
+
+        } catch (ParseException | JsonProcessingException e) {
+            // 예외 처리 로직을 추가하거나 예외를 다시 throw할 수 있습니다.
+            // 예외를 다시 throw하는 경우, 메서드 시그니처에 예외를 선언해야 합니다.
+            e.printStackTrace(); // 예외 정보를 출력합니다. 실제로는 로깅 등의 처리를 권장합니다.
+            throw new CourseException(EMPTY_USER);
+        }
+    }
+
+    /**
+     * 유저가 null 인지 확인
+     * */
+    public void checkUserId(String userId){
+        if(userId == null){
+            throw new CourseException(EMPTY_JWT);
+        }
+    }
+
+    /***
+     * 유저가 존재하는지, 해당 유저타입이 맞는 userType인지 확인
+     * @param userId
+     * @param userType
+     */
+    public void checkUserType(String userId, String userType){
+        checkUserId(userId);
+        UserInfoDto userInfoDto = getUserInfoDto(userId);
+        if(!userInfoDto.getUserInformationType().equals(userType)) {
+            throw new CourseException(NOT_CORRECT_USER);
+        }
     }
 
 }

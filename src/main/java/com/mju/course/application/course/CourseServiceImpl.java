@@ -33,7 +33,6 @@ public class CourseServiceImpl implements CourseService{
     private final CourseRepository courseRepository;
     private final CartRepository cartRepository;
     private final CourseLikeRepository courseLikeRepository;
-    private final UserRepository userRepository;
     private final UserCourseRepository userCourseRepository;
     private final SearchRepository searchRepository;
 
@@ -50,15 +49,14 @@ public class CourseServiceImpl implements CourseService{
      * @return
      */
     @Override
-    public CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable, String search, Long userId){
-        if(userId != null && userId != 0 && search != null){
-            User user = userRepository.findById(userId).get();
-            searchRepository.save(Search.of(user, search));
+    public Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable, String search, String userId){
+        if(userId != null && search != null){
+            searchRepository.save(Search.of(userId, search));
         }
         Page<CoursesReadDto> result = courseRepository.readCourseList(category, order, skill, pageable, search);
         result.forEach(readDto -> readDto.updateUrl(readDto.getCourseTitlePhotoUrl()));  // key를 url로 변경
 
-        return responseService.getSingleResult(result);
+        return result;
     }
 
     /** 코스 하나 읽기
@@ -66,8 +64,7 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult readCourse(Long course_index, Long userId) {
-
+    public CourseReadDto readCourse(Long course_index, String userId) {
 
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
@@ -96,25 +93,23 @@ public class CourseServiceImpl implements CourseService{
         CourseReadDto courseReadDto = CourseReadDto.of(findCourse, skillList, curriculumReadDtoList);
 
         // 유저 정보
-        if(userId != null && userId != 0){
-            User user = userRepository.findById(userId).get();
-            Optional<Cart> cart = cartRepository.findByCourseAndUser(findCourse, user);
-            Optional<CourseLike> like = courseLikeRepository.findByCourseAndUser(findCourse, user);
+        if(userId != null){
+            Optional<Cart> cart = cartRepository.findByCourseAndUserId(findCourse, userId);
+            Optional<CourseLike> like = courseLikeRepository.findByCourseAndUserId(findCourse, userId);
             courseReadDto.addUserInfo(cart, like);
         }
-        
-        return responseService.getSingleResult(courseReadDto);
+
+        return courseReadDto;
     }
 
     /** 검색어 보기
      * @param userId
      */
     @Override
-    public CommonResult readSearch(Long userId) {
+    public CommonResult readSearch(String userId) {
         List<SearchReadDto> searchReadDtos = new ArrayList<>();
-        if(userId != 0){
-            User user = userRepository.findById(userId).get();
-            List<Search> searchList = searchRepository.findByUser(user);
+        if(userId != null){
+            List<Search> searchList = searchRepository.findByUserId(userId);
             searchList.forEach(content->{
                 searchReadDtos.add(SearchReadDto.of(content));
             });
@@ -127,7 +122,7 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult deleteSearch(Long search_index, Long userId){
+    public CommonResult deleteSearch(Long search_index, String userId){
         // 존재하지 않는 유저
 
         // 존재하지 않는 검색어 입니다.
@@ -135,7 +130,7 @@ public class CourseServiceImpl implements CourseService{
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_USER_SEARCH));
 
         // 유저가 일치하지 않습니다.
-        if(search.getId() != userId){
+        if(!search.getUserId().equals(userId)){
             throw new CourseException(NOT_ACCESS_USER_SEARCH);
         }
         searchRepository.delete(search);
@@ -147,9 +142,8 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult deleteSearchList(Long userId) {
-        User user = userRepository.findById(userId).get();
-        List<Search> searchList = searchRepository.findByUser(user);
+    public CommonResult deleteSearchList(String userId) {
+        List<Search> searchList = searchRepository.findByUserId(userId);
         searchList.forEach(search -> {
             searchRepository.delete(search);
         });
@@ -161,16 +155,14 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult addCart(Long userId, Long course_index) {
+    public CommonResult addCart(String userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        User user = userRepository.findById(userId).get();
-
-        Optional<Cart> cart = cartRepository.findByCourseAndUser(course, user);
+        Optional<Cart> cart = cartRepository.findByCourseAndUserId(course, userId);
         if(cart.isPresent()){
             throw new CourseException(EXISTENT_CART);
         }
-        Cart saveCart = Cart.of(course, user);
+        Cart saveCart = Cart.of(course, userId);
         cartRepository.save(saveCart);
 
         return responseService.getSuccessfulResult();
@@ -181,12 +173,10 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult deleteCart(Long userId, Long course_index) {
+    public CommonResult deleteCart(String userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        User user = userRepository.findById(userId).get();
-
-        Cart cart = cartRepository.findByCourseAndUser(course, user)
+        Cart cart = cartRepository.findByCourseAndUserId(course, userId)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CART));
         cartRepository.delete(cart);
 
@@ -198,16 +188,15 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult courseLike(Long userId, Long course_index) {
+    public CommonResult courseLike(String userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        User user = userRepository.findById(userId).get();
 
-        Optional<CourseLike> like = courseLikeRepository.findByCourseAndUser(course, user);
+        Optional<CourseLike> like = courseLikeRepository.findByCourseAndUserId(course, userId);
         if(like.isPresent()){
             courseLikeRepository.delete(like.get());
         }else{
-            courseLikeRepository.save(CourseLike.of(course, user));
+            courseLikeRepository.save(CourseLike.of(course, userId));
         }
         return responseService.getSuccessfulResult();
     }
@@ -217,18 +206,17 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult applyCourse(Long userId, Long course_index) {
+    public CommonResult applyCourse(String userId, Long course_index) {
         // 만약, 이미 수강 신청한 강좌라면 이미 수강신청한 강좌입니다란 정보 추출
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        User user = userRepository.findById(userId).get();
 
-        Optional<UserCourse> checkUserCourse = userCourseRepository.findByUserAndCourse(user, course);
+        Optional<UserCourse> checkUserCourse = userCourseRepository.findByUserIdAndCourse(userId, course);
         if(checkUserCourse.isPresent()){
             throw new CourseException(ALREADY_APPLY_COURSE);
         }
 
-        UserCourse userCourse = UserCourse.of(user, course);
+        UserCourse userCourse = UserCourse.of(userId, course);
         userCourseRepository.save(userCourse);
 
         return responseService.getSuccessfulResult();
@@ -239,10 +227,10 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult cancelCourse(Long userId, Long user_course_index) {
+    public CommonResult cancelCourse(String userId, Long user_course_index) {
         UserCourse userCourse = userCourseRepository.findById(user_course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_USER_COURSE));
-        if(userCourse.getUser().getId() != userId){
+        if(!userCourse.getUserId().equals(userId)){
             throw new CourseException(NOT_ACCESS_USER_COURSE);
         }
         userCourseRepository.delete(userCourse);

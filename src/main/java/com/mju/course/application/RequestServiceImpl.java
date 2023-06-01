@@ -15,11 +15,11 @@ public class RequestServiceImpl {
 
     private final CourseRepository courseRepository;
 
-    public List<RequestUserCourseDto> requestCourseList(Long userId) {
+    public List<RequestUserCourseDto> requestCourseList(String userId) {
         return courseRepository.requestCourseList(userId);
     }
 
-    public List<RequestCourseLikeDto> requestCourseLike(Long userId) {
+    public List<RequestCourseLikeDto> requestCourseLike(String userId) {
         return courseRepository.requestCourseLike(userId);
     }
 }

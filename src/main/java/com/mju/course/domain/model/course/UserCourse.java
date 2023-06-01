@@ -17,9 +17,7 @@ public class UserCourse extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
+    private String userId;
 
     @ManyToOne
     @JoinColumn(name="course_index")
@@ -28,15 +26,15 @@ public class UserCourse extends BaseTimeEntity {
     private boolean courseStatus;
 
     @Builder
-    public UserCourse(User user, Course course, boolean courseStatus) {
-        this.user = user;
+    public UserCourse(String userId, Course course, boolean courseStatus) {
+        this.userId = userId;
         this.course = course;
         this.courseStatus = courseStatus;
     }
 
-    public static UserCourse of(User user, Course course){
+    public static UserCourse of(String userId, Course course){
         return UserCourse.builder()
-                .user(user)
+                .userId(userId)
                 .course(course)
                 .courseStatus(true)
                 .build();
