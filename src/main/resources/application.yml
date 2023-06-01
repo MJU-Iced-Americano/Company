@@ -33,13 +33,6 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
-  # Spring devtools
-  devtools :
-    livereload :
-      enabled : true
-    restart :
-      enabled : true
-
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
@@ -50,6 +43,7 @@ jasypt:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: course.socoa.online
   client:
     register-with-eureka: true
     fetch-registry: true
