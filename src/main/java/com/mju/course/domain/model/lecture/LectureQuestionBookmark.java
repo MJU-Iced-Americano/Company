@@ -1,13 +1,10 @@
 package com.mju.course.domain.model.lecture;
 
 import com.mju.course.domain.model.BaseTimeEntity;
-import com.mju.course.domain.model.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -23,20 +20,18 @@ public class LectureQuestionBookmark extends BaseTimeEntity {
     @JoinColumn(name="lecture_question_index")
     private LectureQuestion lectureQuestion;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
+    private String userId;
 
     @Builder
-    public LectureQuestionBookmark(LectureQuestion lectureQuestion, User user) {
+    public LectureQuestionBookmark(LectureQuestion lectureQuestion, String userId) {
         this.lectureQuestion = lectureQuestion;
-        this.user = user;
+        this.userId = userId;
     }
 
-    public static LectureQuestionBookmark of(LectureQuestion lectureQuestion, User user) {
+    public static LectureQuestionBookmark of(LectureQuestion lectureQuestion, String userId) {
         return LectureQuestionBookmark.builder()
                 .lectureQuestion(lectureQuestion)
-                .user(user)
+                .userId(userId)
                 .build();
     }
 }

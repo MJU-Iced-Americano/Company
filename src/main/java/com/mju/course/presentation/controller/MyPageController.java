@@ -1,6 +1,6 @@
 package com.mju.course.presentation.controller;
 
-import com.mju.course.application.RequestServiceImpl;
+import com.mju.course.application.MyPageServiceImpl;
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.domain.model.other.Result.ListResult;
 import com.mju.course.domain.service.ResponseService;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/request")
-@Tag(name = "MSA 통신", description = "MSA 통신 관련 api")
-public class RequestController {
+@Tag(name = "myPage-service", description = "마이페이지 관련 api")
+public class MyPageController {
 
-    private final RequestServiceImpl requestService;
+    private final MyPageServiceImpl myPageService;
     private final ResponseService responseService;
 
     private final UserServiceImpl userService;
@@ -24,13 +24,13 @@ public class RequestController {
     @Operation(summary = "수강 중인 목록 보기", description = "수강 중인 목록 보기 API 입니다. ")
     @GetMapping("/user/course-list")
     public ListResult readCourseList(HttpServletRequest request){
-        return responseService.getListResult(requestService.requestCourseList(userService.getUserId(request)));
+        return responseService.getListResult(myPageService.requestCourseList(userService.getUserId(request)));
     }
 
     @Operation(summary = "좋아요 한 강의", description = "좋아요 한 강의 API 입니다. ")
     @GetMapping("/user/course-like")
     public ListResult readCourseLike(HttpServletRequest request){
-        return responseService.getListResult(requestService.requestCourseLike(userService.getUserId(request)));
+        return responseService.getListResult(myPageService.requestCourseLike(userService.getUserId(request)));
     }
 
 }

@@ -40,11 +40,25 @@ public class LectureManageServiceImpl implements LectureManageService {
     private final S3UploaderService s3UploaderService;
     private final LectureDomainService lectureDomainService;
 
+    /**
+     * 코스에 접근가능한 유저인지 확인
+     * @param course
+     * @param userId
+     * */
+    private void checkUser(Course course, String userId){
+        if(!course.getUserId().equals(userId)) throw new CourseException(NOT_ACCESS_USER);
+    }
+
+    /**
+     * (강사) 강의 등록
+     * */
     @Override
-    public CommonResult createLecture(Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException {
+    public CommonResult createLecture(String userId, Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException {
 
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+
+        checkUser(findCourse, userId);
 
         Curriculum findCurriculum = curriculumRepository.findByCourseAndChapter(findCourse, chapter)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM));
@@ -79,7 +93,7 @@ public class LectureManageServiceImpl implements LectureManageService {
     }
 
     @Override
-    public CommonResult updateLecture(Long lecture_index, LectureUpdateDto lectureUpdateDto) {
+    public CommonResult updateLecture(String userId, Long lecture_index, LectureUpdateDto lectureUpdateDto) {
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
 
@@ -112,7 +126,7 @@ public class LectureManageServiceImpl implements LectureManageService {
      * */
     @Override
     @Transactional
-    public CommonResult deleteLecture(Long lecture_index) {
+    public CommonResult deleteLecture(String userId, Long lecture_index) {
         lectureDomainService.deleteLecture(lecture_index);
         return responseService.getSuccessfulResult();
     }

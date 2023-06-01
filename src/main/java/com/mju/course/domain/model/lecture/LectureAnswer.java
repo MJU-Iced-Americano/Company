@@ -1,7 +1,6 @@
 package com.mju.course.domain.model.lecture;
 
 import com.mju.course.domain.model.BaseTimeEntity;
-import com.mju.course.domain.model.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,9 +23,7 @@ public class LectureAnswer extends BaseTimeEntity {
     @JoinColumn(name="lecture_question_index")
     private LectureQuestion lectureQuestion;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
+    private String userId;
 
     @Column(name = "lecture_answer")
     private String lectureAnswer;
@@ -36,16 +33,16 @@ public class LectureAnswer extends BaseTimeEntity {
     private List<LectureAnswerPhoto> lectureAnswerPhotoList = new ArrayList<>();
 
     @Builder
-    public LectureAnswer(LectureQuestion lectureQuestion, User user, String lectureAnswer) {
+    public LectureAnswer(LectureQuestion lectureQuestion, String userId, String lectureAnswer) {
         this.lectureQuestion = lectureQuestion;
-        this.user = user;
+        this.userId = userId;
         this.lectureAnswer = lectureAnswer;
     }
 
-    public static LectureAnswer of(LectureQuestion lectureQuestion, User user, String answer) {
+    public static LectureAnswer of(LectureQuestion lectureQuestion, String userId, String answer) {
         return LectureAnswer.builder()
                 .lectureQuestion(lectureQuestion)
-                .user(user)
+                .userId(userId)
                 .lectureAnswer(answer)
                 .build();
     }

@@ -1,7 +1,6 @@
 package com.mju.course.domain.model.lecture;
 
 import com.mju.course.domain.model.BaseTimeEntity;
-import com.mju.course.domain.model.User;
 import com.mju.course.presentation.dto.request.LectureQuestionCreateDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -25,9 +24,7 @@ public class LectureQuestion extends BaseTimeEntity {
     @JoinColumn(name="lecture_index")
     private Lecture lecture;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
+    private String userId;
 
     @Column(name = "lecture_question_title")
     private String lectureQuestionTitle;
@@ -53,17 +50,17 @@ public class LectureQuestion extends BaseTimeEntity {
     }
 
     @Builder
-    public LectureQuestion(Lecture lecture, User user, String lectureQuestion, String lectureQuestionTitle) {
+    public LectureQuestion(Lecture lecture, String userId, String lectureQuestion, String lectureQuestionTitle) {
         this.lecture = lecture;
-        this.user = user;
+        this.userId = userId;
         this.lectureQuestionTitle = lectureQuestionTitle;
         this.lectureQuestion = lectureQuestion;
     }
 
-    public static LectureQuestion of(Lecture lecture, User user, LectureQuestionCreateDto lectureQuestionCreateDto){
+    public static LectureQuestion of(Lecture lecture, String userId, LectureQuestionCreateDto lectureQuestionCreateDto){
         return LectureQuestion.builder()
                 .lecture(lecture)
-                .user(user)
+                .userId(userId)
                 .lectureQuestion(lectureQuestionCreateDto.getLectureQuestion())
                 .lectureQuestionTitle(lectureQuestionCreateDto.getLectureQuestionTitle())
                 .build();

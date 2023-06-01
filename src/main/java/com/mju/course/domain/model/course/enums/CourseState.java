@@ -1,4 +1,4 @@
-package com.mju.course.domain.model.enums;
+package com.mju.course.domain.model.course.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

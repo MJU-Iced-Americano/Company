@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LectureQuestionCreateDto {
-    @Schema(description = "유저 이름")
-    private long userId;
 
     @Schema(description = "질문 제목")
     @NotNull @NotBlank

@@ -1,15 +1,11 @@
 package com.mju.course.application.course;
 
-import com.mju.course.domain.model.*;
 import com.mju.course.domain.model.course.*;
 import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.domain.model.other.Result.SingleResult;
-import com.mju.course.domain.repository.UserRepository;
 import com.mju.course.domain.repository.course.*;
 import com.mju.course.domain.service.ResponseService;
-import com.mju.course.presentation.controller.UserFeignClient;
 import com.mju.course.presentation.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

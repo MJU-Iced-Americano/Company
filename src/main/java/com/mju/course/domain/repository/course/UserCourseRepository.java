@@ -1,6 +1,5 @@
 package com.mju.course.domain.repository.course;
 
-import com.mju.course.domain.model.User;
 import com.mju.course.domain.model.course.Course;
 import com.mju.course.domain.model.course.UserCourse;
 import org.springframework.data.jpa.repository.JpaRepository;

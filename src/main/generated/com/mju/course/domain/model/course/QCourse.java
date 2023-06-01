@@ -2,6 +2,7 @@ package com.mju.course.domain.model.course;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.mju.course.domain.model.course.enums.CourseState;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
@@ -53,7 +54,7 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final ListPath<Skill, QSkill> skillList = this.<Skill, QSkill>createList("skillList", Skill.class, QSkill.class, PathInits.DIRECT2);
 
-    public final EnumPath<com.mju.course.domain.model.enums.CourseState> status = createEnum("status", com.mju.course.domain.model.enums.CourseState.class);
+    public final EnumPath<CourseState> status = createEnum("status", CourseState.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
