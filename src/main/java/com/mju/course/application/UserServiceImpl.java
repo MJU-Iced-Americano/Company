@@ -32,9 +32,12 @@ public class UserServiceImpl {
     public String getUserId(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         String ssoToken = null;
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals("SOCOA-SSO-TOKEN")){
-                ssoToken = cookie.getValue();
+
+        if(cookies != null && cookies.length != 0){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("SOCOA-SSO-TOKEN")){
+                    ssoToken = cookie.getValue();
+                }
             }
         }
 
