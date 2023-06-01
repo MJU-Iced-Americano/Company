@@ -139,7 +139,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public List<RequestUserCourseDto> requestCourseList(Long userId) {
+    public List<RequestUserCourseDto> requestCourseList(String userId) {
         QCourse course = QCourse.course;
         QUserCourse userCourse = QUserCourse.userCourse;
 
@@ -155,7 +155,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                         userCourse.createdAt))
                 .from(userCourse)
                 .join(userCourse.course, course)
-                .where(userCourse.user.id.in(userId));
+                .where(userCourse.userId.in(userId));
 
         // Query 실행
         List<RequestUserCourseDto> results = query.fetch();
@@ -167,7 +167,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public List<RequestCourseLikeDto> requestCourseLike(Long userId) {
+    public List<RequestCourseLikeDto> requestCourseLike(String userId) {
         QCourse course = QCourse.course;
         QCourseLike courseLike = QCourseLike.courseLike;
 
@@ -183,7 +183,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                         courseLike.createdAt))
                 .from(courseLike)
                 .join(courseLike.course, course)
-                .where(courseLike.user.id.in(userId));
+                .where(courseLike.userId.in(userId));
 
         // Query 실행
         List<RequestCourseLikeDto> results = query.fetch();

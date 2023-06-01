@@ -60,6 +60,8 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final ListPath<UserCourse, QUserCourse> userCourseList = this.<UserCourse, QUserCourse>createList("userCourseList", UserCourse.class, QUserCourse.class, PathInits.DIRECT2);
 
+    public final StringPath userId = createString("userId");
+
     public QCourse(String variable) {
         super(Course.class, forVariable(variable));
     }

@@ -21,20 +21,18 @@ public class Cart extends BaseTimeEntity {
     @JoinColumn(name="course_index")
     private Course course;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
+    private String userId;
 
     @Builder
-    public Cart(Course course, User user) {
+    public Cart(Course course, String userId) {
         this.course = course;
-        this.user = user;
+        this.userId = userId;
     }
 
-    public static Cart of(Course course, User user){
+    public static Cart of(Course course, String userId){
         return Cart.builder()
                 .course(course)
-                .user(user)
+                .userId(userId)
                 .build();
     }
 

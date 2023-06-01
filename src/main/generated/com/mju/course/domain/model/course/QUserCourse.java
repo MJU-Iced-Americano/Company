@@ -36,7 +36,7 @@ public class QUserCourse extends EntityPathBase<UserCourse> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public final com.mju.course.domain.model.QUser user;
+    public final StringPath userId = createString("userId");
 
     public QUserCourse(String variable) {
         this(UserCourse.class, forVariable(variable), INITS);
@@ -57,7 +57,6 @@ public class QUserCourse extends EntityPathBase<UserCourse> {
     public QUserCourse(Class<? extends UserCourse> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.course = inits.isInitialized("course") ? new QCourse(forProperty("course")) : null;
-        this.user = inits.isInitialized("user") ? new com.mju.course.domain.model.QUser(forProperty("user")) : null;
     }
 
 }

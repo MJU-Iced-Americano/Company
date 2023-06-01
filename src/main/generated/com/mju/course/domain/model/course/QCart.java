@@ -34,7 +34,7 @@ public class QCart extends EntityPathBase<Cart> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public final com.mju.course.domain.model.QUser user;
+    public final StringPath userId = createString("userId");
 
     public QCart(String variable) {
         this(Cart.class, forVariable(variable), INITS);
@@ -55,7 +55,6 @@ public class QCart extends EntityPathBase<Cart> {
     public QCart(Class<? extends Cart> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.course = inits.isInitialized("course") ? new QCourse(forProperty("course")) : null;
-        this.user = inits.isInitialized("user") ? new com.mju.course.domain.model.QUser(forProperty("user")) : null;
     }
 
 }

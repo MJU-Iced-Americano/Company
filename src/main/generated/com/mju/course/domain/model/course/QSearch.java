@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,8 +16,6 @@ import com.querydsl.core.types.dsl.PathInits;
 public class QSearch extends EntityPathBase<Search> {
 
     private static final long serialVersionUID = -1334654500L;
-
-    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QSearch search1 = new QSearch("search1");
 
@@ -34,27 +31,18 @@ public class QSearch extends EntityPathBase<Search> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public final com.mju.course.domain.model.QUser user;
+    public final StringPath userId = createString("userId");
 
     public QSearch(String variable) {
-        this(Search.class, forVariable(variable), INITS);
+        super(Search.class, forVariable(variable));
     }
 
     public QSearch(Path<? extends Search> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QSearch(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QSearch(PathMetadata metadata, PathInits inits) {
-        this(Search.class, metadata, inits);
-    }
-
-    public QSearch(Class<? extends Search> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new com.mju.course.domain.model.QUser(forProperty("user")) : null;
+        super(Search.class, metadata);
     }
 
 }

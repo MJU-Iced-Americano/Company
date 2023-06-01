@@ -3,6 +3,7 @@ package com.mju.course.presentation.controller;
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.course.CourseService;
 import com.mju.course.domain.model.other.Result.CommonResult;
+import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.response.CourseReadDto;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +31,8 @@ public class CourseController {
 
     private final CourseService courseService;
     private final UserServiceImpl userService;
+
+    private final ResponseService responseService;
 
     // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 리뷰 많은 순
     // 유저 정보가 존재한다면 - 검색어 저장
@@ -47,26 +53,33 @@ public class CourseController {
                                        @RequestParam(value = "skill", required = false) List<String> skill,
                                        @RequestParam(value = "search", required = false) String search,
                                        Pageable pageable,
-                                       @RequestParam(value = "userId", required = false) Long userId) {
-        return courseService.readCourseList(category, order, skill, pageable, search, userId);
+                                       HttpServletRequest request) {
+        Page<CoursesReadDto> result = courseService.readCourseList(category, order, skill, pageable, search, userService.getUserId(request));
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "검색어 보기", description = "검색어 보기 API 입니다. ")
     @GetMapping("/search")
-    public CommonResult readSearch(@RequestParam Long userId){
+    public CommonResult readSearch(HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.readSearch(userId);
     }
 
     @Operation(summary = "검색어 하나 삭제", description = "검색어 하나 삭제 API 입니다. ")
     @DeleteMapping("/delete-search/{search_index}")
     public CommonResult deleteSearch(@PathVariable Long search_index,
-                                     @RequestParam Long userId){
+                                     HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.deleteSearch(search_index, userId);
     }
 
     @Operation(summary = "검색어 전체 삭제", description = "검색어 전체 삭제 API 입니다. ")
     @DeleteMapping("/delete-search/list")
-    public CommonResult deleteSearchList(@RequestParam Long userId){
+    public CommonResult deleteSearchList(HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.deleteSearchList(userId);
     }
 
@@ -79,42 +92,53 @@ public class CourseController {
     @Parameter(name = "course_index", description = "코스 인덱스", required = true)
     @GetMapping("/{course_index}")
     public CommonResult readCourse(@PathVariable Long course_index,
-                                   @RequestParam(required = false) Long userId) {
-        return courseService.readCourse(course_index, userId);
+                                   HttpServletRequest request) {
+        CourseReadDto result = courseService.readCourse(course_index, userService.getUserId(request));
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(공통) 코스 장바구니 추가", description = "코스 장바구니 추가 API 입니다. ")
     @PostMapping("/{course_index}/cart")
     public CommonResult addCart(@PathVariable Long course_index,
-                                @RequestParam Long userId){
+                                HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.addCart(userId, course_index);
     }
 
     @Operation(summary = "(공통) 코스 장바구니 삭제", description = "코스 장바구니 삭제 API 입니다. ")
     @DeleteMapping("/{course_index}/cart")
     public CommonResult deleteCart(@PathVariable Long course_index,
-                                   @RequestParam Long userId){
+                                   HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.deleteCart(userId, course_index);
     }
 
     @Operation(summary = "(공통) 코스 좋아요, 좋아요 취소", description = "코스 좋아요 API 입니다. ")
     @GetMapping("/{course_index}/like")
     public CommonResult courseLike(@PathVariable Long course_index,
-                                   @RequestParam Long userId){
+                                   HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.courseLike(userId, course_index);
     }
 
     @Operation(summary = "코스 수강 신청", description = "코스 수강 신청 API 입니다. ")
     @GetMapping("/apply-course/{course_index}")
     public CommonResult applyCourse(@PathVariable Long course_index,
-                                    @RequestParam Long userId){
+                                    HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.applyCourse(userId, course_index);
     }
 
     @Operation(summary = "코스 수강 취소", description = "코스 취소 API 입니다. ")
     @GetMapping("/cancel-course/{user_course_index}")
     public CommonResult cancelCourse(@PathVariable Long user_course_index,
-                                     @RequestParam Long userId){
+                                     HttpServletRequest request) {
+        String userId = userService.getUserId(request);
+        userService.checkUserId(userId);
         return courseService.cancelCourse(userId, user_course_index);
     }
 

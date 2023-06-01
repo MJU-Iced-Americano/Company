@@ -1,22 +1,25 @@
 package com.mju.course.application.course;
 
 import com.mju.course.domain.model.other.Result.CommonResult;
+import com.mju.course.presentation.dto.response.CourseReadDto;
+import com.mju.course.presentation.dto.response.CoursesReadDto;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface CourseService {
-    CommonResult readCourseList(String category, String order, List<String> skill, Pageable pageable, String search, Long userId);
-    CommonResult readCourse(Long course_index, Long userId);
+    Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable, String search, String userId);
+    CourseReadDto readCourse(Long course_index, String userId);
 
-    CommonResult readSearch(Long userId);
-    CommonResult deleteSearch(Long search_index, Long userId);
-    CommonResult deleteSearchList(Long userId);
+    CommonResult readSearch(String userId);
+    CommonResult deleteSearch(Long search_index, String userId);
+    CommonResult deleteSearchList(String userId);
 
-    CommonResult addCart(Long userId, Long course_index);
-    CommonResult deleteCart(Long userId, Long course_index);
-    CommonResult courseLike(Long userId, Long course_index);
+    CommonResult addCart(String userId, Long course_index);
+    CommonResult deleteCart(String userId, Long course_index);
+    CommonResult courseLike(String userId, Long course_index);
 
-    CommonResult applyCourse(Long userId, Long course_index);
-    CommonResult cancelCourse(Long userId, Long user_course_index);
+    CommonResult applyCourse(String userId, Long course_index);
+    CommonResult cancelCourse(String userId, Long user_course_index);
 }

@@ -34,7 +34,7 @@ public class QCourseLike extends EntityPathBase<CourseLike> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public final com.mju.course.domain.model.QUser user;
+    public final StringPath userId = createString("userId");
 
     public QCourseLike(String variable) {
         this(CourseLike.class, forVariable(variable), INITS);
@@ -55,7 +55,6 @@ public class QCourseLike extends EntityPathBase<CourseLike> {
     public QCourseLike(Class<? extends CourseLike> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.course = inits.isInitialized("course") ? new QCourse(forProperty("course")) : null;
-        this.user = inits.isInitialized("user") ? new com.mju.course.domain.model.QUser(forProperty("user")) : null;
     }
 
 }

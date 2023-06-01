@@ -17,21 +17,19 @@ public class Search extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
+    private String userId;
 
     private String search;
 
     @Builder
-    public Search(User user, String search) {
-        this.user = user;
+    public Search(String userId, String search) {
+        this.userId = userId;
         this.search = search;
     }
 
-    public static Search of(User user, String search){
+    public static Search of(String userId, String search){
         return Search.builder()
-                .user(user)
+                .userId(userId)
                 .search(search)
                 .build();
     }
