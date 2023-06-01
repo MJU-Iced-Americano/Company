@@ -34,7 +34,7 @@ public class QLectureQuestionBookmark extends EntityPathBase<LectureQuestionBook
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public final com.mju.course.domain.model.QUser user;
+    public final StringPath userId = createString("userId");
 
     public QLectureQuestionBookmark(String variable) {
         this(LectureQuestionBookmark.class, forVariable(variable), INITS);
@@ -55,7 +55,6 @@ public class QLectureQuestionBookmark extends EntityPathBase<LectureQuestionBook
     public QLectureQuestionBookmark(Class<? extends LectureQuestionBookmark> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.lectureQuestion = inits.isInitialized("lectureQuestion") ? new QLectureQuestion(forProperty("lectureQuestion"), inits.get("lectureQuestion")) : null;
-        this.user = inits.isInitialized("user") ? new com.mju.course.domain.model.QUser(forProperty("user")) : null;
     }
 
 }

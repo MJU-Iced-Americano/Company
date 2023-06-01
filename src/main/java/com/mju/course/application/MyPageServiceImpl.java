@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RequestServiceImpl {
+public class MyPageServiceImpl {
 
     private final CourseRepository courseRepository;
 

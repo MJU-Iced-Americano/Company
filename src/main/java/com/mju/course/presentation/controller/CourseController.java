@@ -54,7 +54,8 @@ public class CourseController {
                                        @RequestParam(value = "search", required = false) String search,
                                        Pageable pageable,
                                        HttpServletRequest request) {
-        Page<CoursesReadDto> result = courseService.readCourseList(category, order, skill, pageable, search, userService.getUserId(request));
+        String userId = userService.getUserId(request);
+        Page<CoursesReadDto> result = courseService.readCourseList(category, order, skill, pageable, search, userId);
         return responseService.getSingleResult(result);
     }
 

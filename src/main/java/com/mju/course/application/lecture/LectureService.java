@@ -15,13 +15,13 @@ public interface LectureService {
     CommonResult readQuestions(Long lecture_index, Pageable pageable);
     CommonResult readAnswer(Long lecture_answer_index);
 
-    CommonResult createQuestion(Long lecture_index, List<MultipartFile> images, LectureQuestionCreateDto lectureQuestionCreateDto);
+    CommonResult createQuestion(String userId, Long lecture_index, List<MultipartFile> images, LectureQuestionCreateDto lectureQuestionCreateDto);
     CommonResult updateQuestion(Long question_index);
-    CommonResult deleteQuestion(Long question_index);
+    CommonResult deleteQuestion(String userId, Long question_index);
 
-    CommonResult lectureQuestionBookmark(Long question_index, Long userId);
+    CommonResult lectureQuestionBookmark(Long question_index, String userId);
 
-    CommonResult createAnswer(Long question_index, List<MultipartFile> images, AnswerCreateDto answerCreateDto);
-    CommonResult deleteAnswer(Long lecture_answer_index);
+    CommonResult createAnswer(String userId, Long question_index, List<MultipartFile> images, AnswerCreateDto answerCreateDto);
+    CommonResult deleteAnswer(String userId, Long lecture_answer_index);
 
 }

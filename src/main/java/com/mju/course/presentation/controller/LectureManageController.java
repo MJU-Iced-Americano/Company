@@ -1,7 +1,9 @@
 package com.mju.course.presentation.controller;
 
+import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.lecture.LectureManageService;
 import com.mju.course.domain.model.other.Result.CommonResult;
+import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.LectureCreateDto;
 import com.mju.course.presentation.dto.request.LectureUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +29,9 @@ import java.io.IOException;
 public class LectureManageController {
 
     private final LectureManageService lectureManageService;
+    private final UserServiceImpl userService;
+
+    private final ResponseService responseService;
 
     @Operation(summary = "(강사) 강의 등록", description = "강사진 용 강의 등록 API 입니다. ")
     @ApiResponses({
@@ -48,8 +54,11 @@ public class LectureManageController {
                                       @PathVariable int chapter,
                                       @PathVariable int lecture_sequence,
                                       @RequestPart("postLectureDto") @Validated LectureCreateDto lectureCreateDto,
-                                      @RequestPart("video") MultipartFile multipartFile) throws IOException {
-        return lectureManageService.createLecture(course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
+                                      @RequestPart("video") MultipartFile multipartFile,
+                                      HttpServletRequest request) throws IOException {
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId,"TEACHER");
+        return lectureManageService.createLecture(userId, course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
     }
 
     @Operation(summary = "(강사) 강의 수정", description = "강사진 용 강의 수정 API 입니다. ")
@@ -65,8 +74,11 @@ public class LectureManageController {
     })
     @PutMapping("/edit/{lecture_index}")
     public CommonResult updateLecture(@PathVariable Long lecture_index,
-                                      @RequestBody LectureUpdateDto lectureUpdateDto){
-        return lectureManageService.updateLecture(lecture_index, lectureUpdateDto);
+                                      @RequestBody LectureUpdateDto lectureUpdateDto,
+                                      HttpServletRequest request){
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId,"TEACHER");
+        return lectureManageService.updateLecture(userId, lecture_index, lectureUpdateDto);
     }
 
     @Operation(summary = "(강사) 강의 삭제", description = "강사진 용 강의 삭제 API 입니다. ")
@@ -78,8 +90,11 @@ public class LectureManageController {
     })
     @Parameter(name = "lecture_index", description = "강의 인덱스", required = true)
     @DeleteMapping("/delete/{lecture_index}") //s3 관련 추가
-    public CommonResult deleteLecture(@PathVariable Long lecture_index){
-        return lectureManageService.deleteLecture(lecture_index);
+    public CommonResult deleteLecture(@PathVariable Long lecture_index,
+                                      HttpServletRequest request){
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId,"TEACHER");
+        return lectureManageService.deleteLecture(userId, lecture_index);
     }
 
     // [Crate] (강사) 대용량 파일 업로드

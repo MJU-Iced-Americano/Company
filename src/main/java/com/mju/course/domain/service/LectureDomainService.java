@@ -5,12 +5,10 @@ import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.domain.model.lecture.LectureAnswer;
 import com.mju.course.domain.model.lecture.LectureQuestion;
 import com.mju.course.domain.model.other.Exception.CourseException;
-import com.mju.course.domain.repository.UserRepository;
 import com.mju.course.domain.repository.lecture.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import static com.mju.course.domain.model.other.Exception.ExceptionList.*;
 
@@ -20,8 +18,6 @@ import static com.mju.course.domain.model.other.Exception.ExceptionList.*;
 public class LectureDomainService {
 
     private final LectureRepository lectureRepository;
-
-    private final UserRepository userRepository;
 
     private final LectureQuestionRepository lectureQuestionRepository;
     private final LectureQuestionPhotoRepository lectureQuestionPhotoRepository;

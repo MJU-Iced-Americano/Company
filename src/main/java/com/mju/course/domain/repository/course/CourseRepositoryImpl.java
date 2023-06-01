@@ -8,7 +8,7 @@ import com.querydsl.core.types.Projections;
 
 import java.util.ArrayList;
 import com.mju.course.domain.model.course.QCourse;
-import com.mju.course.domain.model.enums.CourseState;
+import com.mju.course.domain.model.course.enums.CourseState;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
 import com.querydsl.core.QueryResults;

@@ -1,7 +1,7 @@
 package com.mju.course.presentation.dto.response.admin;
 
 import com.mju.course.domain.model.course.Course;
-import com.mju.course.domain.model.enums.CourseState;
+import com.mju.course.domain.model.course.enums.CourseState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
