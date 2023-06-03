@@ -255,4 +255,31 @@ public class CourseServiceImpl implements CourseService{
         return "코스 수강 신청이 취소되었습니다.";
     }
 
+    @Override
+    public ClientReadCourseDto returnCourse(Long course_index) {
+        Course course = courseRepository.findById(course_index)
+                .orElse(null);
+        if(course == null){
+            return null;
+        }
+        return ClientReadCourseDto.builder()
+                .courseIndex(course.getId())
+                .lecturerIndex(course.getLecturerIndex())
+                .build();
+    }
+
+    @Override
+    public List<String> returnCourseUsers(Long course_index) {
+        Course course = courseRepository.findById(course_index)
+                .orElse(null);
+        List<String> users = new ArrayList<>();
+        if(course != null){
+            course.getUserCourseList()
+                    .forEach(s->{
+                        users.add(s.getUserId());
+                    });
+        }
+        return users;
+    }
+
 }
