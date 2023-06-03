@@ -58,12 +58,14 @@ public class CourseReadDto {
     @Schema(description = "유저가 장바구니에 담은 코스인지", defaultValue = "false")
     private boolean userAddCart;
 
+    private LecturerInfoDto lecturerInfoDto;
+
     public void addUserInfo(Optional<Cart> cart, Optional<CourseLike> like) {
         if(cart.isPresent()) userAddCart = true;
         if(like.isPresent()) userAddcourseLike = true;
     }
 
-    public static CourseReadDto of(Course course, List<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList){
+    public static CourseReadDto of(Course course, List<String> skillList, ArrayList<CurriculumReadDto> curriculumReadDtoList, LecturerInfoDto lecturerInfoDto){
         return CourseReadDto.builder()
                 .courseIndex(course.getId())
                 .category(course.getCategory())
@@ -79,6 +81,7 @@ public class CourseReadDto {
                 .hits(course.getHits())
                 .courseLikeSum(course.getCourseLikeList().size())
                 .cartSum(course.getCartList().size())
+                .lecturerInfoDto(lecturerInfoDto)
                 .build();
     }
 }

@@ -41,26 +41,26 @@ public class CourseManageServiceImpl implements CourseManageService {
     /**
      * 코스에 접근가능한 유저인지 확인
      * @param course
-     * @param userId
+     * @param lecturerId
      * */
-    private void checkUser(Course course, String userId){
-        if(!course.getUserId().equals(userId)) throw new CourseException(NOT_ACCESS_USER);
+    private void checkUser(Course course, Long lecturerId){
+        if(course.getLecturerIndex() != lecturerId || course.getLecturerIndex() == 0) throw new CourseException(NOT_ACCESS_USER);
     }
 
     /**
      * (강사) 코스 등록
-     * @param userId
+     * @param lecturerId
      * @param courseCreateDto
      * @param titlePhoto
      * */
     @Transactional
     @Override
-    public String createCourse(String userId, CourseCreateDto courseCreateDto, MultipartFile titlePhoto) throws IOException {
+    public String createCourse(Long lecturerId, CourseCreateDto courseCreateDto, MultipartFile titlePhoto) throws IOException {
         Optional<Course> checkCourse = courseRepository.findByCourseName(courseCreateDto.getCourseName());
         if(checkCourse.isPresent()) throw new CourseException(DUPLICATION_COURSE_NAME);
 
         // 코스 저장
-        Course course = Course.of(userId, courseCreateDto);
+        Course course = Course.of(lecturerId, courseCreateDto);
         Course saveCourse = courseRepository.save(course);
 
         // 스킬 저장
@@ -90,17 +90,17 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     /**
      * (강사) 코스 수정
-     * @param userId
+     * @param lecturerId
      * @param course_index
      * @param courseUpdateDto
      * @param titlePhoto
      * */
     @Override
-    public String updateCourse(String userId, Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException {
+    public String updateCourse(Long lecturerId, Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
-        checkUser(findCourse, userId);
+        checkUser(findCourse, lecturerId);
 
         AtomicBoolean isModified = new AtomicBoolean(false); // 수정 유무
         ArrayList<String> arr = new ArrayList<>();
@@ -180,39 +180,39 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     /**
      * (강사) 코스 삭제
-     * @param userId
+     * @param lecturerId
      * @param course_index
      * @param comment
     * */
     @Override
     @Transactional
-    public String deleteCourse(String userId, Long course_index, String comment) {
+    public String deleteCourse(Long lecturerId, Long course_index, String comment) {
         if(comment != null){
-            updateState(userId, course_index, CourseState.delete, comment);
+            updateState(lecturerId, course_index, CourseState.delete, comment);
             return "삭제되었습니다.";
         }else{
             throw new CourseException(PLEASE_COURSE_DELETE_REASON);
         }
     }
 
-    private void updateState(String userId, Long course_index, CourseState status,String comment) {
+    private void updateState(Long lecturerId, Long course_index, CourseState status,String comment) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        checkUser(findCourse, userId);
+        checkUser(findCourse, lecturerId);
         findCourse.updateState(status, comment);
         courseRepository.save(findCourse);
     }
 
     /**
      * (강사) 코스 신청
-     * @param userId
+     * @param lecturerId
      * @param course_index
      * */
     @Override
-    public String requestCourse(String userId, Long course_index) {
+    public String requestCourse(Long lecturerId, Long course_index) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        checkUser(findCourse, userId);
+        checkUser(findCourse, lecturerId);
         List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse); // 에러 처리
 
         boolean checkLecture = false;
@@ -230,16 +230,16 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     /**
      * (강사) 커리 큘럼 추가
-     * @param userId
+     * @param lecturerId
      * @param course_index
      * @param curriculumCreateDto
      * */
     @Override
     @Transactional
-    public String addCurriculum(String userId, Long course_index, CurriculumCreateDto curriculumCreateDto) {
+    public String addCurriculum(Long lecturerId, Long course_index, CurriculumCreateDto curriculumCreateDto) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        checkUser(findCourse, userId);
+        checkUser(findCourse, lecturerId);
         checkCurriculumAndTitle(findCourse, curriculumCreateDto.getChapter(), curriculumCreateDto.getCurriculumTitle());
 
         Curriculum curriculum = Curriculum.of(curriculumCreateDto, findCourse);
@@ -249,17 +249,17 @@ public class CourseManageServiceImpl implements CourseManageService {
 
     /**
      * (강사) 커리 큘럼 수정
-     * @param userId
+     * @param lecturerId
      * @param course_index
      * @param chapter
      * @param curriculumCreateDto
      * */
     @Override
     @Transactional
-    public String updateCurriculum(String userId, Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto) {
+    public String updateCurriculum(Long lecturerId, Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        checkUser(findCourse, userId);
+        checkUser(findCourse, lecturerId);
         Optional<Curriculum> findCurriculum = Optional.ofNullable(curriculumRepository.findByCourseAndChapter(findCourse, chapter)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM)));
 
@@ -302,15 +302,15 @@ public class CourseManageServiceImpl implements CourseManageService {
     /**
      * 커리큘럼 삭제
      * @param course_index
-     * @param chapter
+     * @param lecturerId
      * @param chapter
      * */
     @Override
     @Transactional
-    public String deleteCurriculum(String userId, Long course_index, int chapter) {
+    public String deleteCurriculum(Long lecturerId, Long course_index, int chapter) {
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-        checkUser(findCourse, userId);
+        checkUser(findCourse, lecturerId);
         Optional<Curriculum> findCurriculum = Optional.ofNullable(curriculumRepository.findByCourseAndChapter(findCourse, chapter)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM)));
         List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get());

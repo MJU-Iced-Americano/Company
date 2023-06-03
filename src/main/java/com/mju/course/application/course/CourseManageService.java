@@ -8,12 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface CourseManageService {
-    String createCourse(String userId, CourseCreateDto courseCreateDto, MultipartFile titlePhoto) throws IOException;
-    String updateCourse(String userId, Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException;
-    String deleteCourse(String userId, Long course_index, String comment);
-    String requestCourse(String userId, Long course_index);
+    String createCourse(Long lecturerId, CourseCreateDto courseCreateDto, MultipartFile titlePhoto) throws IOException;
+    String updateCourse(Long lecturerId, Long course_index, CourseUpdateDto courseUpdateDto, MultipartFile titlePhoto) throws IOException;
+    String deleteCourse(Long lecturerId, Long course_index, String comment);
+    String requestCourse(Long lecturerId, Long course_index);
 
-    String addCurriculum(String userId, Long course_index, CurriculumCreateDto curriculumCreateDto);
-    String updateCurriculum(String userId, Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto);
-    String deleteCurriculum(String userId, Long course_index, int chapter);
+    String addCurriculum(Long lecturerId, Long course_index, CurriculumCreateDto curriculumCreateDto);
+    String updateCurriculum(Long lecturerId, Long course_index, int chapter, CurriculumCreateDto curriculumCreateDto);
+    String deleteCurriculum(Long lecturerId, Long course_index, int chapter);
 }

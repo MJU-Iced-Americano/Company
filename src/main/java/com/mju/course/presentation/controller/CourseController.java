@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +34,13 @@ public class CourseController {
     private final UserServiceImpl userService;
 
     private final ResponseService responseService;
+
+    @Operation(summary = "기술리스트 보기")
+    @GetMapping("/skill/all")
+    public CommonResult readSkills(){
+        Set<String> skills = courseService.readSkills();
+        return responseService.getSingleResult(skills);
+    }
 
     // 추후 개발 - 다른 MSA 와의 통신 : 평점 높은 순, 리뷰 많은 순
     // 유저 정보가 존재한다면 - 검색어 저장

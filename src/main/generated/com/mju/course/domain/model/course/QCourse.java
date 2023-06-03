@@ -49,6 +49,8 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final NumberPath<Long> lecturerIndex = createNumber("lecturerIndex", Long.class);
+
     public final NumberPath<Long> price = createNumber("price", Long.class);
 
     public final ListPath<Skill, QSkill> skillList = this.<Skill, QSkill>createList("skillList", Skill.class, QSkill.class, PathInits.DIRECT2);
@@ -59,8 +61,6 @@ public class QCourse extends EntityPathBase<Course> {
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final ListPath<UserCourse, QUserCourse> userCourseList = this.<UserCourse, QUserCourse>createList("userCourseList", UserCourse.class, QUserCourse.class, PathInits.DIRECT2);
-
-    public final StringPath userId = createString("userId");
 
     public QCourse(String variable) {
         super(Course.class, forVariable(variable));

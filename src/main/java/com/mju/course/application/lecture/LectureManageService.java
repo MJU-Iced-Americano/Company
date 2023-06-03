@@ -9,9 +9,9 @@ import java.io.IOException;
 
 public interface LectureManageService {
 
-    CommonResult createLecture(String userId, Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException;
+    void createLecture(Long lecturerId, Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException;
 
-    CommonResult updateLecture(String userId, Long lecture_index, LectureUpdateDto lectureUpdateDto);
+    String updateLecture(Long lecturerId, Long lecture_index, LectureUpdateDto lectureUpdateDto);
 
-    CommonResult deleteLecture(String userId, Long lecture_index);
+    String deleteLecture(Long lecturerId, Long lecture_index);
 }

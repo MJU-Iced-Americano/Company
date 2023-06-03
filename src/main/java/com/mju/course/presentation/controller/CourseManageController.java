@@ -2,9 +2,11 @@ package com.mju.course.presentation.controller;
 
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.course.CourseManageService;
+import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.*;
+import com.mju.course.presentation.dto.response.LecturerInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -21,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import static com.mju.course.domain.model.other.Exception.ExceptionList.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/course-service/course/manage")
@@ -31,6 +35,17 @@ public class CourseManageController {
     private final UserServiceImpl userService;
 
     private final ResponseService responseService;
+    private final LecturerFeignClient lecturerFeignClient;
+
+    private Long getLecturer(HttpServletRequest request){
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId,"TEACHER");
+        LecturerInfoDto lecturerInfoDto = lecturerFeignClient.readLecturerByUserId(userId);
+        if(lecturerInfoDto == null){
+            throw new CourseException(NOT_EXISTENT_LECTURE_INFO);
+        }
+        return lecturerInfoDto.getLecturerIndex();
+    }
 
     // (강사) 코스 등록 - 코스 설명할 때 사진 어떻게 처리 ? -> 다중 사진 처리
     @Operation(summary = "(강사) 코스 등록", description = "강사진 용 코스 등록 API 입니다. ")
@@ -47,9 +62,8 @@ public class CourseManageController {
     public CommonResult createCourse(@RequestPart("courseCreateDto") @Validated CourseCreateDto courseCreateDto,
                                      @RequestPart(value="titlePhoto") MultipartFile titlePhoto,
                                      HttpServletRequest request) throws IOException {
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        return responseService.getSingleResult(courseManageService.createCourse(userId, courseCreateDto, titlePhoto));
+        Long lecturerId = getLecturer(request);
+        return responseService.getSingleResult(courseManageService.createCourse(lecturerId, courseCreateDto, titlePhoto));
     }
 
     @Operation(summary = "(강사) 코스 수정", description = "코스 수정 API 입니다. ")
@@ -70,9 +84,8 @@ public class CourseManageController {
                                      @RequestPart(value ="courseUpdateDto",required = false) CourseUpdateDto courseUpdateDto,
                                      @RequestPart(value ="changeTitlePhoto",required = false) MultipartFile titlePhoto,
                                      HttpServletRequest request) throws IOException {
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        String result = courseManageService.updateCourse(userId, course_index, courseUpdateDto, titlePhoto);
+        Long lecturerId = getLecturer(request);
+        String result = courseManageService.updateCourse(lecturerId, course_index, courseUpdateDto, titlePhoto);
         return responseService.getSingleResult(result);
     }
 
@@ -91,9 +104,8 @@ public class CourseManageController {
     public CommonResult deleteCourse(@PathVariable Long course_index,
                                      String comment,
                                      HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        String result = courseManageService.deleteCourse(userId, course_index, comment);
+        Long lecturerId = getLecturer(request);
+        String result = courseManageService.deleteCourse(lecturerId, course_index, comment);
         return responseService.getSingleResult(result);
     }
 
@@ -109,9 +121,8 @@ public class CourseManageController {
     @PostMapping("/request/{course_index}")
     public CommonResult requestCourse(@PathVariable Long course_index,
                                       HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        String result = courseManageService.requestCourse(userId, course_index);
+        Long lecturerId = getLecturer(request);
+        String result = courseManageService.requestCourse(lecturerId, course_index);
         return responseService.getSingleResult(result);
     }
 
@@ -131,9 +142,8 @@ public class CourseManageController {
     public CommonResult addCurriculum(@PathVariable Long course_index,
                                       @RequestBody @Validated CurriculumCreateDto curriculumCreateDto,
                                       HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        String result = courseManageService.addCurriculum(userId, course_index,curriculumCreateDto);
+        Long lecturerId = getLecturer(request);
+        String result = courseManageService.addCurriculum(lecturerId, course_index,curriculumCreateDto);
         return responseService.getSingleResult(result);
     }
 
@@ -158,9 +168,8 @@ public class CourseManageController {
                                          @PathVariable int chapter,
                                          @RequestBody CurriculumCreateDto curriculumCreateDto,
                                          HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        String result = courseManageService.updateCurriculum(userId, course_index, chapter, curriculumCreateDto);
+        Long lecturerId = getLecturer(request);
+        String result = courseManageService.updateCurriculum(lecturerId, course_index, chapter, curriculumCreateDto);
         return responseService.getSingleResult(result);
     }
 
@@ -180,9 +189,8 @@ public class CourseManageController {
     public CommonResult deleteCurriculum(@PathVariable Long course_index,
                                          @PathVariable int chapter,
                                          HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        String result = courseManageService.deleteCurriculum(userId, course_index, chapter);
+        Long lecturerId = getLecturer(request);
+        String result = courseManageService.deleteCurriculum(lecturerId, course_index, chapter);
         return responseService.getSingleResult(result);
     }
 
