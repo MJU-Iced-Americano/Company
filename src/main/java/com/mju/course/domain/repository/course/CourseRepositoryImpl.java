@@ -1,13 +1,11 @@
 package com.mju.course.domain.repository.course;
 
-import com.mju.course.domain.model.course.Course;
-import com.mju.course.domain.model.course.QCourseLike;
-import com.mju.course.domain.model.course.QUserCourse;
+import com.mju.course.domain.model.course.*;
 import com.mju.course.presentation.dto.response.*;
 import com.querydsl.core.types.Projections;
 
 import java.util.ArrayList;
-import com.mju.course.domain.model.course.QCourse;
+
 import com.mju.course.domain.model.course.enums.CourseState;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import com.mju.course.presentation.dto.response.admin.AdminReadCoursesDto;
@@ -139,13 +137,13 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public List<RequestUserCourseDto> requestCourseList(String userId) {
+    public List<MyPageUserCourseDto> requestCourseList(String userId) {
         QCourse course = QCourse.course;
         QUserCourse userCourse = QUserCourse.userCourse;
 
         // Query 객체 생성
-        JPQLQuery<RequestUserCourseDto> query = queryFactory
-                .selectDistinct(Projections.constructor(RequestUserCourseDto.class,
+        JPQLQuery<MyPageUserCourseDto> query = queryFactory
+                .selectDistinct(Projections.constructor(MyPageUserCourseDto.class,
                         userCourse.id,
                         course.category,
                         course.courseName,
@@ -158,7 +156,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .where(userCourse.userId.in(userId));
 
         // Query 실행
-        List<RequestUserCourseDto> results = query.fetch();
+        List<MyPageUserCourseDto> results = query.fetch();
 
         results.forEach(content->{
             content.updateUrl(content.getCourseTitlePhotoUrl());
@@ -167,13 +165,13 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public List<RequestCourseLikeDto> requestCourseLike(String userId) {
+    public List<MyPageCourseLikeDto> requestCourseLike(String userId) {
         QCourse course = QCourse.course;
         QCourseLike courseLike = QCourseLike.courseLike;
 
         // Query 객체 생성
-        JPQLQuery<RequestCourseLikeDto> query = queryFactory
-                .selectDistinct(Projections.constructor(RequestCourseLikeDto.class,
+        JPQLQuery<MyPageCourseLikeDto> query = queryFactory
+                .selectDistinct(Projections.constructor(MyPageCourseLikeDto.class,
                         courseLike.id,
                         course.category,
                         course.courseName,
@@ -186,7 +184,35 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .where(courseLike.userId.in(userId));
 
         // Query 실행
-        List<RequestCourseLikeDto> results = query.fetch();
+        List<MyPageCourseLikeDto> results = query.fetch();
+
+        results.forEach(content->{
+            content.updateUrl(content.getCourseTitlePhotoUrl());
+        });
+        return results;
+    }
+
+    @Override
+    public List<MyPageCartDto> readCart(String userId) {
+        QCourse course = QCourse.course;
+        QCart cart = QCart.cart;
+
+        // Query 객체 생성
+        JPQLQuery<MyPageCartDto> query = queryFactory
+                .selectDistinct(Projections.constructor(MyPageCartDto.class,
+                        cart.id,
+                        course.category,
+                        course.courseName,
+                        course.price,
+                        course.difficulty,
+                        course.courseTitlePhotoKey,
+                        cart.createdAt))
+                .from(cart)
+                .join(cart.course, course)
+                .where(cart.userId.in(userId));
+
+        // Query 실행
+        List<MyPageCartDto> results = query.fetch();
 
         results.forEach(content->{
             content.updateUrl(content.getCourseTitlePhotoUrl());
