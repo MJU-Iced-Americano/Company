@@ -41,9 +41,8 @@ public class UserServiceImpl {
             String userId = getUserInfoDto(token).getId();
             System.out.println(userId);
             return userId;
-        }else{
-            throw new NonExceptionUser(EMPTY_JWT);
         }
+        return "";
     }
 
     /**
