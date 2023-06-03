@@ -6,6 +6,7 @@ import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.response.CourseReadDto;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
+import com.mju.course.presentation.dto.response.SearchReadDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -72,7 +73,8 @@ public class CourseController {
     public CommonResult readSearch(HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.readSearch(userId);
+        List<SearchReadDto> result = courseService.readSearch(userId);
+        return responseService.getListResult(result);
     }
 
     @Operation(summary = "검색어 하나 삭제", description = "검색어 하나 삭제 API 입니다. ")
@@ -81,7 +83,8 @@ public class CourseController {
                                      HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.deleteSearch(search_index, userId);
+        String result = courseService.deleteSearch(search_index, userId);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "검색어 전체 삭제", description = "검색어 전체 삭제 API 입니다. ")
@@ -89,7 +92,8 @@ public class CourseController {
     public CommonResult deleteSearchList(HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.deleteSearchList(userId);
+        String result = courseService.deleteSearchList(userId);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(공통) 코스 조회", description = "코스 조회 API 입니다. ")
@@ -112,7 +116,8 @@ public class CourseController {
                                 HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.addCart(userId, course_index);
+        String result = courseService.addCart(userId, course_index);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(공통) 코스 장바구니 삭제", description = "코스 장바구니 삭제 API 입니다. ")
@@ -121,7 +126,8 @@ public class CourseController {
                                    HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.deleteCart(userId, course_index);
+        String result = courseService.deleteCart(userId, course_index);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(공통) 코스 좋아요, 좋아요 취소", description = "코스 좋아요 API 입니다. ")
@@ -130,7 +136,8 @@ public class CourseController {
                                    HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.courseLike(userId, course_index);
+        courseService.courseLike(userId, course_index);
+        return responseService.getSuccessfulResult();
     }
 
     @Operation(summary = "코스 수강 신청", description = "코스 수강 신청 API 입니다. ")
@@ -139,7 +146,8 @@ public class CourseController {
                                     HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.applyCourse(userId, course_index);
+        String result = courseService.applyCourse(userId, course_index);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "코스 수강 취소", description = "코스 취소 API 입니다. ")
@@ -148,7 +156,8 @@ public class CourseController {
                                      HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return courseService.cancelCourse(userId, user_course_index);
+        String result = courseService.cancelCourse(userId, user_course_index);
+        return responseService.getSingleResult(result);
     }
 
 }

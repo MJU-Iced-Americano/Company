@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,8 +31,6 @@ public class CourseServiceImpl implements CourseService{
     private final UserCourseRepository userCourseRepository;
     private final SearchRepository searchRepository;
     private final SkillRepository skillRepository;
-
-    private final ResponseService responseService;
 
     private final LecturerFeignClient lecturerFeignClient;
 
@@ -119,7 +118,7 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult readSearch(String userId) {
+    public List<SearchReadDto> readSearch(String userId) {
         List<SearchReadDto> searchReadDtos = new ArrayList<>();
         if(userId != null){
             List<Search> searchList = searchRepository.findByUserId(userId);
@@ -127,7 +126,7 @@ public class CourseServiceImpl implements CourseService{
                 searchReadDtos.add(SearchReadDto.of(content));
             });
         }
-        return responseService.getSingleResult(searchReadDtos);
+        return searchReadDtos;
     }
 
     /** 검색어 하나 삭제
@@ -135,7 +134,8 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult deleteSearch(Long search_index, String userId){
+    @Transactional
+    public String deleteSearch(Long search_index, String userId){
         // 존재하지 않는 유저
 
         // 존재하지 않는 검색어 입니다.
@@ -148,19 +148,20 @@ public class CourseServiceImpl implements CourseService{
         }
         searchRepository.delete(search);
 
-        return responseService.getSuccessfulResult();
+        return "검색어가 삭제되었습니다.";
     }
 
     /** 검색어 전체 삭제
      * @param userId
      */
     @Override
-    public CommonResult deleteSearchList(String userId) {
+    @Transactional
+    public String deleteSearchList(String userId) {
         List<Search> searchList = searchRepository.findByUserId(userId);
         searchList.forEach(search -> {
             searchRepository.delete(search);
         });
-        return responseService.getSuccessfulResult();
+        return "검색어가 모두 삭제되었습니다.";
     }
 
     /** 장바구니 추가
@@ -168,7 +169,8 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult addCart(String userId, Long course_index) {
+    @Transactional
+    public String addCart(String userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         Optional<Cart> cart = cartRepository.findByCourseAndUserId(course, userId);
@@ -178,7 +180,7 @@ public class CourseServiceImpl implements CourseService{
         Cart saveCart = Cart.of(course, userId);
         cartRepository.save(saveCart);
 
-        return responseService.getSuccessfulResult();
+        return "장바구니에 추가되었습니다.";
     }
 
     /** 장바구니 삭제
@@ -186,14 +188,15 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult deleteCart(String userId, Long course_index) {
+    @Transactional
+    public String deleteCart(String userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
         Cart cart = cartRepository.findByCourseAndUserId(course, userId)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CART));
         cartRepository.delete(cart);
 
-        return responseService.getSuccessfulResult();
+        return "장바구니에서 삭제되었습니다.";
     }
 
     /** 코스 좋아요 추가, 삭제
@@ -201,7 +204,8 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult courseLike(String userId, Long course_index) {
+    @Transactional
+    public void courseLike(String userId, Long course_index) {
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
@@ -211,7 +215,6 @@ public class CourseServiceImpl implements CourseService{
         }else{
             courseLikeRepository.save(CourseLike.of(course, userId));
         }
-        return responseService.getSuccessfulResult();
     }
 
     /** 코스 수강 신청
@@ -219,7 +222,8 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult applyCourse(String userId, Long course_index) {
+    @Transactional
+    public String applyCourse(String userId, Long course_index) {
         // 만약, 이미 수강 신청한 강좌라면 이미 수강신청한 강좌입니다란 정보 추출
         Course course = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
@@ -232,7 +236,7 @@ public class CourseServiceImpl implements CourseService{
         UserCourse userCourse = UserCourse.of(userId, course);
         userCourseRepository.save(userCourse);
 
-        return responseService.getSuccessfulResult();
+        return "코스 수강신청되었습니다.";
     }
 
     /** 코스 수강 취소
@@ -240,14 +244,15 @@ public class CourseServiceImpl implements CourseService{
      * @param userId
      */
     @Override
-    public CommonResult cancelCourse(String userId, Long user_course_index) {
+    @Transactional
+    public String cancelCourse(String userId, Long user_course_index) {
         UserCourse userCourse = userCourseRepository.findById(user_course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_USER_COURSE));
         if(!userCourse.getUserId().equals(userId)){
             throw new CourseException(NOT_ACCESS_USER_COURSE);
         }
         userCourseRepository.delete(userCourse);
-        return responseService.getSuccessfulResult();
+        return "코스 수강 신청이 취소되었습니다.";
     }
 
 }
