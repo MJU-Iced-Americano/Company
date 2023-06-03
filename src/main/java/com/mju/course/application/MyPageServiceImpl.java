@@ -15,11 +15,15 @@ public class MyPageServiceImpl {
 
     private final CourseRepository courseRepository;
 
-    public List<RequestUserCourseDto> requestCourseList(String userId) {
+    public List<MyPageUserCourseDto> requestCourseList(String userId) {
         return courseRepository.requestCourseList(userId);
     }
 
-    public List<RequestCourseLikeDto> requestCourseLike(String userId) {
+    public List<MyPageCourseLikeDto> requestCourseLike(String userId) {
         return courseRepository.requestCourseLike(userId);
+    }
+
+    public List<MyPageCartDto> readCart(String userId) {
+        return courseRepository.readCart(userId);
     }
 }

@@ -33,4 +33,10 @@ public class MyPageController {
         return responseService.getListResult(myPageService.requestCourseLike(userService.getUserId(request)));
     }
 
+    @Operation(summary = "장바구니에 담은 코스", description = "장바구니에 담은 코스 보기 API 입니다. ")
+    @GetMapping("/user/cart")
+    public ListResult readCart(HttpServletRequest request){
+        return responseService.getListResult(myPageService.readCart(userService.getUserId(request)));
+    }
+
 }

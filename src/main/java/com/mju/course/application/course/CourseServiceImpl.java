@@ -6,6 +6,7 @@ import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.*;
 import com.mju.course.domain.service.ResponseService;
+import com.mju.course.presentation.controller.LecturerFeignClient;
 import com.mju.course.presentation.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mju.course.domain.model.other.Exception.ExceptionList.*;
@@ -30,8 +29,24 @@ public class CourseServiceImpl implements CourseService{
     private final CourseLikeRepository courseLikeRepository;
     private final UserCourseRepository userCourseRepository;
     private final SearchRepository searchRepository;
+    private final SkillRepository skillRepository;
 
     private final ResponseService responseService;
+
+    private final LecturerFeignClient lecturerFeignClient;
+
+    /**
+     * 기술 리스트 보기
+     * */
+    @Override
+    public Set<String> readSkills() {
+        List<Skill> skillList = skillRepository.findAll();
+        Set<String> skills = new HashSet<>();
+        skillList.forEach(skill -> {
+            skills.add(skill.getSkill());
+        });
+        return skills;
+    }
 
     /**
      * 코스 목록 보기
@@ -85,7 +100,10 @@ public class CourseServiceImpl implements CourseService{
             curriculumReadDtoList.add(CurriculumReadDto.of(curriculum, lectureReadDtos));
         });
 
-        CourseReadDto courseReadDto = CourseReadDto.of(findCourse, skillList, curriculumReadDtoList);
+        // 강사 정보
+        LecturerInfoDto lecturerInfoDto = lecturerFeignClient.readLecturer(findCourse.getLecturerIndex());
+
+        CourseReadDto courseReadDto = CourseReadDto.of(findCourse, skillList, curriculumReadDtoList,lecturerInfoDto);
 
         // 유저 정보
         if(userId != null){

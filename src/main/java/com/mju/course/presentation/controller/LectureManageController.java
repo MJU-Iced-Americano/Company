@@ -2,10 +2,12 @@ package com.mju.course.presentation.controller;
 
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.lecture.LectureManageService;
+import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.LectureCreateDto;
 import com.mju.course.presentation.dto.request.LectureUpdateDto;
+import com.mju.course.presentation.dto.response.LecturerInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -22,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import static com.mju.course.domain.model.other.Exception.ExceptionList.NOT_EXISTENT_LECTURE_INFO;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lecture-service/lecture/manage")
@@ -32,6 +36,17 @@ public class LectureManageController {
     private final UserServiceImpl userService;
 
     private final ResponseService responseService;
+    private final LecturerFeignClient lecturerFeignClient;
+
+    private Long getLecturer(HttpServletRequest request){
+        String userId = userService.getUserId(request);
+        userService.checkUserType(userId,"TEACHER");
+        LecturerInfoDto lecturerInfoDto = lecturerFeignClient.readLecturerByUserId(userId);
+        if(lecturerInfoDto == null){
+            throw new CourseException(NOT_EXISTENT_LECTURE_INFO);
+        }
+        return lecturerInfoDto.getLecturerIndex();
+    }
 
     @Operation(summary = "(강사) 강의 등록", description = "강사진 용 강의 등록 API 입니다. ")
     @ApiResponses({
@@ -56,9 +71,9 @@ public class LectureManageController {
                                       @RequestPart("postLectureDto") @Validated LectureCreateDto lectureCreateDto,
                                       @RequestPart("video") MultipartFile multipartFile,
                                       HttpServletRequest request) throws IOException {
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        return lectureManageService.createLecture(userId, course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
+        Long lecturerId = getLecturer(request);
+        lectureManageService.createLecture(lecturerId, course_index,chapter,lecture_sequence, lectureCreateDto,multipartFile);
+        return responseService.getSuccessfulResult();
     }
 
     @Operation(summary = "(강사) 강의 수정", description = "강사진 용 강의 수정 API 입니다. ")
@@ -76,9 +91,9 @@ public class LectureManageController {
     public CommonResult updateLecture(@PathVariable Long lecture_index,
                                       @RequestBody LectureUpdateDto lectureUpdateDto,
                                       HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        return lectureManageService.updateLecture(userId, lecture_index, lectureUpdateDto);
+        Long lecturerId = getLecturer(request);
+        String result = lectureManageService.updateLecture(lecturerId, lecture_index, lectureUpdateDto);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "(강사) 강의 삭제", description = "강사진 용 강의 삭제 API 입니다. ")
@@ -92,9 +107,9 @@ public class LectureManageController {
     @DeleteMapping("/delete/{lecture_index}") //s3 관련 추가
     public CommonResult deleteLecture(@PathVariable Long lecture_index,
                                       HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserType(userId,"TEACHER");
-        return lectureManageService.deleteLecture(userId, lecture_index);
+        Long lecturerId = getLecturer(request);
+        String result = lectureManageService.deleteLecture(lecturerId, lecture_index);
+        return responseService.getSingleResult(result);
     }
 
     // [Crate] (강사) 대용량 파일 업로드

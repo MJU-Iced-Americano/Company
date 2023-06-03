@@ -11,6 +11,7 @@ public interface CourseRepositoryCustom {
     Page<CoursesReadDto> readCourseList(String category, String order, List<String> skill, Pageable pageable, String search);
     Page<AdminReadCoursesDto> readAdminCourseList(String state, String order, Pageable pageable);
 
-    List<RequestUserCourseDto> requestCourseList(String userId);
-    List<RequestCourseLikeDto> requestCourseLike(String userId);
+    List<MyPageUserCourseDto> requestCourseList(String userId);
+    List<MyPageCourseLikeDto> requestCourseLike(String userId);
+    List<MyPageCartDto> readCart(String userId);
 }

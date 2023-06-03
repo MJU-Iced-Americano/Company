@@ -36,29 +36,29 @@ public class LectureManageServiceImpl implements LectureManageService {
     private final CurriculumRepository curriculumRepository;
     private final LectureRepository lectureRepository;
 
-    private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
     private final LectureDomainService lectureDomainService;
 
     /**
-     * 코스에 접근가능한 유저인지 확인
+     * 강사에 접근가능한 유저인지 확인
      * @param course
-     * @param userId
+     * @param lecturerId
      * */
-    private void checkUser(Course course, String userId){
-        if(!course.getUserId().equals(userId)) throw new CourseException(NOT_ACCESS_USER);
+    private void checkUser(Course course, Long lecturerId){
+        if(course.getLecturerIndex() != lecturerId || course.getLecturerIndex() == 0) throw new CourseException(NOT_ACCESS_USER);
     }
 
     /**
      * (강사) 강의 등록
      * */
     @Override
-    public CommonResult createLecture(String userId, Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException {
+    @Transactional
+    public void createLecture(Long lecturerId, Long course_index, int chapter, int lecture_sequence, LectureCreateDto lectureCreateDto, MultipartFile multipartFile) throws IOException {
 
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
-        checkUser(findCourse, userId);
+        checkUser(findCourse, lecturerId);
 
         Curriculum findCurriculum = curriculumRepository.findByCourseAndChapter(findCourse, chapter)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_CURRICULUM));
@@ -88,14 +88,16 @@ public class LectureManageServiceImpl implements LectureManageService {
         Lecture saveLecture = lectureRepository.save(lecture);
 
         // 코스 업데이트
-
-        return responseService.getSuccessfulResult();
     }
 
     @Override
-    public CommonResult updateLecture(String userId, Long lecture_index, LectureUpdateDto lectureUpdateDto) {
+    public String updateLecture(Long lecturerId, Long lecture_index, LectureUpdateDto lectureUpdateDto) {
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
+
+        Course findCourse = courseRepository.findById(lecture.getCurriculum().getCourse().getId())
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+        checkUser(findCourse, lecturerId);
 
         boolean isModified = false; // 수정 유무
         ArrayList<String> arr = new ArrayList<>();
@@ -116,7 +118,7 @@ public class LectureManageServiceImpl implements LectureManageService {
             throw new CourseException(NO_MODIFIED_LECTURE);
         }else{
             lectureRepository.save(lecture);
-            return responseService.getSingleResult(arr +"가 수정되었습니다.");
+            return arr +"가 수정되었습니다.";
         }
     }
 
@@ -126,9 +128,16 @@ public class LectureManageServiceImpl implements LectureManageService {
      * */
     @Override
     @Transactional
-    public CommonResult deleteLecture(String userId, Long lecture_index) {
+    public String deleteLecture(Long lecturerId, Long lecture_index) {
+        Lecture lecture = lectureRepository.findById(lecture_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
+        Course findCourse = courseRepository.findById(lecture.getCurriculum().getCourse().getId())
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+        checkUser(findCourse, lecturerId);
+
         lectureDomainService.deleteLecture(lecture_index);
-        return responseService.getSuccessfulResult();
+
+        return "강의가 삭제되었습니다.";
     }
 
 }
