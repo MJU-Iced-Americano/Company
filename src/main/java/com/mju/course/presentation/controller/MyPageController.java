@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/request")
+@RequestMapping("/mypage")
 @Tag(name = "myPage-service", description = "마이페이지 관련 api")
 public class MyPageController {
 
