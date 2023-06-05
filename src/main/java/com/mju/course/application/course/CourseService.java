@@ -23,7 +23,7 @@ public interface CourseService {
     String deleteCart(String userId, Long course_index);
     void courseLike(String userId, Long course_index);
 
-    String applyCourse(String userId, Long course_index);
+    String applyCourse(String userId, List<Long> courseList);
     String cancelCourse(String userId, Long user_course_index);
 
     ClientReadCourseDto returnCourse(Long course_index);
