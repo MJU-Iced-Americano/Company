@@ -1,4 +1,4 @@
-package com.mju.course.presentation.controller;
+package com.mju.course.presentation.controller.client;
 
 import com.mju.course.presentation.dto.response.UserInfoDto;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -5,6 +5,7 @@ import com.mju.course.application.course.CourseManageService;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.service.ResponseService;
+import com.mju.course.presentation.controller.client.LecturerFeignClient;
 import com.mju.course.presentation.dto.request.*;
 import com.mju.course.presentation.dto.response.LecturerInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,7 +78,7 @@ public class CourseManageController {
     @Parameters({
             @Parameter(name = "course_index", description = "코스 인덱스", required = true),
             @Parameter(name = "courseUpdateDto", description = "코스 변경 정보를 담은 객체"),
-            @Parameter(name = "titlePhoto", description = "코스 기본 사진")
+            @Parameter(name = "changeTitlePhoto", description = "코스 기본 사진")
     })
     @PutMapping("/edit/{course_index}")
     public CommonResult updateCourse(@PathVariable Long course_index,

@@ -5,6 +5,7 @@ import com.mju.course.application.lecture.LectureManageService;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.service.ResponseService;
+import com.mju.course.presentation.controller.client.LecturerFeignClient;
 import com.mju.course.presentation.dto.request.LectureCreateDto;
 import com.mju.course.presentation.dto.request.LectureUpdateDto;
 import com.mju.course.presentation.dto.response.LecturerInfoDto;
