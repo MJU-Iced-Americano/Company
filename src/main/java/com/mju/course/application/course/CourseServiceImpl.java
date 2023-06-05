@@ -218,23 +218,25 @@ public class CourseServiceImpl implements CourseService{
     }
 
     /** 코스 수강 신청
-     * @param course_index
+     * @param courseList
      * @param userId
      */
     @Override
     @Transactional
-    public String applyCourse(String userId, Long course_index) {
-        // 만약, 이미 수강 신청한 강좌라면 이미 수강신청한 강좌입니다란 정보 추출
-        Course course = courseRepository.findById(course_index)
-                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+    public String applyCourse(String userId, List<Long> courseList) {
+        courseList.forEach(course_index->{
+            // 만약, 이미 수강 신청한 강좌라면 이미 수강신청한 강좌입니다란 정보 추출
+            Course course = courseRepository.findById(course_index)
+                    .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
-        Optional<UserCourse> checkUserCourse = userCourseRepository.findByUserIdAndCourse(userId, course);
-        if(checkUserCourse.isPresent()){
-            throw new CourseException(ALREADY_APPLY_COURSE);
-        }
+            Optional<UserCourse> checkUserCourse = userCourseRepository.findByUserIdAndCourse(userId, course);
+            if(checkUserCourse.isPresent()){
+                throw new CourseException(ALREADY_APPLY_COURSE);
+            }
 
-        UserCourse userCourse = UserCourse.of(userId, course);
-        userCourseRepository.save(userCourse);
+            UserCourse userCourse = UserCourse.of(userId, course);
+            userCourseRepository.save(userCourse);
+        });
 
         return "코스 수강신청되었습니다.";
     }

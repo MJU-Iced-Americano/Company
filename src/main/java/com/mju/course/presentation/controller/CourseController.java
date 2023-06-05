@@ -141,12 +141,13 @@ public class CourseController {
     }
 
     @Operation(summary = "코스 수강 신청", description = "코스 수강 신청 API 입니다. ")
-    @GetMapping("/apply-course/{course_index}")
-    public CommonResult applyCourse(@PathVariable Long course_index,
+    @GetMapping("/apply-course")
+    public CommonResult applyCourse(List<Long> courseList,
                                     HttpServletRequest request) {
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        String result = courseService.applyCourse(userId, course_index);
+
+        String result = courseService.applyCourse(userId, courseList);
         return responseService.getSingleResult(result);
     }
 
