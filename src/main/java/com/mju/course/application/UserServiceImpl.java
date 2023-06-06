@@ -3,10 +3,9 @@ package com.mju.course.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mju.course.domain.model.other.Exception.CourseException;
-import com.mju.course.presentation.controller.UserFeignClient;
+import com.mju.course.presentation.controller.client.UserFeignClient;
 import com.mju.course.presentation.dto.response.UserInfoDto;
 import com.nimbusds.jwt.SignedJWT;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,6 +104,15 @@ public class UserServiceImpl {
         if(!userInfoDto.getUserInformationType().equals(userType)) {
             throw new CourseException(NOT_CORRECT_USER);
         }
+    }
+
+    /**
+     * 유저 id 가져로고 null인지 확인
+     * */
+    public String getAndCheckUserId(HttpServletRequest request){
+        String userId = getUserId(request);
+        checkUserId(userId);
+        return userId;
     }
 
 }

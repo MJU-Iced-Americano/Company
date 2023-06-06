@@ -4,6 +4,7 @@ import com.mju.course.application.UserServiceImpl;
 import com.mju.course.application.course.CourseService;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.service.ResponseService;
+import com.mju.course.presentation.dto.request.ApplyCourseListDto;
 import com.mju.course.presentation.dto.response.CourseReadDto;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
 import com.mju.course.presentation.dto.response.SearchReadDto;
@@ -71,8 +72,7 @@ public class CourseController {
     @Operation(summary = "검색어 보기", description = "검색어 보기 API 입니다. ")
     @GetMapping("/search")
     public CommonResult readSearch(HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
+        String userId = userService.getAndCheckUserId(request);
         List<SearchReadDto> result = courseService.readSearch(userId);
         return responseService.getListResult(result);
     }
@@ -81,8 +81,7 @@ public class CourseController {
     @DeleteMapping("/delete-search/{search_index}")
     public CommonResult deleteSearch(@PathVariable Long search_index,
                                      HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
+        String userId = userService.getAndCheckUserId(request);
         String result = courseService.deleteSearch(search_index, userId);
         return responseService.getSingleResult(result);
     }
@@ -90,8 +89,7 @@ public class CourseController {
     @Operation(summary = "검색어 전체 삭제", description = "검색어 전체 삭제 API 입니다. ")
     @DeleteMapping("/delete-search/list")
     public CommonResult deleteSearchList(HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
+        String userId = userService.getAndCheckUserId(request);
         String result = courseService.deleteSearchList(userId);
         return responseService.getSingleResult(result);
     }
@@ -114,8 +112,7 @@ public class CourseController {
     @PostMapping("/{course_index}/cart")
     public CommonResult addCart(@PathVariable Long course_index,
                                 HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
+        String userId = userService.getAndCheckUserId(request);
         String result = courseService.addCart(userId, course_index);
         return responseService.getSingleResult(result);
     }
@@ -124,8 +121,7 @@ public class CourseController {
     @DeleteMapping("/{course_index}/cart")
     public CommonResult deleteCart(@PathVariable Long course_index,
                                    HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
+        String userId = userService.getAndCheckUserId(request);
         String result = courseService.deleteCart(userId, course_index);
         return responseService.getSingleResult(result);
     }
@@ -134,29 +130,25 @@ public class CourseController {
     @GetMapping("/{course_index}/like")
     public CommonResult courseLike(@PathVariable Long course_index,
                                    HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
+        String userId = userService.getAndCheckUserId(request);
         courseService.courseLike(userId, course_index);
         return responseService.getSuccessfulResult();
     }
 
     @Operation(summary = "코스 수강 신청", description = "코스 수강 신청 API 입니다. ")
-    @GetMapping("/apply-course")
-    public CommonResult applyCourse(List<Long> courseList,
+    @PostMapping("/apply-course")
+    public CommonResult applyCourse(@RequestBody ApplyCourseListDto courseList,
                                     HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
-
+        String userId = userService.getAndCheckUserId(request);
         String result = courseService.applyCourse(userId, courseList);
         return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "코스 수강 취소", description = "코스 취소 API 입니다. ")
-    @GetMapping("/cancel-course/{user_course_index}")
+    @DeleteMapping("/cancel-course/{user_course_index}")
     public CommonResult cancelCourse(@PathVariable Long user_course_index,
                                      HttpServletRequest request) {
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
+        String userId = userService.getAndCheckUserId(request);
         String result = courseService.cancelCourse(userId, user_course_index);
         return responseService.getSingleResult(result);
     }

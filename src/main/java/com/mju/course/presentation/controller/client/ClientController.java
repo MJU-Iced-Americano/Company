@@ -1,4 +1,4 @@
-package com.mju.course.presentation.controller;
+package com.mju.course.presentation.controller.client;
 
 import com.mju.course.application.course.CourseService;
 import com.mju.course.presentation.dto.response.ClientReadCourseDto;

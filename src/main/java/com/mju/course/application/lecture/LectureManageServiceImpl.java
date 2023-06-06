@@ -88,6 +88,7 @@ public class LectureManageServiceImpl implements LectureManageService {
         Lecture saveLecture = lectureRepository.save(lecture);
 
         // 코스 업데이트
+        findCourse.updateCourseTime(lectureCreateDto.getLectureTime());
     }
 
     @Override

@@ -13,4 +13,6 @@ public class LectureUpdateDto {
     private String lectureTitle;
     @Schema(description = "강의 상세 설명")
     private String lectureDescription;
+
+    private int lectureTime;
 }

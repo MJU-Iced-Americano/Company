@@ -64,6 +64,7 @@ public class Lecture extends BaseTimeEntity {
         return Lecture.builder()
                 .curriculum(curriculum)
                 .lectureSequence(lecture_sequence)
+                .lectureTime(lectureCreateDto.getLectureTime())
                 .lectureTitle(lectureCreateDto.getLectureTitle())
                 .lectureKey(lectureKey)
                 .lectureInputKey(inputKey)

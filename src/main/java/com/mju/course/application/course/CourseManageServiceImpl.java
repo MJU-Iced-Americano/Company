@@ -105,57 +105,59 @@ public class CourseManageServiceImpl implements CourseManageService {
         AtomicBoolean isModified = new AtomicBoolean(false); // 수정 유무
         ArrayList<String> arr = new ArrayList<>();
 
-        if(courseUpdateDto.getCategory() != null && !courseUpdateDto.getCategory().equals(findCourse.getCategory())){
-            findCourse.updateCategory(courseUpdateDto.getCategory());
-            arr.add("카테고리");
-            isModified.set(true);
-        }
-
-        if(courseUpdateDto.getCourseName() != null && !courseUpdateDto.getCourseName().equals(findCourse.getCourseName())){
-            // 코스 이름 중복 확인 - 작동이 안됨
-            Optional<Course> checkCourse = courseRepository.findByCourseName(courseUpdateDto.getCourseName());
-            if(checkCourse.isPresent()) {
-                throw new CourseException(DUPLICATION_COURSE_NAME);
-            }else{
-                arr.add("코스 이름");
-                findCourse.updateCourseName(courseUpdateDto.getCourseName());
+        if(courseUpdateDto != null){
+            if(courseUpdateDto.getCategory() != null && !courseUpdateDto.getCategory().equals(findCourse.getCategory())){
+                findCourse.updateCategory(courseUpdateDto.getCategory());
+                arr.add("카테고리");
                 isModified.set(true);
             }
-        }
 
-        if(courseUpdateDto.getPrice() != 0 && courseUpdateDto.getPrice() != findCourse.getPrice()){
-            arr.add("코스 가격");
-            findCourse.updatePrice(courseUpdateDto.getPrice());
-            isModified.set(true);
-        }
-        if(courseUpdateDto.getCourseDescription() != null && !courseUpdateDto.getCourseDescription().equals(findCourse.getCourseDescription())){
-            arr.add("코스 설명");
-            findCourse.updateCourseDescription(courseUpdateDto.getCourseDescription());
-            isModified.set(true);
-        }
-        if(courseUpdateDto.getDifficulty() != 0 && courseUpdateDto.getDifficulty() != findCourse.getDifficulty()){
-            arr.add("난이도");
-            findCourse.updateDifficulty(courseUpdateDto.getDifficulty());
-            isModified.set(true);
-        }
+            if(courseUpdateDto.getCourseName() != null && !courseUpdateDto.getCourseName().equals(findCourse.getCourseName())){
+                // 코스 이름 중복 확인 - 작동이 안됨
+                Optional<Course> checkCourse = courseRepository.findByCourseName(courseUpdateDto.getCourseName());
+                if(checkCourse.isPresent()) {
+                    throw new CourseException(DUPLICATION_COURSE_NAME);
+                }else{
+                    arr.add("코스 이름");
+                    findCourse.updateCourseName(courseUpdateDto.getCourseName());
+                    isModified.set(true);
+                }
+            }
 
-        if(courseUpdateDto.getSkillList() != null){
-            ArrayList<String> skills = skillRepository.findByCourse(findCourse);
-            courseUpdateDto.getSkillList().stream()
-                    .forEach(s ->{
-                        boolean checkSkill = false;
-                        for(int i=0; i<skills.size(); i++){
-                            if(skills.get(i).equals(s)) checkSkill = true;
-                        }
-                        if(!checkSkill){
-                            skillRepository.save(Skill.builder()
-                                    .course(findCourse)
-                                    .skill(s)
-                                    .build());
-                            isModified.set(true);
-                            arr.add("스킬");
-                        }
-                    });
+            if(courseUpdateDto.getPrice() != 0 && courseUpdateDto.getPrice() != findCourse.getPrice()){
+                arr.add("코스 가격");
+                findCourse.updatePrice(courseUpdateDto.getPrice());
+                isModified.set(true);
+            }
+            if(courseUpdateDto.getCourseDescription() != null && !courseUpdateDto.getCourseDescription().equals(findCourse.getCourseDescription())){
+                arr.add("코스 설명");
+                findCourse.updateCourseDescription(courseUpdateDto.getCourseDescription());
+                isModified.set(true);
+            }
+            if(courseUpdateDto.getDifficulty() != 0 && courseUpdateDto.getDifficulty() != findCourse.getDifficulty()){
+                arr.add("난이도");
+                findCourse.updateDifficulty(courseUpdateDto.getDifficulty());
+                isModified.set(true);
+            }
+
+            if(courseUpdateDto.getSkillList() != null){
+                ArrayList<String> skills = skillRepository.findByCourse(findCourse);
+                courseUpdateDto.getSkillList().stream()
+                        .forEach(s ->{
+                            boolean checkSkill = false;
+                            for(int i=0; i<skills.size(); i++){
+                                if(skills.get(i).equals(s)) checkSkill = true;
+                            }
+                            if(!checkSkill){
+                                skillRepository.save(Skill.builder()
+                                        .course(findCourse)
+                                        .skill(s)
+                                        .build());
+                                isModified.set(true);
+                                arr.add("스킬");
+                            }
+                        });
+            }
         }
 
         if(titlePhoto != null){
