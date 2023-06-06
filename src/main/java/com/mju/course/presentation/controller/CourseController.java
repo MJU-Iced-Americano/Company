@@ -40,7 +40,7 @@ public class CourseController {
     @Operation(summary = "기술리스트 보기")
     @GetMapping("/skill/all")
     public CommonResult readSkills(){
-        Set<String> skills = courseService.readSkills();
+        List<String> skills = courseService.readSkills();
         return responseService.getSingleResult(skills);
     }
 

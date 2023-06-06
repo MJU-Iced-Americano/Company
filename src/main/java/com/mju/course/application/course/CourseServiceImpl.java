@@ -37,13 +37,28 @@ public class CourseServiceImpl implements CourseService{
      * 기술 리스트 보기
      * */
     @Override
-    public Set<String> readSkills() {
+    public List<String> readSkills() {
         List<Skill> skillList = skillRepository.findAll();
-        Set<String> skills = new HashSet<>();
+
+        HashMap<String, Integer> map = new HashMap<>();
         skillList.forEach(skill -> {
-            skills.add(skill.getSkill());
+            map.put(skill.getSkill(), map.getOrDefault(skill, 1) + 1);
         });
-        return skills;
+
+        List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(map.entrySet());
+        sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
+        List<Map.Entry<String, Integer>> topEntries = sortedEntries.stream()
+                .limit(8)
+                .collect(Collectors.toList());
+
+        HashMap<String, Integer> topSkillsMap = new LinkedHashMap<>();
+        List<String> result = new ArrayList<>();
+
+        topEntries.forEach(entry -> topSkillsMap.put(entry.getKey(), entry.getValue()));
+        topEntries.forEach(entry -> result.add(entry.getKey()));
+
+        return result;
     }
 
     /**

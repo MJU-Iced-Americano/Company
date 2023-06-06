@@ -6,8 +6,7 @@ import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.domain.model.course.enums.CourseState;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.model.other.Result.CommonResult;
-import com.mju.course.domain.repository.course.CourseRepository;
-import com.mju.course.domain.repository.course.CurriculumRepository;
+import com.mju.course.domain.repository.course.*;
 import com.mju.course.domain.repository.lecture.LectureRepository;
 import com.mju.course.domain.service.LectureDomainService;
 import com.mju.course.domain.service.ResponseService;
@@ -32,13 +31,24 @@ public class AdminServiceImpl {
     private final CurriculumRepository curriculumRepository;
     private final LectureRepository lectureRepository;
 
+    private final CourseLikeRepository courseLikeRepository;
+    private final CartRepository cartRepository;
+    private final SkillRepository skillRepository;
+    private final UserCourseRepository userCourseRepository;
+
     private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
     private final LectureDomainService lectureDomainService;
 
-    public CommonResult readAdminCourseList(String state, String order, Pageable pageable) {
+    /**
+     * (운영자) 코스 조회 리스트 조회
+     * @param state
+     * @param order
+     * @param pageable
+     * */
+    public Page<AdminReadCoursesDto> readAdminCourseList(String state, String order, Pageable pageable) {
         Page<AdminReadCoursesDto> result = courseRepository.readAdminCourseList(state, order, pageable);
-        return responseService.getSingleResult(result);
+        return result;
     }
 
     /**
@@ -46,36 +56,49 @@ public class AdminServiceImpl {
      * @param course_index
      * */
     @Transactional
-    public CommonResult deleteCourse(Long course_index) {
-        // 코스
+    public void deleteCourse(Long course_index) {
+        // 코스 찾기
         Course findCourse = courseRepository.findById(course_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
-        // 커리 큘럼
-        List<Curriculum> findCurriculum = curriculumRepository.findByCourse(findCourse);
-
-        // 강의 삭제
-        for(int i=0; i<findCurriculum.size(); i++){
-            List<Lecture> lectures = lectureRepository.findByCurriculum(findCurriculum.get(i));
-            if(lectures.size() != 0){
-                lectures.forEach(lecture -> {
-                    lectureDomainService.deleteLecture(lecture.getId());
+        // 코스 좋아요
+        findCourse.getCourseLikeList()
+                .forEach(like->{
+                    courseLikeRepository.delete(like);
                 });
-            }
-        }
 
-        // 커리 큘럼 삭제
-        for(int i=0; i< findCurriculum.size(); i++){
-            curriculumRepository.delete(findCurriculum.get(i));
-        }
+        // 장바구니
+        findCourse.getCartList()
+                .forEach(cart -> {
+                    cartRepository.delete(cart);
+                });
+
+        // 사용 기술
+        findCourse.getSkillList()
+                .forEach(skill -> {
+                    skillRepository.delete(skill);
+                });
+
+        // 수강 신청 리스트
+        findCourse.getUserCourseList()
+                .forEach(userCourse -> {
+                    userCourseRepository.delete(userCourse);
+                });
+
+        // 커리 큘럼
+        findCourse.getCurriculumList()
+                .forEach(curriculum -> {
+                    curriculum.getLectureList()
+                            .forEach(lecture -> {
+                                lectureDomainService.deleteLecture(lecture.getId());
+                            });
+                    curriculumRepository.delete(curriculum);
+                });
 
         // 코스 삭제
         s3UploaderService.deleteS3File(findCourse.getCourseTitlePhotoKey());
         courseRepository.delete(findCourse);
-
-        return responseService.getSuccessfulResult();
     }
-
 
     public CommonResult registerCourse(Long course_index) {
         return updateState(course_index, CourseState.registration, null);
