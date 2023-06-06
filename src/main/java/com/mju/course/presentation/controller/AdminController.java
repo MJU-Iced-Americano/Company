@@ -60,15 +60,22 @@ public class AdminController {
     @Operation(summary = "(운영자) 코스 등록", description = "courseState : request -> registration")
     @Parameter(name = "course_index", description = "코스 인덱스")
     @PutMapping("/manage/register/{course_index}")
-    public CommonResult registerCourse(@PathVariable Long course_index){
-        return adminService.registerCourse(course_index);
+    public CommonResult registerCourse(@PathVariable Long course_index,
+                                       HttpServletRequest request){
+        String userId = userService.getAndCheckUserId(request);
+        adminService.registerCourse(course_index);
+        return responseService.getSuccessfulResult();
     }
 
     @Operation(summary = "(운영자) 코스 등록 보류", description = "courseState : request -> hold")
     @Parameter(name = "course_index", description = "코스 인덱스")
     @PutMapping("/manage/hold/{course_index}")
-    public CommonResult holdCourse(@PathVariable Long course_index, @RequestBody String comment){
-        return adminService.holdCourse(course_index, comment);
+    public CommonResult holdCourse(@PathVariable Long course_index,
+                                   @RequestBody String comment,
+                                   HttpServletRequest request){
+        String userId = userService.getAndCheckUserId(request);
+        adminService.holdCourse(course_index, comment);
+        return responseService.getSuccessfulResult();
     }
 
     // 검색 기능

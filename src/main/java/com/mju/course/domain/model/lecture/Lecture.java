@@ -42,6 +42,11 @@ public class Lecture extends BaseTimeEntity {
 
     @Column(name = "lecture_description")
     private String lectureDescription;
+    
+    private String hls360;
+    private String hls540;
+    private String hls720;
+    private String mp4740;
 
     // 양방향 매핑
     @OneToMany(mappedBy = "lecture")
@@ -80,4 +85,15 @@ public class Lecture extends BaseTimeEntity {
         this.lectureDescription = lectureDescription;
     }
 
+    public void saveVideo(String basicFileName){
+        String hls360 = basicFileName+"/Default/HLS/"+basicFileName+"_360.m3u8";
+        String hls540 = basicFileName+"/Default/HLS/"+basicFileName+"_540.m3u8";
+        String hls720 = basicFileName+"/Default/HLS/"+basicFileName+"_720.m3u8";
+        String mp4740 = basicFileName+"/Default/MP4/"+basicFileName+".mp4";
+
+        this.hls360 = hls360;
+        this.hls540 = hls540;
+        this.hls720 = hls720;
+        this.mp4740 = mp4740;
+    }
 }

@@ -80,11 +80,9 @@ public class LectureManageServiceImpl implements LectureManageService {
         // 2. output (lectureKey)
         String lectureKey = basicFileName+"/Default/HLS/"+basicFileName+".m3u8";
 
-        // 동영상 시간 파악
-
         // 강의 DB 저장
-        
         Lecture lecture = Lecture.of(findCurriculum, lecture_sequence, lectureCreateDto,lectureKey, inputKey);
+        lecture.saveVideo(basicFileName);
         Lecture saveLecture = lectureRepository.save(lecture);
 
         // 코스 업데이트

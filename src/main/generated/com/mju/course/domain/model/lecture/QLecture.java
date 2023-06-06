@@ -29,6 +29,12 @@ public class QLecture extends EntityPathBase<Lecture> {
 
     public final com.mju.course.domain.model.course.QCurriculum curriculum;
 
+    public final StringPath hls360 = createString("hls360");
+
+    public final StringPath hls540 = createString("hls540");
+
+    public final StringPath hls720 = createString("hls720");
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath lectureDescription = createString("lectureDescription");
@@ -44,6 +50,8 @@ public class QLecture extends EntityPathBase<Lecture> {
     public final NumberPath<Integer> lectureTime = createNumber("lectureTime", Integer.class);
 
     public final StringPath lectureTitle = createString("lectureTitle");
+
+    public final StringPath mp4740 = createString("mp4740");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
