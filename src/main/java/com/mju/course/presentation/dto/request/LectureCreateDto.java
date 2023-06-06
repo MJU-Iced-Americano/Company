@@ -16,4 +16,6 @@ public class LectureCreateDto {
     private String lectureTitle;
 
     private String lectureDescription;
+
+    private int lectureTime;
 }
