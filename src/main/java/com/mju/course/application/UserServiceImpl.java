@@ -106,4 +106,13 @@ public class UserServiceImpl {
         }
     }
 
+    /**
+     * 유저 id 가져로고 null인지 확인
+     * */
+    public String getAndCheckUserId(HttpServletRequest request){
+        String userId = getUserId(request);
+        checkUserId(userId);
+        return userId;
+    }
+
 }

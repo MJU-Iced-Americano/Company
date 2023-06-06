@@ -1,5 +1,6 @@
 package com.mju.course.application.course;
 
+import com.mju.course.presentation.dto.request.ApplyCourseListDto;
 import com.mju.course.presentation.dto.response.ClientReadCourseDto;
 import com.mju.course.presentation.dto.response.CourseReadDto;
 import com.mju.course.presentation.dto.response.CoursesReadDto;
@@ -23,7 +24,7 @@ public interface CourseService {
     String deleteCart(String userId, Long course_index);
     void courseLike(String userId, Long course_index);
 
-    String applyCourse(String userId, List<Long> courseList);
+    String applyCourse(String userId, ApplyCourseListDto applyCourseListDto);
     String cancelCourse(String userId, Long user_course_index);
 
     ClientReadCourseDto returnCourse(Long course_index);

@@ -5,6 +5,7 @@ import com.mju.course.domain.model.lecture.Lecture;
 import com.mju.course.domain.model.other.Exception.CourseException;
 import com.mju.course.domain.repository.course.*;
 import com.mju.course.presentation.controller.client.LecturerFeignClient;
+import com.mju.course.presentation.dto.request.ApplyCourseListDto;
 import com.mju.course.presentation.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -216,13 +217,17 @@ public class CourseServiceImpl implements CourseService{
     }
 
     /** 코스 수강 신청
-     * @param courseList
+     * @param applyCourseListDto
      * @param userId
      */
     @Override
     @Transactional
-    public String applyCourse(String userId, List<Long> courseList) {
-        courseList.forEach(course_index->{
+    public String applyCourse(String userId, ApplyCourseListDto applyCourseListDto) {
+        if(applyCourseListDto.getCourseList()== null || applyCourseListDto.getCourseList().size() ==0){
+            throw new CourseException(EMPTY_USER_COURSE);
+        }
+
+        applyCourseListDto.getCourseList().forEach(course_index->{
             // 만약, 이미 수강 신청한 강좌라면 이미 수강신청한 강좌입니다란 정보 추출
             Course course = courseRepository.findById(course_index)
                     .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));

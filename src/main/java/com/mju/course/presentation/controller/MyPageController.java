@@ -21,28 +21,22 @@ public class MyPageController {
 
     private final UserServiceImpl userService;
 
-    private String getUser(HttpServletRequest request){
-        String userId = userService.getUserId(request);
-        userService.checkUserId(userId);
-        return userId;
-    }
-
     @Operation(summary = "수강 중인 목록 보기", description = "수강 중인 목록 보기 API 입니다. ")
     @GetMapping("/user/course-list")
     public ListResult readCourseList(HttpServletRequest request){
-        return responseService.getListResult(myPageService.requestCourseList(getUser(request)));
+        return responseService.getListResult(myPageService.requestCourseList(userService.getAndCheckUserId(request)));
     }
 
     @Operation(summary = "좋아요 한 강의", description = "좋아요 한 강의 API 입니다. ")
     @GetMapping("/user/course-like")
     public ListResult readCourseLike(HttpServletRequest request){
-        return responseService.getListResult(myPageService.requestCourseLike(getUser(request)));
+        return responseService.getListResult(myPageService.requestCourseLike(userService.getAndCheckUserId(request)));
     }
 
     @Operation(summary = "장바구니에 담은 코스", description = "장바구니에 담은 코스 보기 API 입니다. ")
     @GetMapping("/user/cart")
     public ListResult readCart(HttpServletRequest request){
-        return responseService.getListResult(myPageService.readCart(getUser(request)));
+        return responseService.getListResult(myPageService.readCart(userService.getAndCheckUserId(request)));
     }
 
 }
