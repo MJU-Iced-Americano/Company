@@ -23,6 +23,15 @@ public class LectureReadDto {
     @Schema(description = "강의 설명", defaultValue = "1")
     private String lectureDescription;
 
+    @Schema(description = "강의 url 360", defaultValue = "1")
+    private String lectureUrl360;
+    @Schema(description = "강의 url 540", defaultValue = "1")
+    private String lectureUrl540;
+    @Schema(description = "강의 url 720", defaultValue = "1")
+    private String lectureUrl720;
+    @Schema(description = "강의 url 740", defaultValue = "1")
+    private String lectureUrl740;
+
     public static LectureReadDto of(Lecture lecture){
         return LectureReadDto.builder()
                 .lectureIndex(lecture.getId())
@@ -30,6 +39,10 @@ public class LectureReadDto {
                 .lectureTitle(lecture.getLectureTitle())
                 .lectureTime(lecture.getLectureTime())
                 .lectureUrl("https://d19wla4ff811v8.cloudfront.net/output/" + lecture.getLectureKey())
+                .lectureUrl360("https://d19wla4ff811v8.cloudfront.net/output/" + lecture.getHls360())
+                .lectureUrl540("https://d19wla4ff811v8.cloudfront.net/output/" + lecture.getHls540())
+                .lectureUrl720("https://d19wla4ff811v8.cloudfront.net/output/" + lecture.getHls720())
+                .lectureUrl740("https://d19wla4ff811v8.cloudfront.net/output/" + lecture.getMp4740())
                 .lectureDescription(lecture.getLectureDescription())
                 .build();
     }

@@ -29,14 +29,12 @@ public class AdminServiceImpl {
 
     private final CourseRepository courseRepository;
     private final CurriculumRepository curriculumRepository;
-    private final LectureRepository lectureRepository;
 
     private final CourseLikeRepository courseLikeRepository;
     private final CartRepository cartRepository;
     private final SkillRepository skillRepository;
     private final UserCourseRepository userCourseRepository;
 
-    private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
     private final LectureDomainService lectureDomainService;
 
@@ -100,20 +98,26 @@ public class AdminServiceImpl {
         courseRepository.delete(findCourse);
     }
 
-    public CommonResult registerCourse(Long course_index) {
-        return updateState(course_index, CourseState.registration, null);
+    /**
+     * (운영자) 코스 등록
+     * */
+    public void registerCourse(Long course_index) {
+        updateState(course_index, CourseState.registration, null);
     }
 
-    public CommonResult holdCourse(Long course_index,String comment) {
-        return updateState(course_index, CourseState.hold, comment);
+    /**
+     * (운영자) 코스 등록 보류
+     * */
+    public void holdCourse(Long course_index,String comment) {
+        updateState(course_index, CourseState.hold, comment);
     }
 
-    private CommonResult updateState(Long course_index, CourseState status,String comment) {
-        Course findCourse = courseRepository.findById(course_index).orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
+    private void updateState(Long course_index, CourseState status,String comment) {
+        Course findCourse = courseRepository.findById(course_index)
+                .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
 
         findCourse.updateState(status, comment);
         courseRepository.save(findCourse);
-        return responseService.getSuccessfulResult();
     }
 
 }
