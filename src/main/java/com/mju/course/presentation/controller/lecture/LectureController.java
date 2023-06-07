@@ -1,4 +1,4 @@
-package com.mju.course.presentation.controller;
+package com.mju.course.presentation.controller.lecture;
 
 import com.mju.course.application.lecture.LectureService;
 import com.mju.course.application.UserServiceImpl;

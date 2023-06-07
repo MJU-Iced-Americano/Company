@@ -1,4 +1,4 @@
-package com.mju.course.application;
+package com.mju.course.application.course;
 
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.presentation.dto.response.*;
