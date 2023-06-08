@@ -137,13 +137,13 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public List<MyPageUserCourseDto> requestCourseList(String userId) {
+    public List<UserCourseReadDto> requestCourseList(String userId) {
         QCourse course = QCourse.course;
         QUserCourse userCourse = QUserCourse.userCourse;
 
         // Query 객체 생성
-        JPQLQuery<MyPageUserCourseDto> query = queryFactory
-                .selectDistinct(Projections.constructor(MyPageUserCourseDto.class,
+        JPQLQuery<UserCourseReadDto> query = queryFactory
+                .selectDistinct(Projections.constructor(UserCourseReadDto.class,
                         userCourse.id,
                         course.category,
                         course.courseName,
@@ -156,7 +156,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .where(userCourse.userId.in(userId));
 
         // Query 실행
-        List<MyPageUserCourseDto> results = query.fetch();
+        List<UserCourseReadDto> results = query.fetch();
 
         results.forEach(content->{
             content.updateUrl(content.getCourseTitlePhotoUrl());
@@ -165,13 +165,13 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public List<MyPageCourseLikeDto> requestCourseLike(String userId) {
+    public List<CourseLikeReadDto> requestCourseLike(String userId) {
         QCourse course = QCourse.course;
         QCourseLike courseLike = QCourseLike.courseLike;
 
         // Query 객체 생성
-        JPQLQuery<MyPageCourseLikeDto> query = queryFactory
-                .selectDistinct(Projections.constructor(MyPageCourseLikeDto.class,
+        JPQLQuery<CourseLikeReadDto> query = queryFactory
+                .selectDistinct(Projections.constructor(CourseLikeReadDto.class,
                         courseLike.id,
                         course.category,
                         course.courseName,
@@ -184,7 +184,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .where(courseLike.userId.in(userId));
 
         // Query 실행
-        List<MyPageCourseLikeDto> results = query.fetch();
+        List<CourseLikeReadDto> results = query.fetch();
 
         results.forEach(content->{
             content.updateUrl(content.getCourseTitlePhotoUrl());
@@ -193,13 +193,13 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     @Override
-    public List<MyPageCartDto> readCart(String userId) {
+    public List<CartReadDto> readCart(String userId) {
         QCourse course = QCourse.course;
         QCart cart = QCart.cart;
 
         // Query 객체 생성
-        JPQLQuery<MyPageCartDto> query = queryFactory
-                .selectDistinct(Projections.constructor(MyPageCartDto.class,
+        JPQLQuery<CartReadDto> query = queryFactory
+                .selectDistinct(Projections.constructor(CartReadDto.class,
                         cart.id,
                         course.category,
                         course.courseName,
@@ -212,7 +212,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .where(cart.userId.in(userId));
 
         // Query 실행
-        List<MyPageCartDto> results = query.fetch();
+        List<CartReadDto> results = query.fetch();
 
         results.forEach(content->{
             content.updateUrl(content.getCourseTitlePhotoUrl());

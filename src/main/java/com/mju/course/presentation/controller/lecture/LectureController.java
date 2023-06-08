@@ -5,10 +5,13 @@ import com.mju.course.application.UserServiceImpl;
 import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.*;
+import com.mju.course.presentation.dto.response.LectureAnswerReadDto;
+import com.mju.course.presentation.dto.response.LectureQuestionReadDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,27 +34,29 @@ public class LectureController {
     @GetMapping("/{lecture_index}")
     public CommonResult readBasicLecture(@PathVariable Long lecture_index,
                                          @RequestParam("tab") String tab){
-        return lectureService.readLecture(lecture_index, tab);
+        Object result = lectureService.readLecture(lecture_index, tab);
+        return responseService.getSingleResult(result);
     }
 
     // 강의 질문-답변 read
     @Operation(summary = "강의 질문 하나 보기 (+답변) ", description = "강의 질문 하나 보기 API 입니다. ")
     @GetMapping("/question/{question_index}")
     public CommonResult readQAndA(@PathVariable Long question_index){
-        return lectureService.readQAndA(question_index);
+        return responseService.getSingleResult(lectureService.readQAndA(question_index));
     }
 
     @Operation(summary = "강의 질문 리스트 보기 (페이징 처리)", description = "강의 질문 리스트 보기 API 입니다. ")
     @GetMapping("/{lecture_index}/question")
     public CommonResult readQuestions(@PathVariable Long lecture_index,
                                       Pageable pageable){
-        return lectureService.readQuestions(lecture_index, pageable);
+        Page<LectureQuestionReadDto> result = lectureService.readQuestions(lecture_index, pageable);
+        return responseService.getSingleResult(result);
     }
 
     @Operation(summary = "강의 답변 하나보기", description = "강의 답변 하나보기 API 입니다. ")
     @GetMapping("/answer/{lecture_answer_index}")
     public CommonResult readAnswer(@PathVariable Long lecture_answer_index){
-        return lectureService.readAnswer(lecture_answer_index);
+        return responseService.getSingleResult(lectureService.readAnswer(lecture_answer_index));
     }
 
     // 강의 질문 CD
@@ -63,7 +68,8 @@ public class LectureController {
                                        HttpServletRequest request){
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return lectureService.createQuestion(userId, lecture_index, images, lectureQuestionCreateDto);
+        lectureService.createQuestion(userId, lecture_index, images, lectureQuestionCreateDto);
+        return responseService.getSuccessfulResult();
     }
 
 //    @Operation(summary = "강의 질문 수정하기", description = "강의 질문 수정하기 API 입니다. ")
@@ -78,7 +84,8 @@ public class LectureController {
                                        HttpServletRequest request){
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return lectureService.deleteQuestion(userId, question_index);
+        lectureService.deleteQuestion(userId, question_index);
+        return responseService.getSuccessfulResult();
     }
 
     // 강의 질문 북마크, 북마크 취소
@@ -88,7 +95,8 @@ public class LectureController {
                                                 HttpServletRequest request){
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return lectureService.lectureQuestionBookmark(question_index,userId);
+        String result = lectureService.lectureQuestionBookmark(question_index,userId);
+        return responseService.getSingleResult(result);
     }
 
     // 강의 답변 CD
@@ -100,7 +108,8 @@ public class LectureController {
                                      HttpServletRequest request){
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return lectureService.createAnswer(userId, question_index, images, answerCreateDto);
+        lectureService.createAnswer(userId, question_index, images, answerCreateDto);
+        return responseService.getSuccessfulResult();
     }
 
 //    @Operation(summary = "강의 답변 수정하기", description = "강의 답변 작성하기 API 입니다. ")
@@ -117,7 +126,8 @@ public class LectureController {
                                      HttpServletRequest request){
         String userId = userService.getUserId(request);
         userService.checkUserId(userId);
-        return lectureService.deleteAnswer(userId, lecture_answer_index);
+        lectureService.deleteAnswer(userId, lecture_answer_index);
+        return responseService.getSuccessfulResult();
     }
 
 }

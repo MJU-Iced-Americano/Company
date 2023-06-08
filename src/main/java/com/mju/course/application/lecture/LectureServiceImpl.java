@@ -4,11 +4,9 @@ import com.mju.course.application.S3UploaderService;
 import com.mju.course.domain.model.course.Course;
 import com.mju.course.domain.model.lecture.*;
 import com.mju.course.domain.model.other.Exception.CourseException;
-import com.mju.course.domain.model.other.Result.CommonResult;
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.domain.repository.lecture.*;
 import com.mju.course.domain.service.LectureDomainService;
-import com.mju.course.domain.service.ResponseService;
 import com.mju.course.presentation.dto.request.AnswerCreateDto;
 import com.mju.course.presentation.dto.request.LectureQuestionCreateDto;
 import com.mju.course.presentation.dto.response.LectureAnswerReadDto;
@@ -46,7 +44,6 @@ public class LectureServiceImpl implements LectureService{
 
     private final LectureQuestionBookmarkRepository lectureQuestionBookmarkRepository;
 
-    private final ResponseService responseService;
     private final S3UploaderService s3UploaderService;
     private final LectureDomainService lectureDomainService;
 
@@ -55,15 +52,15 @@ public class LectureServiceImpl implements LectureService{
      * @param tab
      */
     @Override
-    public CommonResult readLecture(Long lecture_index, String tab){
+    public Object readLecture(Long lecture_index, String tab){
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
         if(tab.equals("curriculum")){
             Course course = courseRepository.findById(lecture.getCurriculum().getCourse().getId())
                     .orElseThrow(() -> new CourseException(NOT_EXISTENT_COURSE));
-            return responseService.getSingleResult(LectureCurriculumReadDto.of(lecture, course));
+            return LectureCurriculumReadDto.of(lecture, course);
         }else{
-            return responseService.getSingleResult(LectureReadDto.of(lecture));
+            return LectureReadDto.of(lecture);
         }
     }
 
@@ -72,7 +69,7 @@ public class LectureServiceImpl implements LectureService{
      */
     @Override
     @Transactional
-    public CommonResult readQAndA(Long question_index) {
+    public LectureQAndAReadDto readQAndA(Long question_index) {
         LectureQuestion lectureQuestion = lectureQuestionRepository.findById(question_index)
                 .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_QUESTION));
 
@@ -92,10 +89,7 @@ public class LectureServiceImpl implements LectureService{
                     });
         }
 
-        return responseService.getSingleResult(LectureQAndAReadDto.builder()
-                        .lectureQuestionReadDto(lectureQuestionReadDto)
-                        .lectureAnswerReadDtos(list)
-                .build());
+        return LectureQAndAReadDto.of(lectureQuestionReadDto, list);
     }
 
     /** 강의 질문 리스트 보기 (페이징 처리)
@@ -103,21 +97,21 @@ public class LectureServiceImpl implements LectureService{
      * @param pageable
      */
     @Override
-    public CommonResult readQuestions(Long lecture_index, Pageable pageable) {
+    public Page<LectureQuestionReadDto> readQuestions(Long lecture_index, Pageable pageable) {
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
         Page<LectureQuestionReadDto> result = lectureRepository.readQuestions(lecture, pageable);
-        return responseService.getSingleResult(result);
+        return result;
     }
 
     /** 강의 답변 하나보기
      * @param lecture_answer_index
      */
     @Override
-    public CommonResult readAnswer(Long lecture_answer_index) {
+    public LectureAnswerReadDto readAnswer(Long lecture_answer_index) {
         LectureAnswer lectureAnswer = lectureAnswerRepository.findById(lecture_answer_index)
                 .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_ANSWER));
-        return responseService.getSingleResult(LectureAnswerReadDto.of(lectureAnswer));
+        return LectureAnswerReadDto.of(lectureAnswer);
     }
 
     /** 강의 질문 작성하기
@@ -127,7 +121,7 @@ public class LectureServiceImpl implements LectureService{
      */
     @Override
     @Transactional
-    public CommonResult createQuestion(String userId, Long lecture_index, List<MultipartFile> images, LectureQuestionCreateDto lectureQuestionCreateDto) {
+    public void createQuestion(String userId, Long lecture_index, List<MultipartFile> images, LectureQuestionCreateDto lectureQuestionCreateDto) {
         Lecture lecture = lectureRepository.findById(lecture_index)
                 .orElseThrow(() -> new CourseException(NOT_EXISTENT_LECTURE));
 
@@ -149,15 +143,13 @@ public class LectureServiceImpl implements LectureService{
                 }
             });
         }
-        return responseService.getSuccessfulResult();
     }
 
     /** 강의 질문 수정 하기
      * @param question_index
      */
     @Override
-    public CommonResult updateQuestion(Long question_index) {
-        return null;
+    public void updateQuestion(Long question_index) {
     }
 
     /** 강의 질문 삭제 하기
@@ -166,15 +158,13 @@ public class LectureServiceImpl implements LectureService{
      */
     @Override
     @Transactional
-    public CommonResult deleteQuestion(String userId, Long question_index) {
+    public void deleteQuestion(String userId, Long question_index) {
         LectureQuestion lectureQuestion = lectureQuestionRepository.findById(question_index)
                         .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_QUESTION));
         if(!lectureQuestion.getUserId().equals(userId)){
             throw new CourseException(NOT_ACCESS_USER);
         }
-
         lectureDomainService.deleteQuestion(question_index);
-        return responseService.getSuccessfulResult();
     }
 
     /** 강의 질문 북마크, 북마크 취소
@@ -183,17 +173,17 @@ public class LectureServiceImpl implements LectureService{
      */
     @Override
     @Transactional
-    public CommonResult lectureQuestionBookmark(Long question_index, String userId) {
+    public String lectureQuestionBookmark(Long question_index, String userId) {
         LectureQuestion lectureQuestion = lectureQuestionRepository.findById(question_index)
                 .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_QUESTION));
 
         Optional<LectureQuestionBookmark> bookmark = lectureQuestionBookmarkRepository.findByLectureQuestionAndUserId(lectureQuestion, userId);
         if(bookmark.isPresent()){
             lectureQuestionBookmarkRepository.delete(bookmark.get());
-            return responseService.getSingleResult("북마크가 취소되었습니다.");
+            return "북마크가 취소되었습니다.";
         }else{
             lectureQuestionBookmarkRepository.save(LectureQuestionBookmark.of(lectureQuestion, userId));
-            return responseService.getSingleResult("북마크되었습니다.");
+            return "북마크되었습니다.";
         }
 
     }
@@ -205,7 +195,7 @@ public class LectureServiceImpl implements LectureService{
      */
     @Override
     @Transactional
-    public CommonResult createAnswer(String userId, Long question_index, List<MultipartFile> images, AnswerCreateDto answerCreateDto) {
+    public void createAnswer(String userId, Long question_index, List<MultipartFile> images, AnswerCreateDto answerCreateDto) {
         LectureQuestion lectureQuestion = lectureQuestionRepository.findById(question_index)
                 .orElseThrow(()-> new CourseException(NOT_EXISTENT_LECTURE_QUESTION));
         LectureAnswer lectureAnswer = LectureAnswer.of(lectureQuestion, userId, answerCreateDto.getAnswer());
@@ -225,7 +215,6 @@ public class LectureServiceImpl implements LectureService{
                 }
             });
         }
-        return responseService.getSuccessfulResult();
     }
 
     /** 강의 질문 답변 삭제
@@ -233,9 +222,8 @@ public class LectureServiceImpl implements LectureService{
      */
     @Override
     @Transactional
-    public CommonResult deleteAnswer(String userId, Long lecture_answer_index) {
+    public void deleteAnswer(String userId, Long lecture_answer_index) {
         lectureDomainService.deleteAnswer(lecture_answer_index);
-        return responseService.getSuccessfulResult();
     }
 
 }

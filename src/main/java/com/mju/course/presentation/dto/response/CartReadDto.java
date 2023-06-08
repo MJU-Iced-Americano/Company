@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MyPageCourseLikeDto {
+public class CartReadDto {
 
-    @Schema(description = "유저가 코스 좋아요 한 인덱스", defaultValue = "1")
-    private Long userCourseLikeIndex;
+    @Schema(description = "장바구니 인덱스", defaultValue = "1")
+    private Long userCartIndex;
     @Schema(description = "카테 고리")
     private String category;
     @Schema(description = "코스 이름", defaultValue = "자바 기초")
@@ -24,7 +24,7 @@ public class MyPageCourseLikeDto {
     private int difficulty;
     @Schema(description = "코스 기본 사진 URL")
     private String courseTitlePhotoUrl;
-    @Schema(description = "코스 좋아요 생성 시간")
+    @Schema(description = "장바구니에 담은 시간")
     private LocalDateTime createdAt;
 
     public void updateUrl(String courseTitlePhotoKey){
