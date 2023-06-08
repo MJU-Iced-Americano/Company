@@ -1,4 +1,4 @@
-package com.mju.course.application;
+package com.mju.course.application.course;
 
 import com.mju.course.domain.repository.course.CourseRepository;
 import com.mju.course.presentation.dto.response.*;
@@ -15,15 +15,15 @@ public class MyPageServiceImpl {
 
     private final CourseRepository courseRepository;
 
-    public List<MyPageUserCourseDto> requestCourseList(String userId) {
+    public List<UserCourseReadDto> requestCourseList(String userId) {
         return courseRepository.requestCourseList(userId);
     }
 
-    public List<MyPageCourseLikeDto> requestCourseLike(String userId) {
+    public List<CourseLikeReadDto> requestCourseLike(String userId) {
         return courseRepository.requestCourseLike(userId);
     }
 
-    public List<MyPageCartDto> readCart(String userId) {
+    public List<CartReadDto> readCart(String userId) {
         return courseRepository.readCart(userId);
     }
 }

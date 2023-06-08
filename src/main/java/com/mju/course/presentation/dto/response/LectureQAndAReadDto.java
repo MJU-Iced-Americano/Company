@@ -14,4 +14,11 @@ import java.util.List;
 public class LectureQAndAReadDto {
     private LectureQuestionReadDto lectureQuestionReadDto;
     private List<LectureAnswerReadDto> lectureAnswerReadDtos;
+
+    public static LectureQAndAReadDto of(LectureQuestionReadDto lectureQuestionReadDto, List<LectureAnswerReadDto> list){
+        return LectureQAndAReadDto.builder()
+                .lectureQuestionReadDto(lectureQuestionReadDto)
+                .lectureAnswerReadDtos(list)
+                .build();
+    }
 }

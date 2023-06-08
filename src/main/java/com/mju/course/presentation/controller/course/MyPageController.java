@@ -1,6 +1,6 @@
-package com.mju.course.presentation.controller;
+package com.mju.course.presentation.controller.course;
 
-import com.mju.course.application.MyPageServiceImpl;
+import com.mju.course.application.course.MyPageServiceImpl;
 import com.mju.course.application.UserServiceImpl;
 import com.mju.course.domain.model.other.Result.ListResult;
 import com.mju.course.domain.service.ResponseService;
